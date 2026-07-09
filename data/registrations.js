@@ -1,0 +1,36 @@
+// ⚠ 本檔為 index.html 抽出的純資料檔，需在 index.html 主程式之前載入。
+// 每月更新資料時只需修改本檔，不必動 index.html 的程式邏輯。
+
+const RAW=[
+  {yr:2024,mo:1,kicks:646,kickse:90,sentra:465,xtrail:574,xtraile:81,ariya:0,note:null},
+  {yr:2024,mo:2,kicks:358,kickse:59,sentra:195,xtrail:316,xtraile:179,ariya:0,note:null},
+  {yr:2024,mo:3,kicks:381,kickse:38,sentra:579,xtrail:400,xtraile:505,ariya:0,note:null},
+  {yr:2024,mo:4,kicks:441,kickse:150,sentra:432,xtrail:524,xtraile:201,ariya:0,note:null},
+  {yr:2024,mo:5,kicks:607,kickse:62,sentra:299,xtrail:450,xtraile:155,ariya:0,note:null},
+  {yr:2024,mo:6,kicks:515,kickse:59,sentra:293,xtrail:454,xtraile:139,ariya:0,note:'夏季競賽月'},
+  {yr:2024,mo:7,kicks:604,kickse:99,sentra:432,xtrail:500,xtraile:177,ariya:0,note:'夏季競賽月'},
+  {yr:2024,mo:8,kicks:275,kickse:68,sentra:192,xtrail:273,xtraile:146,ariya:0,note:'民俗月'},
+  {yr:2024,mo:9,kicks:443,kickse:54,sentra:311,xtrail:409,xtraile:175,ariya:0,note:null},
+  {yr:2024,mo:10,kicks:340,kickse:49,sentra:427,xtrail:311,xtraile:109,ariya:0,note:null},
+  {yr:2024,mo:11,kicks:525,kickse:64,sentra:381,xtrail:388,xtraile:101,ariya:0,note:null},
+  {yr:2024,mo:12,kicks:526,kickse:71,sentra:397,xtrail:469,xtraile:111,ariya:0,note:null},
+  {yr:2025,mo:1,kicks:390,kickse:50,sentra:299,xtrail:339,xtraile:86,ariya:0,note:null},
+  {yr:2025,mo:2,kicks:284,kickse:64,sentra:218,xtrail:206,xtraile:79,ariya:0,note:null},
+  {yr:2025,mo:3,kicks:263,kickse:349,sentra:263,xtrail:249,xtraile:140,ariya:0,note:null},
+  {yr:2025,mo:4,kicks:368,kickse:79,sentra:291,xtrail:166,xtraile:44,ariya:0,note:null},
+  {yr:2025,mo:5,kicks:276,kickse:217,sentra:254,xtrail:161,xtraile:61,ariya:0,note:null},
+  {yr:2025,mo:6,kicks:337,kickse:238,sentra:224,xtrail:96,xtraile:327,ariya:0,note:'夏季競賽月'},
+  {yr:2025,mo:7,kicks:397,kickse:153,sentra:260,xtrail:336,xtraile:100,ariya:0,note:'夏季競賽月'},
+  {yr:2025,mo:8,kicks:207,kickse:95,sentra:155,xtrail:267,xtraile:65,ariya:0,note:'民俗月'},
+  {yr:2025,mo:9,kicks:325,kickse:60,sentra:261,xtrail:228,xtraile:150,ariya:0,note:null},
+  {yr:2025,mo:10,kicks:381,kickse:2,sentra:300,xtrail:223,xtraile:189,ariya:0,note:null},
+  {yr:2025,mo:11,kicks:393,kickse:0,sentra:263,xtrail:253,xtraile:104,ariya:0,note:null},
+  {yr:2025,mo:12,kicks:610,kickse:0,sentra:364,xtrail:270,xtraile:138,ariya:13,note:null},
+  {yr:2026,mo:1,kicks:458,kickse:0,sentra:294,xtrail:248,xtraile:129,ariya:12,note:null},
+  {yr:2026,mo:2,kicks:180,kickse:0,sentra:170,xtrail:123,xtraile:57,ariya:2,note:null},
+  {yr:2026,mo:3,kicks:511,kickse:0,sentra:299,xtrail:163,xtraile:58,ariya:6,note:'櫻花特仕版(KICKS/SENTRA)'},
+  {yr:2026,mo:4,kicks:515,kickse:0,sentra:227,xtrail:227,xtraile:76,ariya:6,note:'櫻花特仕版(KICKS/SENTRA)'},
+  {yr:2026,mo:5,kicks:467,kickse:0,sentra:286,xtrail:192,xtraile:70,ariya:0,note:'櫻花特仕版(KICKS/SENTRA)'},
+  {yr:2026,mo:6,kicks:481,kickse:0,sentra:304,xtrail:260,xtraile:93,ariya:0,note:'夏季競賽月'},
+];
+
