@@ -183,6 +183,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
     <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--accent)">2026 Q1 重點觀察</span>
     <span style="font-size:12px;color:var(--text2);margin-left:12px">Q1競品集體加碼優惠、Ford Territory掀背影音破圈、HYUNDAI加速EV化布局</span>
   </div>
+  <div id="promoIntensityStrip" style="margin-bottom:16px"></div>
   <div id="promoTableWrap"></div>
 </div>
 
@@ -460,6 +461,82 @@ let promoMonth='jan', promoBrand='ALL';
 
 // 📦 資料已抽離 → data/promos.js（競品促銷方案 PROMO）
 
+// ── 促銷火力指數：規則式評分（0–5），把文字方案量化成可跨品牌比較的讓利強度 ──
+// 規則透明：徽章 tooltip 會列出命中的訊號；規則調整只需改 PROMO_SIGNALS 權重。
+const PROMO_SIGNALS=[
+  {key:'cash',    label:'價格讓利／專案價', w:1.5, re:/現金|直折|折價|折讓|優惠價|專案價|保證購回|\d{2,3}(?:\.\d)?萬(?:元)?起|最高(?:價值)?\s*\d+(?:\.\d+)?萬/},
+  {key:'zero',    label:'0利率',            w:1,   re:/[0零]利率/},
+  {key:'pay',     label:'低月付／低頭款',   w:1,   re:/月付|低?頭[期款]/},
+  {key:'gift',    label:'配件金／贈品升級', w:1,   re:/配件金|購車金|充電金|升級|贈|投影機|悠遊卡|入主送/},
+  {key:'trade',   label:'舊換新／貨物稅',   w:0.5, re:/舊換新|汰舊|貨物稅/},
+  {key:'warranty',label:'延長保固',         w:0.5, re:/保固/},
+  {key:'lure',    label:'試乘禮／抽獎',     w:0.5, re:/試乘|試駕|抽/},
+];
+function promoIntensity(text){
+  if(!text||text==='—') return {score:0,hits:[]};
+  const hits=PROMO_SIGNALS.filter(s=>s.re.test(text));
+  let score=hits.reduce((s,h)=>s+h.w,0);
+  // 明確高額讓利（≥10萬）再加碼 0.5
+  const m=text.match(/(?:直折|折價|折讓|最高|優惠|補助)(?:價值)?\s*(\d+(?:\.\d+)?)\s*萬/);
+  if(m&&parseFloat(m[1])>=10) score+=0.5;
+  return {score:Math.min(5,+score.toFixed(1)),hits};
+}
+function promoLevel(score){
+  if(score<=0)  return {tag:'—',  label:'無方案', color:'var(--text3)'};
+  if(score<=1.5)return {tag:'L1', label:'輕度',   color:'#7dd3fc'};
+  if(score<=2.5)return {tag:'L2', label:'中度',   color:'#fbbf24'};
+  if(score<=3.5)return {tag:'L3', label:'高度',   color:'#fb923c'};
+  return           {tag:'L4', label:'重砲',   color:'#f87171'};
+}
+// 品牌×月 火力指數 = 該品牌所有車款列（含空方案=0）的平均分，反映「廣度×深度」
+function promoBrandIndex(brand,mo){
+  const rows=PROMO.filter(r=>r.brand===brand);
+  if(!rows.length) return {avg:0,max:0,n:0,active:0};
+  const scores=rows.map(r=>promoIntensity(r[mo]).score);
+  return {
+    avg:+(scores.reduce((s,v)=>s+v,0)/rows.length).toFixed(2),
+    max:Math.max(...scores),
+    n:rows.length,
+    active:scores.filter(v=>v>0).length,
+  };
+}
+function buildPromoIntensityStrip(){
+  const el=document.getElementById('promoIntensityStrip');
+  if(!el) return;
+  const mo=promoMonth;
+  if(!MONTHS_AVAIL.includes(mo)){el.innerHTML='';return}
+  const brands=['NISSAN','HONDA','FORD','HYUNDAI','MAZDA','TOYOTA'];
+  const idx=brands.map(b=>({brand:b,...promoBrandIndex(b,mo)})).sort((a,b)=>b.avg-a.avg);
+  const maxAvg=Math.max(...idx.map(d=>d.avg),0.01);
+  el.innerHTML=`<div class="chart-card full" style="margin-bottom:0">
+    <div class="card-header">
+      <span class="card-title">品牌促銷火力指數 — ${MONTH_LABELS[mo]}</span>
+      <span class="card-tag">0–5 分 · 全車款平均</span>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:7px">
+      ${idx.map(d=>{
+        const c=BRAND_COLORS[d.brand]==='var(--accent)'?'#c8f55a':BRAND_COLORS[d.brand];
+        const lv=promoLevel(d.avg);
+        const isN=d.brand==='NISSAN';
+        return `<div style="display:flex;align-items:center;gap:10px">
+          <span style="font-family:'DM Mono',monospace;font-size:11px;color:${c};width:70px;flex-shrink:0;font-weight:${isN?'700':'500'}">${d.brand}</span>
+          <div style="flex:1;background:var(--surface2);border-radius:3px;height:12px;overflow:hidden">
+            <div style="width:${d.avg/maxAvg*100}%;height:100%;background:${c}${isN?'':'99'};border-radius:3px"></div>
+          </div>
+          <span style="font-family:'DM Mono',monospace;font-size:12px;font-weight:600;color:${c};width:36px;text-align:right">${d.avg.toFixed(1)}</span>
+          <span style="font-family:'DM Mono',monospace;font-size:9px;color:${lv.color};width:56px">${lv.tag} ${lv.label}</span>
+          <span style="font-size:10px;color:var(--text3);width:96px;white-space:nowrap">${d.active}/${d.n} 車款有方案</span>
+        </div>`;
+      }).join('')}
+    </div>
+    <div style="margin-top:12px;padding-top:10px;border-top:1px solid var(--border);font-size:10px;color:var(--text3);line-height:1.8">
+      <span style="font-family:'DM Mono',monospace;color:var(--text2)">ⓘ 評分規則（規則式、可稽核）：</span>
+      價格讓利/專案價 +1.5 ｜ 0利率 +1 ｜ 低月付 +1 ｜ 配件金/贈品 +1 ｜ 舊換新/貨物稅 +0.5 ｜ 延長保固 +0.5 ｜ 試乘禮/抽獎 +0.5 ｜ 明確讓利≥10萬 再+0.5（上限5分）。
+      指數為文字方案的量化近似值，用於跨品牌/跨月相對比較，非實際讓利金額。
+    </div>
+  </div>`;
+}
+
 function setPromoMonth(m,e){
   promoMonth=m;
   document.querySelectorAll('#promoMonthGroup .tab-btn').forEach(b=>b.classList.remove('active'));
@@ -488,6 +565,7 @@ function buildPromoTable(){
     <th style="padding:12px 16px;text-align:left;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:.08em;white-space:nowrap;width:80px">車型級距</th>
     <th style="padding:12px 16px;text-align:left;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:.08em;white-space:nowrap;width:140px">車款</th>
     <th style="padding:12px 16px;text-align:left;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:.08em">${MONTH_LABELS[mo]}優惠方案</th>
+    <th style="padding:12px 16px;text-align:center;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:.08em;white-space:nowrap;width:90px">火力指數</th>
   </tr></thead><tbody>`;
 
   brands.forEach(brand=>{
@@ -507,11 +585,19 @@ function buildPromoTable(){
           ${isEmpty?`<span style="color:var(--text3);font-family:'DM Mono',monospace;font-size:11px">本月無方案</span>`
           :`<div style="display:flex;flex-wrap:wrap;gap:6px">${lines.map((l,li)=>`<span style="display:inline-block;background:var(--surface2);border:1px solid var(--border);color:${li===0&&!isCCL?'var(--text)':'var(--text2)'};font-size:${li===0&&!isCCL?'12px':'11px'};font-weight:${li===0&&!isCCL?'500':'400'};padding:3px 9px;border-radius:4px;line-height:1.5">${l}</span>`).join('')}</div>`}
         </td>
+        ${(()=>{
+          const pi=promoIntensity(isEmpty?null:content),lv=promoLevel(pi.score);
+          const tip=pi.hits.length?`命中訊號：${pi.hits.map(h=>`${h.label}(+${h.w})`).join('、')}`:'本月無方案';
+          return `<td style="padding:10px 16px;border-bottom:1px solid var(--border);vertical-align:top;text-align:center">
+            <span title="${tip}" style="display:inline-block;font-family:'DM Mono',monospace;font-size:10px;font-weight:600;color:${lv.color};background:${pi.score>0?lv.color+'18':'transparent'};border:1px solid ${pi.score>0?lv.color+'44':'var(--border)'};padding:3px 8px;border-radius:100px;white-space:nowrap;cursor:default">${pi.score>0?`${lv.tag} ${pi.score.toFixed(1)}`:'—'}</span>
+          </td>`;
+        })()}
       </tr>`;
     });
   });
   html+=`</tbody></table>`;
   wrap.innerHTML=html;
+  buildPromoIntensityStrip();
 }
 
 
