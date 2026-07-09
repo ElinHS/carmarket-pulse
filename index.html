@@ -44,13 +44,13 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
 <body>
 <div id="app">
 <div id="navBar">
-  <button class="nav-tab active" onclick="switchPage('sales',event)">📊 掛牌數追蹤</button>
-  <button class="nav-tab" onclick="switchPage('comp',event)">🔍 競品掛牌比對</button>
-  <button class="nav-tab" onclick="switchPage('intel',event)">🗞 車市銷售觀察</button>
-  <button class="nav-tab" onclick="switchPage('promo',event)">🎯 競車促銷方案</button>
-  <button class="nav-tab" onclick="switchPage('nielsen',event)">📡 數位廣告監測</button>
-  <button class="nav-tab" onclick="switchPage('strategy',event)">🧭 2025國產車品牌策略</button>
-  <button class="nav-tab" onclick="switchPage('kol',event)">🎬 車媒風格檢索</button>
+  <button class="nav-tab active" data-page="sales" onclick="switchPage('sales',event)">📊 掛牌數追蹤</button>
+  <button class="nav-tab" data-page="comp" onclick="switchPage('comp',event)">🔍 競品掛牌比對</button>
+  <button class="nav-tab" data-page="intel" onclick="switchPage('intel',event)">🗞 車市銷售觀察</button>
+  <button class="nav-tab" data-page="promo" onclick="switchPage('promo',event)">🎯 競車促銷方案</button>
+  <button class="nav-tab" data-page="nielsen" onclick="switchPage('nielsen',event)">📡 數位廣告監測</button>
+  <button class="nav-tab" data-page="strategy" onclick="switchPage('strategy',event)">🧭 2025國產車品牌策略</button>
+  <button class="nav-tab" data-page="kol" onclick="switchPage('kol',event)">🎬 車媒風格檢索</button>
 </div>
 <div id="pageWrap">
 
@@ -1341,7 +1341,8 @@ document.addEventListener('keydown',e=>{
   if(e.key==='Escape') closeLightbox();
 });
 
-document.getElementById('lastUpdate').textContent='更新：'+new Date().toLocaleDateString('zh-TW');
+// 由資料推導最後更新月份，而非顯示「今天」——避免資料過期時誤導
+(function(){const r=RAW[RAW.length-1];document.getElementById('lastUpdate').textContent=`資料至：${r.yr}/${r.mo}月`})();
 
 // ── COMPETITOR COMPARISON (2026起) ──
 // 資料結構：每個車款的競品清單，每個品牌每月掛牌數
@@ -1549,6 +1550,7 @@ window.switchPage=function(p,e){
 
 // 📦 資料已抽離 → data/kol.js（車媒風格檢索 KOL_DATA）
 const KOL_BRAND_COLORS = {NISSAN:'#c8f55a',TOYOTA:'#f97316',HONDA:'#fb7185',HYUNDAI:'#a78bfa',FORD:'#60a5fa',MAZDA:'#34d399'};
+const KOL_BRANDS = Object.keys(KOL_BRAND_COLORS); // 矩陣/影響力視圖用的品牌欄位順序
 const KOL_MONTHS = ['jan','feb','mar'];
 const KOL_MONTH_LABELS = {jan:'1月',feb:'2月',mar:'3月'};
 let kolView = 'profile';
@@ -1649,10 +1651,10 @@ function buildKolMatrix() {
         ${KOL_DATA.map(k=>`<tr>
           <td style="padding:8px 14px;border-bottom:1px solid var(--border);font-size:12px">
             <div style="font-weight:500;color:var(--text)">${k.name}</div>
-            <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text3)">${k.subs}</div>
+            <div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text3)">${k.subs||''}</div>
           </td>
           ${months.map(mo=>KOL_BRANDS.map(b=>{
-            const v=k.mentions[b]?.[mo]||0;
+            const v=k.mentions?.[b]?.[mo]||0;
             const bg=v===0?'':v===1?`${KOL_BRAND_COLORS[b]}22`:v===2?`${KOL_BRAND_COLORS[b]}44`:`${KOL_BRAND_COLORS[b]}88`;
             return `<td style="padding:8px;text-align:center;border-bottom:1px solid var(--border);background:${bg}">
               <span style="font-family:'DM Mono',monospace;font-size:12px;color:${v>0?KOL_BRAND_COLORS[b]:'var(--text3)'}">${v||'—'}</span>
@@ -1665,7 +1667,7 @@ function buildKolMatrix() {
   // Brand total by month chart
   html += `<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px">
     ${months.map(mo=>{
-      const totals = KOL_BRANDS.map(b=>({brand:b,total:KOL_DATA.reduce((s,k)=>s+(k.mentions[b]?.[mo]||0),0)})).sort((a,b)=>b.total-a.total);
+      const totals = KOL_BRANDS.map(b=>({brand:b,total:KOL_DATA.reduce((s,k)=>s+(k.mentions?.[b]?.[mo]||0),0)})).sort((a,b)=>b.total-a.total);
       return `<div class="chart-card">
         <div class="card-header"><span class="card-title">${KOL_MONTH_LABELS[mo]} 品牌被提及總次數</span></div>
         <div style="display:flex;flex-direction:column;gap:6px">
@@ -1695,7 +1697,7 @@ function buildKolImpact() {
   // NISSAN total KOL mentions per month vs NISSAN registrations
   const nissanMentionsByMonth = KOL_MONTHS.map(mo=>({
     mo, label:KOL_MONTH_LABELS[mo],
-    mentions: KOL_DATA.reduce((s,k)=>s+(k.mentions.NISSAN?.[mo]||0),0),
+    mentions: KOL_DATA.reduce((s,k)=>s+(k.mentions?.NISSAN?.[mo]||0),0),
     reg: mo==='jan'?1141:mo==='feb'?532:mo==='mar'?1037:0,
   }));
 
@@ -1703,7 +1705,7 @@ function buildKolImpact() {
   const brandComparison = KOL_BRANDS.map(b=>({
     brand:b,
     color:KOL_BRAND_COLORS[b],
-    months: KOL_MONTHS.map(mo=>KOL_DATA.reduce((s,k)=>s+(k.mentions[b]?.[mo]||0),0)),
+    months: KOL_MONTHS.map(mo=>KOL_DATA.reduce((s,k)=>s+(k.mentions?.[b]?.[mo]||0),0)),
   }));
 
   el.innerHTML = `
@@ -2387,10 +2389,10 @@ function _doPPT(){
   // Nav 按鈕
   const nav = document.getElementById('navBar');
   const btnOp = document.createElement('button');
-  btnOp.className = 'nav-tab'; btnOp.textContent = '📢 社群聲量監測';
+  btnOp.className = 'nav-tab'; btnOp.textContent = '📢 社群聲量監測'; btnOp.dataset.page = 'opview';
   btnOp.onclick = e=>switchPage('opview',e);
   const btnLc = document.createElement('button');
-  btnLc.className = 'nav-tab'; btnLc.textContent = '🗓 新車上市日曆';
+  btnLc.className = 'nav-tab'; btnLc.textContent = '🗓 新車上市日曆'; btnLc.dataset.page = 'launch';
   btnLc.onclick = e=>switchPage('launch',e);
   nav.appendChild(btnOp); nav.appendChild(btnLc);
 
@@ -2525,6 +2527,89 @@ function buildLaunchPage(){
       </div>
     </div>`;
 }
+
+// ── URL 深連結（hash routing）──
+// 網址格式：#頁面/子狀態，例：#nielsen/mar、#promo/apr/FORD、#sales/2025、#intel/26.03
+// 切換頁面或分頁時網址同步更新（replaceState，不汙染瀏覽紀錄），可直接複製網址分享特定視圖。
+(function(){
+  let _restoring=false;
+  let _intelIdx=INTEL.length-1;
+  window._hashPage='sales';
+
+  const PAGE_STATE={
+    sales:   ()=>[currentView],
+    comp:    ()=>[compModel],
+    intel:   ()=>[INTEL[_intelIdx]?INTEL[_intelIdx].id:null],
+    promo:   ()=>[promoMonth,promoBrand],
+    nielsen: ()=>[nielsenPeriod],
+    strategy:()=>[currentStrat],
+    kol:     ()=>[kolView],
+    opview:  ()=>[opviewMo],
+    launch:  ()=>[],
+  };
+
+  function writeHash(){
+    if(_restoring) return;
+    const p=window._hashPage;
+    const parts=[p,...(PAGE_STATE[p]?PAGE_STATE[p]():[])].filter(v=>v!==null&&v!==undefined);
+    history.replaceState(null,'','#'+parts.map(encodeURIComponent).join('/'));
+  }
+
+  // 包裝各狀態 setter：呼叫後同步網址（inline onclick 走 window 上的全域函式，包裝即生效）
+  function hook(name,fn){
+    const orig=window[name];
+    if(typeof orig!=='function') return;
+    window[name]=function(...a){const r=orig.apply(this,a);try{if(fn)fn(...a)}catch(_){}writeHash();return r};
+  }
+  hook('switchPage',p=>{window._hashPage=p});
+  hook('setView');
+  hook('setCompModel');
+  hook('setPromoMonth');
+  hook('setPromoBrand');
+  hook('setNielsenPeriod');
+  hook('showStrat');
+  hook('setKolView');
+  hook('buildOpviewPage');
+  hook('showIntel',idx=>{_intelIdx=idx});
+
+  // 還原：以「模擬點擊對應按鈕」重建狀態，讓 active 樣式與渲染流程完全比照手動操作
+  function clickBtn(scope,fn,val){
+    const b=document.querySelector(`${scope} [onclick*="${fn}('${val}'"]`);
+    if(b) b.click();
+    return !!b;
+  }
+  function applyHash(){
+    const parts=location.hash.replace(/^#/,'').split('/').map(s=>{try{return decodeURIComponent(s)}catch(_){return s}});
+    const p=parts[0];
+    const navBtn=p&&document.querySelector(`#navBar .nav-tab[data-page="${p}"]`);
+    if(!navBtn) return;
+    _restoring=true;
+    try{
+      navBtn.click();
+      const a=parts[1],b=parts[2];
+      if(p==='sales'&&a)    clickBtn('#page-sales','setView',a);
+      if(p==='comp'&&a)     clickBtn('#page-comp','setCompModel',a);
+      if(p==='intel'&&a){
+        const i=INTEL.findIndex(d=>d.id===a);
+        if(i>=0){const el=document.querySelectorAll('#intelNav .intel-nav-item')[i];if(el)el.click();}
+      }
+      if(p==='promo'){
+        if(a) clickBtn('#page-promo','setPromoMonth',a);
+        if(b) clickBtn('#page-promo','setPromoBrand',b);
+      }
+      if(p==='nielsen'&&a)  clickBtn('#page-nielsen','setNielsenPeriod',a);
+      if(p==='strategy'&&a) clickBtn('#page-strategy','showStrat',a);
+      if(p==='kol'&&a)      clickBtn('#page-kol','setKolView',a);
+      if(p==='opview'&&a){
+        const btn=document.querySelector(`#opviewMoTabs [onclick*="opviewMo='${a}'"]`);
+        if(btn) btn.click();
+      }
+    }finally{_restoring=false}
+    writeHash();
+  }
+  window.addEventListener('hashchange',applyHash);
+  if(location.hash.length>1) applyHash();
+})();
 
 </script>
 </body>
