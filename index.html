@@ -234,7 +234,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
   </div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
     <div class="chart-card">
-      <div class="card-header"><span class="card-title">品牌聲量份額 SOV — 月趨勢</span><span class="card-tag">花費市占% 1-5月</span></div>
+      <div class="card-header"><span class="card-title">品牌聲量份額 SOV — 月趨勢</span><span class="card-tag" id="nielsenSovTag">花費市占%</span></div>
       <div class="chart-wrap" style="height:220px"><canvas id="nielsenSovChart"></canvas></div>
     </div>
     <div class="chart-card">
@@ -242,6 +242,32 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
       <div style="display:flex;gap:8px;margin-bottom:8px;flex-wrap:wrap" id="nielsenChannelBrandBtns"></div>
       <div class="chart-wrap" style="height:180px"><canvas id="nielsenChannelChart"></canvas></div>
     </div>
+  </div>
+  <!-- SOV vs SOM 超額聲量分析（ESOV = 聲量份額 − 市場份額，投放領先/落後市場地位的先行指標） -->
+  <div class="chart-card full" style="margin-bottom:16px">
+    <div class="card-header">
+      <span class="card-title">SOV vs SOM — 超額聲量 ESOV 分析</span>
+      <span class="card-tag" id="esovTag">聲量份額 vs 掛牌份額（六品牌內）</span>
+    </div>
+    <div class="chart-wrap" style="height:240px"><canvas id="esovChart"></canvas></div>
+    <div id="esovBadges" style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:12px"></div>
+    <div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--border);font-size:10px;color:var(--text3);line-height:1.7">
+      ⓘ ESOV（Excess Share of Voice）= SOV − SOM。行銷理論上 ESOV 為正的品牌傾向擴大市占、為負則靠品牌慣性消耗。
+      SOV 僅含 Nielsen 可監測數位 Display/Video 花費；SOM 為六監測品牌內的掛牌相對份額（部分品牌掛牌數為估計值）；兩者皆非全市場絕對值，適合看相對強弱與跨月變化。
+    </div>
+  </div>
+  <!-- 品牌整合時間軸：投放 × 促銷 × 掛牌 三線索同框，看因果對應 -->
+  <div class="chart-card full" style="margin-bottom:16px">
+    <div class="card-header">
+      <span class="card-title">品牌整合時間軸 — 投放 SOV × 掛牌 SOM × 促銷火力</span>
+      <span class="card-tag">2026 年 1–6 月</span>
+    </div>
+    <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap" id="timelineBrandBtns"></div>
+    <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);margin-bottom:4px">SOV%（投放聲量份額） vs SOM%（掛牌份額）</div>
+    <div class="chart-wrap" style="height:200px"><canvas id="timelineShareChart"></canvas></div>
+    <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);margin:10px 0 4px">促銷火力指數（0–5，全車款平均）</div>
+    <div class="chart-wrap" style="height:110px"><canvas id="timelinePromoChart"></canvas></div>
+    <div id="timelineInsight" style="margin-top:10px;padding-top:8px;border-top:1px solid var(--border);font-size:11px;color:var(--text2);line-height:1.7"></div>
   </div>
   <div class="chart-card full" style="margin-bottom:16px">
     <div class="card-header"><span class="card-title" id="nielsenTableTitle">各品牌廣告監測總覽</span><span class="card-tag">花費 / 曝光 / CPM / 影音占比</span></div>
@@ -843,6 +869,16 @@ function switchCreativeModel(brandKey, period, model, btnEl){
 
 let nielsenCharts={};
 
+// 六品牌固定順序與品牌色（SOV 趨勢 / ESOV / 整合時間軸共用，順序固定不因篩選改變）
+const ESOV_BRANDS=[
+  {key:'nissan', label:'NISSAN', color:'#c8f55a'},
+  {key:'toyota', label:'TOYOTA', color:'#f97316'},
+  {key:'hyundai',label:'HYUNDAI',color:'#a78bfa'},
+  {key:'ford',   label:'FORD',   color:'#60a5fa'},
+  {key:'mazda',  label:'MAZDA',  color:'#34d399'},
+  {key:'honda',  label:'HONDA',  color:'#fb7185'},
+];
+
 function buildNielsenCharts(){
   // Remove previous competitor comparison block if exists
   const prevComp = document.getElementById('toyotaCompBlock');
@@ -1012,16 +1048,12 @@ function buildNielsenCharts(){
   }
 
 
-    // SOV 月趨勢折線圖（1-5月）
-    const sovBrands5=[
-      {key:'nissan', label:'NISSAN', color:'#c8f55a'},
-      {key:'toyota', label:'TOYOTA', color:'#f97316'},
-      {key:'hyundai',label:'HYUNDAI',color:'#a78bfa'},
-      {key:'ford',   label:'FORD',   color:'#60a5fa'},
-      {key:'mazda',  label:'MAZDA',  color:'#34d399'},
-    ];
-    const sovMoList=['jan','feb','mar','apr','may','jun'];
-    const sovMoLabels5=['1月','2月','3月','4月','5月'];
+    // SOV 月趨勢折線圖（月份/標籤由 NIELSEN_MONTHLY 資料推導，資料更新後自動延長）
+    const sovBrands5=ESOV_BRANDS;
+    const sovMoList=Object.keys(NIELSEN_MONTHLY);
+    const sovMoLabels5=sovMoList.map(m=>MONTH_LABELS[m]||m);
+    const sovTagEl=document.getElementById('nielsenSovTag');
+    if(sovTagEl) sovTagEl.textContent=`花費市占% ${sovMoLabels5[0]}–${sovMoLabels5[sovMoLabels5.length-1]}`;
     const sovTotals5=sovMoList.map(m=>sovBrands5.reduce((s,b)=>s+(NIELSEN_MONTHLY[m]?.[b.key]?.totalSp||0),0));
     const sovDS=sovBrands5.map(b=>({
       label:b.label,
@@ -1136,6 +1168,121 @@ function buildNielsenCharts(){
   const d4=mo4.nissan;
   buildNielsenBrandCards(nielsenPeriod);
 
+}
+
+// ── SOV vs SOM（超額聲量 ESOV）與品牌整合時間軸 ──
+// SOV = 品牌數位花費 ÷ 六品牌合計；SOM = 品牌掛牌 ÷ 六品牌合計。
+// 各月花費以「同月內份額」計算，因此各月資料單位不一致也不影響跨月比較。
+function nielsenShare(mo){
+  const m=NIELSEN_MONTHLY[mo];
+  if(!m) return null;
+  const tSp=ESOV_BRANDS.reduce((s,b)=>s+(m[b.key]?.totalSp||0),0);
+  const tReg=ESOV_BRANDS.reduce((s,b)=>s+(m[b.key]?.reg||0),0);
+  return ESOV_BRANDS.map(b=>{
+    const d=m[b.key]||{};
+    const sov=tSp>0?(d.totalSp||0)/tSp*100:0;
+    const som=tReg>0?(d.reg||0)/tReg*100:0;
+    return {...b,sov,som,esov:sov-som,reg:d.reg||0};
+  });
+}
+
+function buildEsovChart(){
+  const cv=document.getElementById('esovChart');
+  if(!cv||typeof Chart==='undefined') return;
+  const rows=nielsenShare(nielsenPeriod);
+  if(!rows) return;
+  const tagEl=document.getElementById('esovTag');
+  if(tagEl) tagEl.textContent=`${NIELSEN_MONTHLY[nielsenPeriod].label} ｜ 聲量份額 vs 掛牌份額（六品牌內）`;
+  if(nielsenCharts.esov) nielsenCharts.esov.destroy();
+  nielsenCharts.esov=new Chart(cv.getContext('2d'),{type:'bar',
+    data:{labels:rows.map(r=>r.label),datasets:[
+      {label:'SOV 投放聲量份額',data:rows.map(r=>+r.sov.toFixed(1)),backgroundColor:rows.map(r=>r.color+'cc'),borderColor:rows.map(r=>r.color),borderWidth:1,borderRadius:3},
+      {label:'SOM 掛牌份額',data:rows.map(r=>+r.som.toFixed(1)),backgroundColor:rows.map(r=>r.color+'44'),borderColor:rows.map(r=>r.color+'88'),borderWidth:1,borderRadius:3},
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{labels:{color:'#8892a4',font:{size:10},boxWidth:10,boxHeight:10}},
+        tooltip:{backgroundColor:'#1a1e28',borderColor:'#2e3548',borderWidth:1,bodyColor:'#e8eaf0',footerColor:'#b0b8cc',mode:'index',intersect:false,
+          callbacks:{label:c=>` ${c.dataset.label}: ${c.parsed.y}%`,
+            footer:items=>{const r=rows[items[0].dataIndex];return `ESOV ${r.esov>=0?'+':''}${r.esov.toFixed(1)} 百分點 ｜ 掛牌 ${r.reg.toLocaleString()} 台`}}}},
+      scales:{x:{ticks:{color:'#8892a4',font:{size:11}},grid:{color:'#1a1e28'},border:{color:'#252a38'}},
+        y:{min:0,ticks:{color:'#4e5768',font:{size:10},callback:v=>v+'%'},grid:{color:'#1a1e28'},border:{color:'#252a38'}}}}});
+  const bEl=document.getElementById('esovBadges');
+  if(bEl) bEl.innerHTML=rows.map(r=>{
+    const pos=r.esov>=0;
+    return `<div style="background:var(--surface2);border:1px solid ${r.color}33;border-radius:8px;padding:8px 10px;text-align:center">
+      <div style="font-family:'DM Mono',monospace;font-size:10px;color:${r.color};margin-bottom:3px">${r.label}</div>
+      <div style="font-family:'DM Mono',monospace;font-size:15px;font-weight:600;color:${pos?'var(--green)':'var(--red)'}">${pos?'▲ +':'▼ '}${r.esov.toFixed(1)}</div>
+      <div style="font-size:9px;color:var(--text3)">SOV ${r.sov.toFixed(1)}% − SOM ${r.som.toFixed(1)}%</div>
+    </div>`;
+  }).join('');
+}
+
+// 品牌整合時間軸：同一品牌的 SOV / SOM / 促銷火力沿月份對齊，供判讀「投了什麼 → 賣得如何」
+let timelineBrand='nissan';
+const TL_YM={jan:'2026-01',feb:'2026-02',mar:'2026-03',apr:'2026-04',may:'2026-05',jun:'2026-06',jul:'2026-07',aug:'2026-08',sep:'2026-09',oct:'2026-10',nov:'2026-11',dec:'2026-12'};
+function setTimelineBrand(k,e){
+  timelineBrand=k;
+  buildBrandTimeline();
+}
+function buildBrandTimeline(){
+  const btnsEl=document.getElementById('timelineBrandBtns');
+  if(!btnsEl||typeof Chart==='undefined') return;
+  const brand=ESOV_BRANDS.find(b=>b.key===timelineBrand)||ESOV_BRANDS[0];
+  btnsEl.innerHTML=ESOV_BRANDS.map(b=>
+    `<button class="tab-btn ${b.key===brand.key?'active':''}" style="${b.key===brand.key?`color:${b.color};border-color:${b.color}66;background:${b.color}18`:''}" onclick="setTimelineBrand('${b.key}',event)">${b.label}</button>`
+  ).join('');
+  const months=Object.keys(NIELSEN_MONTHLY);
+  const labels=months.map(m=>MONTH_LABELS[m]||m);
+  const shares=months.map(m=>{const s=nielsenShare(m);return s?s.find(x=>x.key===brand.key):null});
+  const sov=shares.map(s=>s?+s.sov.toFixed(1):null);
+  const som=shares.map(s=>s?+s.som.toFixed(1):null);
+  const regs=shares.map(s=>s?s.reg:0);
+  const promo=months.map(m=>promoBrandIndex(brand.label,m).avg);
+  const launches=months.map(m=>LAUNCH_CALENDAR.filter(it=>it.brand===brand.label&&it.ym===TL_YM[m]));
+
+  if(nielsenCharts.tlShare) nielsenCharts.tlShare.destroy();
+  nielsenCharts.tlShare=new Chart(document.getElementById('timelineShareChart').getContext('2d'),{type:'line',
+    data:{labels,datasets:[
+      {label:'SOV 投放聲量份額',data:sov,borderColor:brand.color,backgroundColor:brand.color+'22',borderWidth:2.5,pointRadius:4,pointHoverRadius:6,tension:0.3,fill:false},
+      {label:'SOM 掛牌份額',data:som,borderColor:brand.color,borderDash:[5,4],borderWidth:1.5,pointRadius:3,pointHoverRadius:5,pointStyle:'rect',tension:0.3,fill:false},
+    ]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{labels:{color:'#8892a4',font:{size:10},padding:8,boxWidth:20,boxHeight:2,usePointStyle:true,pointStyle:'line'}},
+        tooltip:{backgroundColor:'#1a1e28',borderColor:'#2e3548',borderWidth:1,bodyColor:'#e8eaf0',footerColor:'#b0b8cc',mode:'index',intersect:false,
+          callbacks:{label:c=>` ${c.dataset.label}: ${c.parsed.y}%`,
+            footer:items=>{
+              const i=items[0].dataIndex;
+              const lines=[`掛牌 ${regs[i].toLocaleString()} 台 ｜ 促銷火力 ${promo[i].toFixed(1)}`];
+              launches[i].forEach(it=>lines.push(`🗓 ${it.model}（${it.type}·${it.status}）`));
+              return lines;
+            }}}},
+      scales:{x:{ticks:{color:'#8892a4',font:{size:11}},grid:{color:'#1a1e28'},border:{color:'#252a38'}},
+        y:{min:0,afterFit:s=>{s.width=46},ticks:{color:'#4e5768',font:{size:10},callback:v=>v+'%'},grid:{color:'#1a1e28'},border:{color:'#252a38'}}}}});
+
+  if(nielsenCharts.tlPromo) nielsenCharts.tlPromo.destroy();
+  nielsenCharts.tlPromo=new Chart(document.getElementById('timelinePromoChart').getContext('2d'),{type:'bar',
+    data:{labels,datasets:[{label:'促銷火力指數',data:promo,backgroundColor:brand.color+'55',borderColor:brand.color,borderWidth:1,borderRadius:3,maxBarThickness:44}]},
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},
+        tooltip:{backgroundColor:'#1a1e28',borderColor:'#2e3548',borderWidth:1,bodyColor:'#e8eaf0',
+          callbacks:{label:c=>{const lv=promoLevel(c.parsed.y);return ` 火力 ${c.parsed.y.toFixed(1)}（${lv.tag} ${lv.label}）`}}}},
+      scales:{x:{ticks:{color:'#8892a4',font:{size:11}},grid:{color:'#1a1e28'},border:{color:'#252a38'}},
+        y:{min:0,max:5,afterFit:s=>{s.width=46},ticks:{color:'#4e5768',font:{size:10},stepSize:1},grid:{color:'#1a1e28'},border:{color:'#252a38'}}}}});
+
+  const insEl=document.getElementById('timelineInsight');
+  if(insEl){
+    const evts=launches.flatMap((ls,i)=>ls.map(it=>`${labels[i]} ${it.model}（${it.type}）`));
+    insEl.innerHTML=
+      `<span style="font-family:'DM Mono',monospace;color:${brand.color}">${brand.label}</span>　`+
+      `上市事件：${evts.length?evts.join('、'):'1–6月無收錄事件'}<br>`+
+      `<span style="color:var(--text3);font-size:10px">判讀：實線（SOV）高於虛線（SOM）代表投放領先市場地位（ESOV 為正，搶份額）；火力柱升高但 SOM 未跟上，優先檢視素材與方案的轉換力，而非加碼預算。</span>`;
+  }
+}
+
+// buildNielsenCharts 在各月份分支內會提早 return，故統一在外層包裝加掛 ESOV 與時間軸
+{
+  const _obnc=buildNielsenCharts;
+  window.buildNielsenCharts=function(){ _obnc(); buildEsovChart(); buildBrandTimeline(); };
 }
 
 // 📦 資料已抽離 → data/strategy.js（品牌策略 STRAT_DATA / CASES）
@@ -2627,7 +2774,7 @@ function buildLaunchPage(){
     comp:    ()=>[compModel],
     intel:   ()=>[INTEL[_intelIdx]?INTEL[_intelIdx].id:null],
     promo:   ()=>[promoMonth,promoBrand],
-    nielsen: ()=>[nielsenPeriod],
+    nielsen: ()=>[nielsenPeriod,timelineBrand],
     strategy:()=>[currentStrat],
     kol:     ()=>[kolView],
     opview:  ()=>[opviewMo],
@@ -2653,6 +2800,7 @@ function buildLaunchPage(){
   hook('setPromoMonth');
   hook('setPromoBrand');
   hook('setNielsenPeriod');
+  hook('setTimelineBrand');
   hook('showStrat');
   hook('setKolView');
   hook('buildOpviewPage');
@@ -2683,7 +2831,10 @@ function buildLaunchPage(){
         if(a) clickBtn('#page-promo','setPromoMonth',a);
         if(b) clickBtn('#page-promo','setPromoBrand',b);
       }
-      if(p==='nielsen'&&a)  clickBtn('#page-nielsen','setNielsenPeriod',a);
+      if(p==='nielsen'){
+        if(a) clickBtn('#page-nielsen','setNielsenPeriod',a);
+        if(b&&ESOV_BRANDS.some(x=>x.key===b)) setTimelineBrand(b,null);
+      }
       if(p==='strategy'&&a) clickBtn('#page-strategy','showStrat',a);
       if(p==='kol'&&a)      clickBtn('#page-kol','setKolView',a);
       if(p==='opview'&&a){
