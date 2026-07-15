@@ -28,6 +28,11 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
 .tab-btn{background:transparent;border:1px solid var(--border2);color:var(--text3);font-family:'DM Mono',monospace;font-size:10px;padding:4px 10px;border-radius:4px;cursor:pointer;transition:.15s}
 .tab-btn:hover{color:var(--text2);border-color:var(--text3)}
 .tab-btn.active{background:rgba(200,245,90,.1);border-color:rgba(200,245,90,.3);color:var(--accent)}
+.range-sel{background:var(--surface2);border:1px solid var(--border2);color:var(--text2);font-family:'DM Mono',monospace;font-size:10px;padding:4px 6px;border-radius:4px;cursor:pointer;outline:none}
+.range-sel:hover{border-color:var(--text3)}
+.info-tip{position:relative;display:inline-block;margin-left:6px;color:var(--text3);cursor:help;font-size:11px;font-family:'DM Mono',monospace;border:1px solid var(--border2);border-radius:100px;width:14px;height:14px;line-height:12px;text-align:center;vertical-align:1px}
+.info-tip::after{content:attr(data-tip);position:absolute;left:0;bottom:140%;background:#1a1e28;border:1px solid var(--border2);color:var(--text2);font-size:11px;font-family:'Noto Sans TC',sans-serif;font-weight:400;line-height:1.7;padding:10px 12px;border-radius:6px;width:280px;white-space:normal;opacity:0;pointer-events:none;transition:.15s;z-index:999;text-align:left;box-shadow:0 6px 20px rgba(0,0,0,.4)}
+.info-tip:hover::after{opacity:1}
 .kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
 .yoy-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border-radius:8px;overflow:hidden}
 .intel-grid{display:grid;grid-template-columns:200px 1fr;gap:0;background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;min-height:400px}
@@ -51,6 +56,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
   <button class="nav-tab" data-page="nielsen" onclick="switchPage('nielsen',event)">📡 數位廣告監測</button>
   <button class="nav-tab" data-page="strategy" onclick="switchPage('strategy',event)">🧭 2025國產車品牌策略</button>
   <button class="nav-tab" data-page="kol" onclick="switchPage('kol',event)">🎬 車媒風格檢索</button>
+  <span id="dataStatus" style="margin-left:auto;align-self:center;font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);white-space:nowrap;padding-left:16px"></span>
 </div>
 <div id="pageWrap">
 
@@ -66,6 +72,13 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
         <button class="tab-btn" onclick="setView('2024',event)">2024年</button>
         <button class="tab-btn" onclick="setView('2025',event)">2025年</button>
         <button class="tab-btn" onclick="setView('2026',event)">2026年</button>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px">
+        <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text3)">自訂區間</span>
+        <select id="rangeFrom" class="range-sel" onchange="applyRange()"></select>
+        <span style="color:var(--text3);font-size:10px">→</span>
+        <select id="rangeTo" class="range-sel" onchange="applyRange()"></select>
+        <button class="tab-btn" id="rangeClear" onclick="clearRange()" style="display:none">✕ 清除區間</button>
       </div>
       <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text3)" id="lastUpdate"></span>
     </div>
@@ -84,7 +97,10 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
   <div class="chart-card full">
     <div class="card-header">
       <span class="card-title">車款掛牌明細</span>
-      <span class="card-tag" id="tableTag">月份明細</span>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span class="card-tag" id="tableTag">月份明細</span>
+        <button class="tab-btn" onclick="exportSalesCSV()">⬇ 匯出 CSV</button>
+      </div>
     </div>
     <div style="overflow-x:auto">
       <table style="width:100%;border-collapse:collapse;font-size:12px">
@@ -214,7 +230,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
   <div id="nielsenKpiRow" style="display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:16px"></div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
     <div class="chart-card">
-      <div class="card-header"><span class="card-title" id="nielsenChart1Title">各品牌廣告花費</span><span class="card-tag" id="nielsenChart1Tag">萬元 · Nielsen估算</span></div>
+      <div class="card-header"><span class="card-title" id="nielsenChart1Title">各品牌廣告花費<span class="info-tip" data-tip="Spend 為 Nielsen 估算之數位廣告花費，僅含可監測的 Display／Video，不含電視、報紙、廣播、戶外，FB／LINE 等封閉平台亦偵測不完整。適合品牌間相對比較與跨月趨勢，不代表實際媒體總投資。">ⓘ</span></span><span class="card-tag" id="nielsenChart1Tag">萬元 · Nielsen估算</span></div>
       <div class="chart-wrap" style="height:220px"><canvas id="nielsenSpendChart"></canvas></div>
     </div>
     <div class="chart-card">
@@ -224,7 +240,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
   </div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
     <div class="chart-card">
-      <div class="card-header"><span class="card-title">各品牌整體 CPM</span><span class="card-tag">元 / 千次曝光</span></div>
+      <div class="card-header"><span class="card-title">各品牌整體 CPM<span class="info-tip" data-tip="CPM（Cost Per Mille）＝每千次曝光成本，計算方式為 花費 ÷ 曝光量 × 1000。CPM 越低代表買到的曝光越便宜；影音（Video）素材的 CPM 通常高於 Display。">ⓘ</span></span><span class="card-tag">元 / 千次曝光</span></div>
       <div class="chart-wrap" style="height:200px"><canvas id="nielsenCpmChart"></canvas></div>
     </div>
     <div class="chart-card">
@@ -234,7 +250,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
   </div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
     <div class="chart-card">
-      <div class="card-header"><span class="card-title">品牌聲量份額 SOV — 月趨勢</span><span class="card-tag" id="nielsenSovTag">花費市占%</span></div>
+      <div class="card-header"><span class="card-title">品牌聲量份額 SOV — 月趨勢<span class="info-tip" data-tip="SOV（Share of Voice）＝該品牌數位花費 ÷ 六監測品牌合計花費。僅含 Nielsen 可監測的數位 Display／Video，為六品牌內的相對份額，非全媒體、全市場聲量。">ⓘ</span></span><span class="card-tag" id="nielsenSovTag">花費市占%</span></div>
       <div class="chart-wrap" style="height:220px"><canvas id="nielsenSovChart"></canvas></div>
     </div>
     <div class="chart-card">
@@ -246,7 +262,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
   <!-- SOV vs SOM 超額聲量分析（ESOV = 聲量份額 − 市場份額，投放領先/落後市場地位的先行指標） -->
   <div class="chart-card full" style="margin-bottom:16px">
     <div class="card-header">
-      <span class="card-title">SOV vs SOM — 超額聲量 ESOV 分析</span>
+      <span class="card-title">SOV vs SOM — 超額聲量 ESOV 分析<span class="info-tip" data-tip="ESOV（Excess Share of Voice）＝SOV − SOM（掛牌份額）。正值代表投放聲量領先市場地位，理論上有利擴大市占；負值代表投放低於市占，靠品牌慣性消耗。注意廣告對掛牌的影響通常有 1–2 個月時滯，判讀跨月變化時建議往後推移對照。">ⓘ</span></span>
       <span class="card-tag" id="esovTag">聲量份額 vs 掛牌份額（六品牌內）</span>
     </div>
     <div class="chart-wrap" style="height:240px"><canvas id="esovChart"></canvas></div>
@@ -370,14 +386,61 @@ const MC={kicks:'#c8f55a',kickse:'#7dd3fc',sentra:'#a78bfa',xtrail:'#f97316',xtr
 const MLab={kicks:'Kicks',kickse:'Kicks e-POWER',sentra:'Sentra',xtrail:'X-Trail 汽油版',xtraile:'X-Trail e-POWER',ariya:'ARIYA'};
 let currentView='both',charts={};
 
+// ── 自訂月份區間（設定後優先於年度頁籤，影響趨勢/比例圖）──
+let rangeFrom=null, rangeTo=null; // 格式：yr*100+mo，例 202503
 function getViewData(){
+  if(rangeFrom||rangeTo) return RAW.filter(r=>{const k=r.yr*100+r.mo;return(!rangeFrom||k>=rangeFrom)&&(!rangeTo||k<=rangeTo)});
   if(currentView==='2024') return RAW.filter(r=>r.yr===2024);
   if(currentView==='2025') return RAW.filter(r=>r.yr===2025);
   if(currentView==='2026') return RAW.filter(r=>r.yr===2026);
   return RAW;
 }
+function rangeLabel(){
+  const f=rangeFrom?`${Math.floor(rangeFrom/100)}/${rangeFrom%100}月`:'最早';
+  const t=rangeTo?`${Math.floor(rangeTo/100)}/${rangeTo%100}月`:'最新';
+  return `${f} – ${t}`;
+}
+function initRangeSelects(){
+  const opts='<option value="">—</option>'+RAW.map(r=>`<option value="${r.yr*100+r.mo}">${r.yr}/${r.mo}月</option>`).join('');
+  document.getElementById('rangeFrom').innerHTML=opts;
+  document.getElementById('rangeTo').innerHTML=opts;
+}
+function applyRange(){
+  const f=+document.getElementById('rangeFrom').value||null;
+  const t=+document.getElementById('rangeTo').value||null;
+  if(f&&t&&f>t){alert('起始月份不可晚於結束月份');return}
+  rangeFrom=f;rangeTo=t;
+  document.getElementById('rangeClear').style.display=(f||t)?'':'none';
+  updateAll();
+}
+function clearRange(){
+  rangeFrom=rangeTo=null;
+  document.getElementById('rangeFrom').value='';
+  document.getElementById('rangeTo').value='';
+  document.getElementById('rangeClear').style.display='none';
+  updateAll();
+}
 function setView(v,e){currentView=v;document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));if(e)e.target.classList.add('active');updateAll()}
 function fmtN(n){return n.toLocaleString()}
+// ── 車款掛牌明細 CSV 匯出（純前端，無外部依賴）──
+function exportSalesCSV(){
+  const yr=currentView==='2026'?2026:currentView==='2025'?2025:currentView==='2024'?2024:2025;
+  const data=RAW.filter(r=>r.yr===yr);
+  const models=['kicks','kickse','sentra','xtrail','xtraile','ariya'];
+  let csv=String.fromCharCode(0xFEFF)+'車款,'+ML.join(',')+',年度累計\n';
+  models.forEach(k=>{
+    const mos=ML.map((_,mi)=>{const row=data.find(r=>r.mo===mi+1);return row?row[k]:''});
+    csv+=`${MLab[k]},${mos.join(',')},${data.reduce((s,r)=>s+r[k],0)}\n`;
+  });
+  const tots=ML.map((_,mi)=>{const row=data.find(r=>r.mo===mi+1);return row?total(row):''});
+  csv+=`全品牌合計,${tots.join(',')},${data.reduce((s,r)=>s+total(r),0)}\n`;
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`NISSAN掛牌明細_${yr}.csv`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
 
 
 function buildKPI(){
@@ -397,6 +460,8 @@ function buildKPI(){
 }
 function buildTrendChart(){
   const data=getViewData(),labels=data.map(r=>`${r.yr}/${r.mo}月`),totals=data.map(total);
+  const tagEl=document.getElementById('trendTag');
+  if(tagEl) tagEl.textContent=(rangeFrom||rangeTo)?`自訂區間 ${rangeLabel()}`:(currentView==='both'?'2024–2026 全覽':currentView+'年');
   const ctx=document.getElementById('trendChart').getContext('2d');
   if(charts.trend)charts.trend.destroy();
   const g=ctx.createLinearGradient(0,0,0,240);g.addColorStop(0,'rgba(200,245,90,0.18)');g.addColorStop(1,'rgba(200,245,90,0)');
@@ -408,7 +473,7 @@ function buildModelChart(){
   const ctx=document.getElementById('modelChart').getContext('2d');
   if(charts.model)charts.model.destroy();
   charts.model=new Chart(ctx,{type:'doughnut',data:{labels:Object.keys(sums).map(k=>MLab[k]),datasets:[{data:Object.values(sums),backgroundColor:Object.keys(sums).map(k=>MC[k]),borderColor:'#13161d',borderWidth:2,hoverOffset:6}]},options:{responsive:true,maintainAspectRatio:false,cutout:'65%',plugins:{legend:{position:'right',labels:{color:'#8892a4',font:{size:11},padding:10,boxWidth:10,boxHeight:10}},tooltip:{backgroundColor:'#1a1e28',borderColor:'#2e3548',borderWidth:1,bodyColor:'#e8eaf0',callbacks:{label:c=>`${c.label}: ${fmtN(c.parsed)} 台 (${(c.parsed/Object.values(sums).reduce((a,b)=>a+b)*100).toFixed(1)}%)`}}}}});
-  document.getElementById('modelTag').textContent=currentView==='both'?'2024–2026全覽':currentView==='2026'?'2026年YTD':currentView+'年';
+  document.getElementById('modelTag').textContent=(rangeFrom||rangeTo)?`自訂區間 ${rangeLabel()}`:currentView==='both'?'2024–2026全覽':currentView==='2026'?'2026年YTD':currentView+'年';
 }
 function buildStackedChart(){
   const data=getViewData(),labels=data.map(r=>`${r.yr}/${r.mo}月`);
@@ -1575,7 +1640,18 @@ document.addEventListener('keydown',e=>{
 });
 
 // 由資料推導最後更新月份，而非顯示「今天」——避免資料過期時誤導
-(function(){const r=RAW[RAW.length-1];document.getElementById('lastUpdate').textContent=`資料至：${r.yr}/${r.mo}月`})();
+(function(){
+  const r=RAW[RAW.length-1];
+  document.getElementById('lastUpdate').textContent=`資料至：${r.yr}/${r.mo}月`;
+  // navBar 全域資料狀態（掛牌 × Nielsen 各自的最新月份）
+  const st=document.getElementById('dataStatus');
+  if(st){
+    let nLabel='';
+    try{const ks=Object.keys(NIELSEN_MONTHLY);nLabel=NIELSEN_MONTHLY[ks[ks.length-1]].label||''}catch(_){}
+    st.textContent=`📅 掛牌至 ${r.yr}/${r.mo}月${nLabel?` ｜ Nielsen 至 ${nLabel}`:''}`;
+  }
+  initRangeSelects();
+})();
 
 // ── COMPETITOR COMPARISON (2026起) ──
 // 資料結構：每個車款的競品清單，每個品牌每月掛牌數
@@ -2322,290 +2398,7 @@ const BRAND_PROMO_MO = (function(){
   return result;
 })();
 
-// ═══════════════════════════════════════════════
-// 📝 月報草稿自動生成 v2（點列式 × 素材清單 × PPT匯出）
-// ═══════════════════════════════════════════════
-const MO_ZH = {jan:'1月',feb:'2月',mar:'3月',apr:'4月',may:'5月',jun:'6月',jul:'7月',aug:'8月',sep:'9月',oct:'10月',nov:'11月',dec:'12月'};
-const MO_NUM = {jan:1,feb:2,mar:3,apr:4,may:5,jun:6,jul:7,aug:8,sep:9,oct:10,nov:11,dec:12};
-const MO_YM = {jan:'202601',feb:'202602',mar:'202603',apr:'202604',may:'202605',jun:'202606'};
-let _lastReportData = null;
-
-function _getCreativeList(period){
-  const ym = MO_YM[period]||'';
-  const brands = ['NISSAN','TOYOTA','HONDA','HYUNDAI','FORD','MAZDA'];
-  const out = [];
-  brands.forEach(b=>{
-    const key = `CREATIVE_${b}_${ym}`;
-    const arr = (window._cac && window._cac[key]) || [];
-    if(arr.length){
-      out.push({brand:b, count:arr.length, labels:arr.map(x=>x.label||'素材'), thumbs:arr.map(x=>x.thumb||x.src||'')});
-    }
-  });
-  return out;
-}
-
-function _buildReportData(){
-  const p = nielsenPeriod;
-  const mo = NIELSEN_MONTHLY[p];
-  if(!mo) return null;
-  const moZh = MO_ZH[p]||p, moNum = MO_NUM[p]||0;
-  const brands = [
-    {k:'toyota',n:'TOYOTA'},{k:'honda',n:'HONDA'},{k:'mazda',n:'MAZDA'},
-    {k:'hyundai',n:'HYUNDAI'},{k:'ford',n:'FORD'},{k:'nissan',n:'NISSAN'},
-  ].map(b=>({...b, d:mo[b.k]})).filter(b=>b.d);
-  const maxSp = Math.max(...brands.map(b=>b.d.totalSp||0));
-  brands.forEach(b=>{ b.spIdx = maxSp>0 ? Math.round((b.d.totalSp||0)/maxSp*100) : 0; });
-  const sorted = [...brands].sort((a,b)=>(b.d.totalSp||0)-(a.d.totalSp||0));
-
-  const rawRow = RAW.find(r=>r.yr===2026&&r.mo===moNum);
-  const rawPrev = RAW.find(r=>r.yr===2025&&r.mo===moNum);
-  const nisTotal = rawRow ? (rawRow.kicks+rawRow.kickse+rawRow.sentra+rawRow.xtrail+rawRow.xtraile+rawRow.ariya) : null;
-  const nisPrev  = rawPrev ? (rawPrev.kicks+rawPrev.kickse+rawPrev.sentra+rawPrev.xtrail+rawPrev.xtraile+rawPrev.ariya) : null;
-  const nisYoY = (nisTotal&&nisPrev) ? ((nisTotal-nisPrev)/nisPrev*100).toFixed(1) : null;
-
-  let compLines = [];
-  for(const key in COMP_DATA){
-    const d = COMP_DATA[key];
-    const vals = d.models.map(m=>({name:m.name,brand:m.brand,v:m.data[p]})).filter(m=>m.v!=null&&m.v>0).sort((a,b)=>b.v-a.v);
-    if(!vals.length) continue;
-    const nis = vals.find(m=>m.brand==='NISSAN');
-    const rank = nis ? vals.findIndex(m=>m.brand==='NISSAN')+1 : null;
-    compLines.push({seg:d.label, leader:`${vals[0].brand} ${vals[0].name}`, leaderV:vals[0].v, nisName:nis?nis.name:null, nisV:nis?nis.v:null, rank, total:vals.length});
-  }
-  const creatives = _getCreativeList(p);
-  return {p, moZh, sorted, rawRow, nisTotal, nisPrev, nisYoY, compLines, creatives};
-}
-
-function genMonthlyReport(){
-  const D = _buildReportData();
-  if(!D){ alert('本月份無 Nielsen 資料'); return; }
-  _lastReportData = D;
-
-  const brandSections = D.sorted.map((b,i)=>{
-    const d = b.d;
-    const spWan = ((d.totalSp||0)/10000).toFixed(1);
-    const impYi = (d.totalImp||0)>=100000000 ? ((d.totalImp)/100000000).toFixed(1)+'億' : ((d.totalImp||0)/10000).toFixed(0)+'萬';
-    const cpr = (d.reg>0&&d.totalSp>0) ? Math.round(d.totalSp*1000/d.reg).toLocaleString()+'元/台' : '—（掛牌待補）';
-    return `${i+1}. ${b.n}（Spend指數 ${b.spIdx}）
-   • 數位投放：約 ${spWan} 萬元（Nielsen估算）
-   • 曝光量：${impYi}｜CPM：${d.cpm||'—'}元
-   • 主力車款：${(d.vehicles||[]).slice(0,2).map(v=>v.name).join('、')||'—'}
-   • 媒體偏好：${(d.channels||[]).slice(0,2).map(c=>`${c.name}（${c.pct}%）`).join('、')||'—'}
-   • 數位每台成本：${cpr}
-   • 投放觀察：${d.note||'—'}`;
-  }).join('\n\n');
-
-  const creativeSection = D.creatives.length
-    ? D.creatives.map(c=>`• ${c.brand}（${c.count}張）\n${c.labels.map(l=>`   - ${l}`).join('\n')}`).join('\n')
-    : '• 本月尚無嵌入素材';
-
-  const compSection = D.compLines.map(c=>
-    `• 【${c.seg}】第一名：${c.leader}（${c.leaderV.toLocaleString()}台）${c.nisName?`；NISSAN ${c.nisName} ${c.nisV.toLocaleString()}台，排名第 ${c.rank}／${c.total}`:''}`
-  ).join('\n');
-
-  const report = `━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-2026年${D.moZh} 競品數位廣告監測月報（草稿）
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-⚠️ 資料範圍聲明
-• 本報告數據僅限 Nielsen AdIntel 數位網路素材（Display／Video）
-• 不含電視、報紙、廣播、戶外廣告（傳統媒體估佔品牌總預算 40–60%）
-• Spend 為 Nielsen 估算值，僅供相對比較
-• Facebook／LINE 等封閉平台偵測不完整，數據可能系統性低估
-
-──────────────────
-一、市場資源配置（Spend 相對指數，最高=100）
-──────────────────
-${D.sorted.map(b=>`• ${b.n}：${'█'.repeat(Math.max(1,Math.round(b.spIdx/5)))} ${b.spIdx}`).join('\n')}
-
-──────────────────
-二、六品牌數位投放分析
-──────────────────
-${brandSections}
-
-──────────────────
-三、NISSAN 掛牌與細分市場對比
-──────────────────
-• NISSAN ${D.moZh}總掛牌：${D.nisTotal?D.nisTotal.toLocaleString()+'台':'待補'}${D.nisYoY?`（去年同期 ${D.nisPrev.toLocaleString()}台，YoY ${D.nisYoY>=0?'+':''}${D.nisYoY}%）`:''}
-${D.rawRow?`• 車款組成：Kicks ${D.rawRow.kicks}｜Sentra ${D.rawRow.sentra}｜X-Trail汽油 ${D.rawRow.xtrail}｜X-Trail e-POWER ${D.rawRow.xtraile}`:''}
-${compSection}
-
-──────────────────
-四、本月素材截圖清單
-──────────────────
-${creativeSection}
-
-──────────────────
-五、用語規範提醒
-──────────────────
-• Spend 僅代表「可監測數位範圍」，不可寫成「該品牌僅投放Ｘ元」
-• 「未偵測到投放」≠「未投放」，應寫「於可監測範圍內未見」
-• 數位每台成本適用同品牌跨月趨勢，不適用跨品牌絕對比較
-• Honda 數據留意殭屍素材干擾，異常低值先查核 UTM 年份
-
-（生成：${new Date().toLocaleString('zh-TW')}｜來源：Nielsen AdIntel × 監理所掛牌 × Dashboard）`;
-
-  showReportModal(report);
-}
-
-function showReportModal(text){
-  let modal = document.getElementById('reportModal');
-  if(modal) modal.remove();
-  modal = document.createElement('div');
-  modal.id = 'reportModal';
-  modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:9999;display:flex;align-items:center;justify-content:center;padding:30px';
-  modal.innerHTML = `<div style="background:var(--surface);border:1px solid var(--border2);border-radius:12px;max-width:880px;width:100%;max-height:85vh;display:flex;flex-direction:column;overflow:hidden">
-    <div style="padding:16px 20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
-      <span style="font-family:'DM Mono',monospace;font-size:14px;color:var(--accent);font-weight:600">📝 月報草稿</span>
-      <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button onclick="copyReport()" style="background:rgba(200,245,90,.13);border:1px solid rgba(200,245,90,.45);color:#d8f76e;font-family:'DM Mono',monospace;font-size:12px;padding:6px 14px;border-radius:6px;cursor:pointer">📋 複製全文</button>
-        <button onclick="copyAiPrompt()" style="background:rgba(125,211,252,.1);border:1px solid rgba(125,211,252,.4);color:#7dd3fc;font-family:'DM Mono',monospace;font-size:12px;padding:6px 14px;border-radius:6px;cursor:pointer">🤖 AI潤稿指令</button>
-        <button onclick="exportReportPPT()" style="background:rgba(251,146,60,.12);border:1px solid rgba(251,146,60,.45);color:#fdba74;font-family:'DM Mono',monospace;font-size:12px;padding:6px 14px;border-radius:6px;cursor:pointer">📊 下載 PPT</button>
-        <button onclick="document.getElementById('reportModal').remove()" style="background:transparent;border:1px solid var(--border2);color:var(--text2);font-size:13px;padding:6px 12px;border-radius:6px;cursor:pointer">✕</button>
-      </div>
-    </div>
-    <textarea id="reportText" readonly style="flex:1;background:var(--bg);color:#e8eaf0;border:none;outline:none;padding:20px;font-family:'DM Mono','Noto Sans TC',monospace;font-size:12.5px;line-height:1.8;resize:none;min-height:480px"></textarea>
-  </div>`;
-  modal.onclick = e=>{ if(e.target===modal) modal.remove(); };
-  document.body.appendChild(modal);
-  document.getElementById('reportText').value = text;
-}
-
-function copyReport(){
-  const t = document.getElementById('reportText');
-  t.select(); document.execCommand('copy');
-  alert('已複製月報草稿');
-}
-
-function copyAiPrompt(){
-  const raw = document.getElementById('reportText').value;
-  const prompt = `你是台灣汽車產業的競情分析師。以下是本月數位廣告監測的結構化數據草稿，請改寫成流暢、專業、可直接呈給行銷主管的月度競情分析報告。要求：
-1. 保留所有數字與資料範圍聲明，不可捏造數據
-2. 每個品牌段落改寫成敘事型分析（媒體策略意圖＋市場結果解讀）
-3. 最後補充2-3個給 NISSAN 的策略行動建議
-4. 全文使用繁體中文，符合台灣汽車產業用語
-
-【結構化數據】
-${raw}`;
-  navigator.clipboard.writeText(prompt).then(()=>alert('已複製 AI 潤稿指令，貼到 Claude 對話框即可生成敘事版月報'));
-}
-
-// ── PPT 匯出 ──
-function exportReportPPT(){
-  if(!_lastReportData){ alert('請先產出月報'); return; }
-  if(window.PptxGenJS){ _doPPT(); return; }
-  const s = document.createElement('script');
-  s.src = 'https://cdnjs.cloudflare.com/ajax/libs/PptxGenJS/3.12.0/pptxgen.bundle.js';
-  s.onload = _doPPT;
-  s.onerror = ()=>alert('PPT 元件載入失敗，請確認網路連線後重試');
-  document.head.appendChild(s);
-}
-
-function _doPPT(){
-  const D = _lastReportData;
-  const pptx = new PptxGenJS();
-  pptx.defineLayout({name:'W', width:13.33, height:7.5});
-  pptx.layout = 'W';
-  const DARK='0D1117', SURFACE='13161D', ACCENT='C8F55A', WHITE='FFFFFF', MUTED='8896B0', ORANGE='FB923C';
-
-  // ── 封面 ──
-  let s = pptx.addSlide(); s.background = {color:DARK};
-  s.addText(`2026年${D.moZh}`, {x:0.8,y:2.2,w:11.7,h:1,fontSize:40,bold:true,color:ACCENT,fontFace:'Noto Sans TC'});
-  s.addText('競品數位廣告監測月報', {x:0.8,y:3.2,w:11.7,h:0.9,fontSize:32,bold:true,color:WHITE,fontFace:'Noto Sans TC'});
-  s.addText('Nielsen AdIntel × 監理所掛牌 × 競品比對整合分析', {x:0.8,y:4.2,w:11.7,h:0.5,fontSize:16,color:MUTED,fontFace:'Noto Sans TC'});
-  s.addText('⚠ 資料僅限數位 Display/Video，不含電視/報紙/廣播/戶外；Spend 為 Nielsen 估算值', {x:0.8,y:6.5,w:11.7,h:0.4,fontSize:11,color:ORANGE,fontFace:'Noto Sans TC'});
-
-  // ── Spend 指數 ──
-  s = pptx.addSlide(); s.background = {color:DARK};
-  s.addText('一、市場資源配置｜Spend 相對指數', {x:0.6,y:0.4,w:12,h:0.6,fontSize:22,bold:true,color:ACCENT,fontFace:'Noto Sans TC'});
-  s.addChart(pptx.ChartType.bar, [{name:'Spend指數', labels:D.sorted.map(b=>b.n), values:D.sorted.map(b=>b.spIdx)}],
-    {x:0.8,y:1.3,w:11.7,h:5.3, barDir:'bar', chartColors:[ACCENT], catAxisLabelColor:WHITE, valAxisLabelColor:MUTED,
-     catAxisLabelFontSize:14, dataLabelColor:WHITE, showValue:true, dataLabelFontSize:14, valAxisHidden:false,
-     plotArea:{fill:{color:DARK}}, chartArea:{fill:{color:DARK}}});
-
-  // ── 各品牌一頁（含素材圖）──
-  D.sorted.forEach((b,i)=>{
-    const d=b.d;
-    const sl = pptx.addSlide(); sl.background={color:DARK};
-    sl.addText(`二、品牌分析｜${b.n}`, {x:0.6,y:0.4,w:9,h:0.6,fontSize:22,bold:true,color:ACCENT,fontFace:'Noto Sans TC'});
-    sl.addText(`Spend指數 ${b.spIdx}`, {x:10.5,y:0.45,w:2.3,h:0.5,fontSize:16,bold:true,color:ORANGE,align:'right',fontFace:'DM Mono'});
-    const spWan=((d.totalSp||0)/10000).toFixed(1);
-    const impYi=(d.totalImp||0)>=100000000?((d.totalImp)/100000000).toFixed(1)+'億':((d.totalImp||0)/10000).toFixed(0)+'萬';
-    const cpr=(d.reg>0&&d.totalSp>0)?Math.round(d.totalSp*1000/d.reg).toLocaleString()+'元/台':'—';
-    const bullets=[
-      `數位投放：約 ${spWan} 萬元（Nielsen估算）`,
-      `曝光量：${impYi}｜CPM：${d.cpm||'—'}元`,
-      `主力車款：${(d.vehicles||[]).slice(0,2).map(v=>v.name).join('、')||'—'}`,
-      `媒體偏好：${(d.channels||[]).slice(0,2).map(c=>`${c.name}（${c.pct}%）`).join('、')||'—'}`,
-      `數位每台成本：${cpr}`,
-      `投放觀察：${(d.note||'—').substring(0,90)}`,
-    ];
-    sl.addText(bullets.map(t=>({text:t, options:{bullet:{code:'2022'}, color:WHITE, fontSize:14, breakLine:true}})),
-      {x:0.7,y:1.4,w:6.2,h:5.4,fontFace:'Noto Sans TC',lineSpacing:26,valign:'top'});
-    // 素材圖
-    const cr = D.creatives.find(c=>c.brand===b.n);
-    if(cr && cr.thumbs[0]){
-      sl.addImage({data:cr.thumbs[0], x:7.2, y:1.4, w:5.6, h:3.15});
-      sl.addText(`素材：${cr.labels[0]||''}${cr.count>1?`（共${cr.count}張，其餘見附錄）`:''}`,
-        {x:7.2,y:4.65,w:5.6,h:0.7,fontSize:10,color:MUTED,fontFace:'Noto Sans TC'});
-    } else {
-      sl.addText('（本月無嵌入素材）',{x:7.2,y:2.8,w:5.6,h:0.5,fontSize:12,color:MUTED,align:'center',fontFace:'Noto Sans TC'});
-    }
-  });
-
-  // ── NISSAN 掛牌對比 ──
-  s = pptx.addSlide(); s.background={color:DARK};
-  s.addText('三、NISSAN 掛牌與細分市場對比', {x:0.6,y:0.4,w:12,h:0.6,fontSize:22,bold:true,color:ACCENT,fontFace:'Noto Sans TC'});
-  const nisLines=[
-    `NISSAN ${D.moZh}總掛牌：${D.nisTotal?D.nisTotal.toLocaleString()+'台':'待補'}${D.nisYoY?`（去年同期 ${D.nisPrev.toLocaleString()}台，YoY ${D.nisYoY>=0?'+':''}${D.nisYoY}%）`:''}`,
-    D.rawRow?`車款組成：Kicks ${D.rawRow.kicks}｜Sentra ${D.rawRow.sentra}｜X-Trail汽油 ${D.rawRow.xtrail}｜X-Trail e-POWER ${D.rawRow.xtraile}`:'',
-    ...D.compLines.map(c=>`【${c.seg}】第一名 ${c.leader}（${c.leaderV.toLocaleString()}台）${c.nisName?`；NISSAN ${c.nisName} ${c.nisV.toLocaleString()}台，第 ${c.rank}／${c.total} 名`:''}`),
-  ].filter(Boolean);
-  s.addText(nisLines.map(t=>({text:t,options:{bullet:{code:'2022'},color:WHITE,fontSize:15,breakLine:true}})),
-    {x:0.7,y:1.4,w:12,h:5.4,fontFace:'Noto Sans TC',lineSpacing:30,valign:'top'});
-
-  // ── 素材附錄（每品牌全部素材）──
-  D.creatives.forEach(c=>{
-    c.thumbs.forEach((thumb,ti)=>{
-      if(!thumb) return;
-      const sl = pptx.addSlide(); sl.background={color:DARK};
-      sl.addText(`附錄｜${c.brand} 素材 ${ti+1}/${c.count}`, {x:0.6,y:0.3,w:12,h:0.5,fontSize:18,bold:true,color:ACCENT,fontFace:'Noto Sans TC'});
-      sl.addText(c.labels[ti]||'', {x:0.6,y:0.85,w:12,h:0.4,fontSize:12,color:MUTED,fontFace:'Noto Sans TC'});
-      sl.addImage({data:thumb, x:1.0, y:1.45, w:11.3, h:5.6});
-    });
-  });
-
-  // ── 注意事項 ──
-  s = pptx.addSlide(); s.background={color:DARK};
-  s.addText('四、用語規範與注意事項', {x:0.6,y:0.4,w:12,h:0.6,fontSize:22,bold:true,color:ACCENT,fontFace:'Noto Sans TC'});
-  const notes=[
-    'Spend 僅代表「可監測數位範圍」，不可寫成「該品牌僅投放Ｘ元」',
-    '「未偵測到投放」≠「未投放」，應寫「於可監測範圍內未見」',
-    '數位每台成本適用同品牌跨月趨勢，不適用跨品牌絕對比較',
-    'Honda 數據留意殭屍素材干擾，異常低值先查核 UTM 年份',
-    'Facebook／LINE 等封閉平台偵測不完整，數據可能系統性低估',
-  ];
-  s.addText(notes.map(t=>({text:t,options:{bullet:{code:'2022'},color:WHITE,fontSize:15,breakLine:true}})),
-    {x:0.7,y:1.4,w:12,h:4.5,fontFace:'Noto Sans TC',lineSpacing:32,valign:'top'});
-
-  pptx.writeFile({fileName:`2026年${D.moZh}_競品數位廣告監測月報.pptx`});
-}
-
-// 在 Nielsen 頁面注入「產出月報」按鈕
-(function(){
-  const page = document.getElementById('page-nielsen');
-  if(!page) return;
-  const firstFlex = page.querySelector('div[style*="justify-content:space-between"]');
-  if(firstFlex){
-    const btn = document.createElement('button');
-    btn.textContent = '📝 產出月報草稿';
-    btn.style.cssText = "background:rgba(200,245,90,.13);border:1px solid rgba(200,245,90,.45);color:#d8f76e;font-family:'DM Mono',monospace;font-size:12px;font-weight:600;padding:8px 16px;border-radius:6px;cursor:pointer;white-space:nowrap";
-    btn.onclick = genMonthlyReport;
-    firstFlex.appendChild(btn);
-  }
-})();
-
-
+// 🗑 「月報草稿自動生成」模組（含 PPT 匯出）已於 2026/07 移除，未來如需恢復請查 git 歷史。
 
 // ═══════════════════════════════════════════════
 // 📢 模組一：Opview 社群聲量月更
