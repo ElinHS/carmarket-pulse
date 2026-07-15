@@ -2422,7 +2422,7 @@ const BRAND_PROMO_MO = (function(){
   const btnLc = document.createElement('button');
   btnLc.className = 'nav-tab'; btnLc.textContent = '🗓 新車上市月曆'; btnLc.dataset.page = 'launch';
   btnLc.onclick = e=>switchPage('launch',e);
-  nav.appendChild(btnLc);
+  nav.insertBefore(btnLc, nav.firstElementChild); // 月曆頁籤固定排第一
   // 資料狀態標示固定排在所有頁籤（含動態注入的）最後方
   const ds = document.getElementById('dataStatus');
   if(ds) nav.appendChild(ds);
