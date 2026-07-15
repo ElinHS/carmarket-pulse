@@ -33,6 +33,9 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
 .info-tip{position:relative;display:inline-block;margin-left:6px;color:var(--text3);cursor:help;font-size:11px;font-family:'DM Mono',monospace;border:1px solid var(--border2);border-radius:100px;width:14px;height:14px;line-height:12px;text-align:center;vertical-align:1px}
 .info-tip::after{content:attr(data-tip);position:absolute;left:0;bottom:140%;background:#1a1e28;border:1px solid var(--border2);color:var(--text2);font-size:11px;font-family:'Noto Sans TC',sans-serif;font-weight:400;line-height:1.7;padding:10px 12px;border-radius:6px;width:280px;white-space:normal;opacity:0;pointer-events:none;transition:.15s;z-index:999;text-align:left;box-shadow:0 6px 20px rgba(0,0,0,.4)}
 .info-tip:hover::after{opacity:1}
+.csv-fab{position:fixed;right:24px;bottom:24px;z-index:900;background:rgba(248,113,113,.16);border:1.5px solid #f87171;color:#f87171;font-family:'DM Mono',monospace;font-size:13px;font-weight:700;padding:11px 20px;border-radius:100px;cursor:pointer;box-shadow:0 4px 18px rgba(0,0,0,.5);transition:.15s;letter-spacing:.02em}
+.csv-fab:hover{background:#f87171;color:#fff;box-shadow:0 6px 22px rgba(248,113,113,.35)}
+.csv-fab.hidden{display:none}
 .kpi-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
 .yoy-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border-radius:8px;overflow:hidden}
 .intel-grid{display:grid;grid-template-columns:200px 1fr;gap:0;background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;min-height:400px}
@@ -58,6 +61,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
   <button class="nav-tab" data-page="kol" onclick="switchPage('kol',event)">🎬 車媒風格檢索</button>
   <span id="dataStatus" style="align-self:center;font-family:'DM Mono',monospace;font-size:11px;color:var(--text2);white-space:nowrap;padding-left:14px"></span>
 </div>
+<button id="csvFab" class="csv-fab" onclick="exportCurrentCSV()" title="下載目前頁面的資料（CSV）">⬇ 匯出 CSV</button>
 <div id="pageWrap">
 
 <!-- PAGE 1: 掛牌數追蹤 -->
@@ -97,10 +101,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
   <div class="chart-card full">
     <div class="card-header">
       <span class="card-title">車款掛牌明細</span>
-      <div style="display:flex;align-items:center;gap:8px">
-        <span class="card-tag" id="tableTag">月份明細</span>
-        <button class="tab-btn" onclick="exportSalesCSV()">⬇ 匯出 CSV</button>
-      </div>
+      <span class="card-tag" id="tableTag">月份明細</span>
     </div>
     <div style="overflow-x:auto">
       <table style="width:100%;border-collapse:collapse;font-size:12px">
@@ -422,24 +423,67 @@ function clearRange(){
 }
 function setView(v,e){currentView=v;document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));if(e)e.target.classList.add('active');updateAll()}
 function fmtN(n){return n.toLocaleString()}
-// ── 車款掛牌明細 CSV 匯出（純前端，無外部依賴）──
+// ── CSV 匯出共用工具（純前端，無外部依賴；BOM 供 Excel 正確開啟中文）──
+function csvEscape(v){
+  v=String(v==null?'':v).replace(/\r?\n/g,'　').trim();
+  return /[",]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;
+}
+function downloadCSV(rows,filename){
+  const csv=String.fromCharCode(0xFEFF)+rows.map(r=>r.map(csvEscape).join(',')).join('\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=filename;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+// 將畫面上的表格直接序列化匯出（匯出的值＝畫面顯示的值）
+function exportTableCSV(tableEl,filename){
+  if(!tableEl){alert('找不到可匯出的表格');return}
+  const rows=[...tableEl.querySelectorAll('tr')].map(tr=>[...tr.querySelectorAll('th,td')].map(c=>(c.innerText||c.textContent||'').trim()));
+  downloadCSV(rows,filename);
+}
+// 掛牌數追蹤：車款 × 月份明細
 function exportSalesCSV(){
   const yr=currentView==='2026'?2026:currentView==='2025'?2025:currentView==='2024'?2024:2025;
   const data=RAW.filter(r=>r.yr===yr);
   const models=['kicks','kickse','sentra','xtrail','xtraile','ariya'];
-  let csv=String.fromCharCode(0xFEFF)+'車款,'+ML.join(',')+',年度累計\n';
+  const rows=[['車款',...ML,'年度累計']];
   models.forEach(k=>{
     const mos=ML.map((_,mi)=>{const row=data.find(r=>r.mo===mi+1);return row?row[k]:''});
-    csv+=`${MLab[k]},${mos.join(',')},${data.reduce((s,r)=>s+r[k],0)}\n`;
+    rows.push([MLab[k],...mos,data.reduce((s,r)=>s+r[k],0)]);
   });
   const tots=ML.map((_,mi)=>{const row=data.find(r=>r.mo===mi+1);return row?total(row):''});
-  csv+=`全品牌合計,${tots.join(',')},${data.reduce((s,r)=>s+total(r),0)}\n`;
-  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});
-  const a=document.createElement('a');
-  a.href=URL.createObjectURL(blob);
-  a.download=`NISSAN掛牌明細_${yr}.csv`;
-  a.click();
-  URL.revokeObjectURL(a.href);
+  rows.push(['全品牌合計',...tots,data.reduce((s,r)=>s+total(r),0)]);
+  downloadCSV(rows,`NISSAN掛牌明細_${yr}.csv`);
+}
+// 競品掛牌比對：目前選擇級距的競品 × 月份表
+function exportCompCSV(){
+  const label=(typeof COMP_DATA!=='undefined'&&COMP_DATA[compModel])?COMP_DATA[compModel].label:compModel;
+  exportTableCSV(document.getElementById('compTable'),`競品掛牌比對_${label}.csv`);
+}
+// 數位廣告監測：目前月份的品牌總覽表
+function exportNielsenCSV(){
+  const tb=document.getElementById('nielsenVehicleTable');
+  const label=(NIELSEN_MONTHLY[nielsenPeriod]&&NIELSEN_MONTHLY[nielsenPeriod].label||nielsenPeriod).replace(/\s/g,'');
+  exportTableCSV(tb?tb.closest('table'):null,`Nielsen廣告監測_${label}.csv`);
+}
+// 競車促銷方案：目前月份／品牌篩選下的方案表
+function exportPromoCSV(){
+  const t=document.querySelector('#promoTableWrap table');
+  exportTableCSV(t,`競車促銷方案_${MONTH_LABELS[promoMonth]||promoMonth}_${promoBrand==='ALL'?'全品牌':promoBrand}.csv`);
+}
+// 新車上市月曆：月份／品牌／專案攤平清單
+function exportLaunchCSV(){
+  const rows=[['月份','品牌','車款／專案','類型','亮點']];
+  LAUNCH_2026.forEach(g=>g.items.forEach(it=>rows.push([g.label,it.brand,it.title,it.type,(it.points||[]).join('；')])));
+  downloadCSV(rows,'2026新車上市月曆.csv');
+}
+// 車媒風格檢索：媒體名單
+function exportKolCSV(){
+  const rows=[['分類','名稱','主持人／型態','FB 粉絲','YT 訂閱','定位','風格摘要','合作建議','受眾輪廓']];
+  KOL_DATA.forEach(k=>rows.push([k.catLabel||k.cat,k.name,k.person,k.fb,k.yt,k.positioning,k.summary,k.collab,k.audience]));
+  downloadCSV(rows,'車媒風格檢索清單.csv');
 }
 
 
@@ -2641,6 +2685,20 @@ function buildLaunchPage(){
   }
   window.addEventListener('hashchange',applyHash);
   if(location.hash.length>1) applyHash();
+})();
+
+// ── 固定匯出按鈕（右下角）：依當前頁面匯出對應 CSV，無可匯出資料的頁面自動隱藏 ──
+const CSV_EXPORTERS={sales:exportSalesCSV,comp:exportCompCSV,promo:exportPromoCSV,nielsen:exportNielsenCSV,launch:exportLaunchCSV,kol:exportKolCSV};
+function _activePageKey(){const p=document.querySelector('.page.active');return p?p.id.replace('page-',''):null}
+function exportCurrentCSV(){const f=CSV_EXPORTERS[_activePageKey()];if(f)f()}
+(function(){
+  function updateCsvFab(){
+    const b=document.getElementById('csvFab');
+    if(b) b.classList.toggle('hidden',!CSV_EXPORTERS[_activePageKey()]);
+  }
+  const orig=window.switchPage;
+  window.switchPage=function(...a){const r=orig.apply(this,a);updateCsvFab();return r};
+  updateCsvFab();
 })();
 
 </script>
