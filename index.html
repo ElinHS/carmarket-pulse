@@ -138,12 +138,16 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
 <div class="page" id="page-comp">
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px">
     <span style="background:rgba(125,211,252,.1);border:1px solid rgba(125,211,252,.3);color:var(--accent2);font-family:'DM Mono',monospace;font-size:10px;padding:3px 10px;border-radius:3px;letter-spacing:.08em">競品掛牌比對</span>
-    <div class="tab-group">
-      <button class="tab-btn active" onclick="setCompModel('xtrail',event)">X-Trail 汽油版</button>
-      <button class="tab-btn" onclick="setCompModel('xtraile',event)">X-Trail e-POWER</button>
-      <button class="tab-btn" onclick="setCompModel('kicks',event)">Kicks</button>
-      <button class="tab-btn" onclick="setCompModel('sentra',event)">Sentra</button>
+    <div class="tab-group" id="compModelGroup">
+      <button class="tab-btn active" onclick="setCompModel('kicks',event)">① 小型SUV/CUV（Kicks）</button>
+      <button class="tab-btn" onclick="setCompModel('sentra',event)">② 中型房車（Sentra）</button>
+      <button class="tab-btn" onclick="setCompModel('xtrail',event)">③ 國產中大型SUV（X-Trail）</button>
+      <button class="tab-btn" onclick="setCompModel('xtraile',event)">④ 進口中大型SUV（e-POWER）</button>
     </div>
+  </div>
+  <div class="chart-card full" style="margin-bottom:16px">
+    <div class="card-header"><span class="card-title">四戰場一覽 — NISSAN 對戰位置</span><span class="card-tag" id="compOverviewTag">YTD 累計</span></div>
+    <div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px" id="compOverviewTable"></table></div>
   </div>
   <div id="compKpiStrip" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px"></div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
@@ -159,6 +163,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
   <div class="chart-card full">
     <div class="card-header"><span class="card-title" id="compTableTitle">掛牌數明細</span></div>
     <div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px" id="compTable"></table></div>
+    <div id="compTableFoot" style="display:flex;flex-direction:column;gap:3px;padding:10px 4px 2px;border-top:1px solid var(--border);margin-top:8px;font-size:10px;color:var(--text3);font-family:'DM Mono','Noto Sans TC',monospace;line-height:1.7"></div>
   </div>
 </div>
 
@@ -1703,7 +1708,8 @@ document.addEventListener('keydown',e=>{
 
 const COMP_MONTHS = ['jan','feb','mar','apr','may','jun'];
 const COMP_MONTH_LABELS = {jan:'1月',feb:'2月',mar:'3月',apr:'4月',may:'5月',jun:'6月'};
-let compModel = 'xtrail';
+const COMP_KEYS = ['kicks','sentra','xtrail','xtraile']; // 戰場①→④ 順序
+let compModel = 'kicks';
 let compCharts = {};
 
 function setCompModel(key, e) {
@@ -1714,33 +1720,83 @@ function setCompModel(key, e) {
 }
 
 function buildCompSection() {
+  buildCompOverview();
   buildCompKpi();
   buildCompBarChart();
   buildCompLineChart();
   buildCompTable();
 }
 
+// 戰場統計（YTD 排名／市占／MoM 皆與 Excel「級距對戰」表同口徑）
+function compStats(key){
+  const d = COMP_DATA[key];
+  const months = COMP_MONTHS.filter(mo=>d.models.some(m=>m.data[mo]!=null));
+  const latMo = months[months.length-1], prevMo = months[months.length-2];
+  const rows = d.models.map(m=>{
+    const filled = COMP_MONTHS.map(mo=>m.data[mo]).filter(v=>v!=null);
+    const ytd = filled.reduce((s,v)=>s+v,0);
+    const avg = filled.length?Math.round(ytd/filled.length):null;
+    const lat = m.data[latMo], prev = prevMo!=null?m.data[prevMo]:null;
+    const mom = (lat!=null&&prev!=null&&prev>0)?(lat-prev)/prev*100:null;
+    return {...m, ytd, avg, lat, mom};
+  }).sort((a,b)=>b.ytd-a.ytd).map((r,i)=>({...r, rank:i+1}));
+  const segTotal = rows.reduce((s,r)=>s+r.ytd,0);
+  rows.forEach(r=>{ r.share = segTotal>0?r.ytd/segTotal*100:0; });
+  const latSum = rows.reduce((s,r)=>s+(r.data[latMo]||0),0);
+  const prevSum = prevMo!=null?rows.reduce((s,r)=>s+(r.data[prevMo]||0),0):0;
+  const segMom = prevSum>0?(latSum-prevSum)/prevSum*100:null;
+  return {d, months, latMo, prevMo, rows, segTotal, latSum, segMom,
+    nissan: rows.find(r=>r.brand==='NISSAN'), leader: rows[0]};
+}
+function _momHtml(mom, note){
+  if(mom==null) return '<span style="color:var(--text3)">—</span>';
+  const warn = Math.abs(mom)>=100 ? `<span title="${(note||'異常波動，請查備註').replace(/"/g,'&quot;')}" style="cursor:help;margin-right:2px">⚠</span>` : '';
+  return `${warn}<span style="color:${mom>=0?'#34d399':'#f87171'}">${mom>=0?'▲':'▼'}${Math.abs(mom).toFixed(1)}%</span>`;
+}
+
+// 四戰場一覽（對齊 Excel Dashboard 工作表；點列可切換戰場）
+function buildCompOverview(){
+  const el = document.getElementById('compOverviewTable');
+  if(!el) return;
+  const th = `padding:8px 12px;text-align:right;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:.06em`;
+  const thL = th.replace('text-align:right','text-align:left');
+  let html = `<thead><tr style="background:var(--surface2)">
+    <th style="${thL}">戰場</th><th style="${thL}">NISSAN 車款</th><th style="${th}">YTD 掛牌</th><th style="${th}">級距排名</th><th style="${th}">級距市占</th><th style="${thL}">級距冠軍</th><th style="${th}">落後冠軍(台)</th><th style="${th}">最新月</th><th style="${th}">最新月MoM</th></tr></thead><tbody>`;
+  COMP_KEYS.forEach((k,idx)=>{
+    const s = compStats(k), n = s.nissan;
+    if(!n) return;
+    const gap = s.leader ? s.leader.ytd-n.ytd : null;
+    const isCur = k===compModel;
+    const td = `padding:9px 12px;border-bottom:1px solid var(--border);text-align:right;font-family:'DM Mono',monospace;font-size:14px;color:#fff`;
+    const tdL = td.replace('text-align:right','text-align:left');
+    html += `<tr onclick="document.querySelectorAll('#compModelGroup .tab-btn')[${idx}].click()" style="cursor:pointer${isCur?';background:rgba(200,245,90,.05)':''}">
+      <td style="${tdL};font-family:'Noto Sans TC';font-size:12px;color:${isCur?'var(--accent)':'var(--text2)'};font-weight:${isCur?700:400}">${s.d.label}</td>
+      <td style="${tdL};font-family:'Noto Sans TC';font-size:12px;font-weight:600">${n.name}</td>
+      <td style="${td}">${n.ytd.toLocaleString()}</td>
+      <td style="${td};color:${n.rank<=2?'#34d399':n.rank<=4?'#fbbf24':'#f87171'};font-weight:700">第 ${n.rank}／${s.rows.length}</td>
+      <td style="${td}">${n.share.toFixed(1)}%</td>
+      <td style="${tdL};font-family:'Noto Sans TC';font-size:12px;color:var(--text2)">${s.leader.brand} ${s.leader.name}</td>
+      <td style="${td};color:#f87171">${gap!=null?gap.toLocaleString():'—'}</td>
+      <td style="${td}">${n.lat!=null?n.lat.toLocaleString():'—'}</td>
+      <td style="${td};font-size:12px">${_momHtml(n.mom)}</td>
+    </tr>`;
+  });
+  html += '</tbody>';
+  el.innerHTML = html;
+  const tag = document.getElementById('compOverviewTag');
+  if(tag) tag.textContent = `YTD 累計（至 ${COMP_MONTH_LABELS[compStats('kicks').latMo]}）｜點列切換戰場`;
+}
+
 function buildCompKpi() {
-  const d = COMP_DATA[compModel];
-  const nissan = d.models.find(m=>m.brand==='NISSAN');
-  // latest month with NISSAN data
-  const months = COMP_MONTHS.filter(mo=>nissan.data[mo]!=null);
-  const latMo = months[months.length-1];
-  const latVal = nissan.data[latMo]||0;
-
-  // rank in latest month
-  const latVals = d.models.map(m=>({name:m.name,v:m.data[latMo]||0}))
-    .filter(m=>m.v>0).sort((a,b)=>b.v-a.v);
-  const rank = latVals.findIndex(m=>m.name===nissan.name)+1;
-  const total = latVals.reduce((s,m)=>s+m.v,0);
-  const share = total>0?(latVal/total*100).toFixed(1):0;
-  const filled = d.models.filter(m=>m.data[latMo]!=null).length;
-
+  const s = compStats(compModel), n = s.nissan;
+  const gap = s.leader ? s.leader.ytd - n.ytd : 0;
+  const momH = n.mom!=null ? `${n.mom>=0?'+':''}${n.mom.toFixed(1)}%` : '—';
+  const segMomH = s.segMom!=null ? `${s.segMom>=0?'+':''}${s.segMom.toFixed(1)}%` : '—';
   document.getElementById('compKpiStrip').innerHTML=[
-    {label:'NISSAN 最新月掛牌',value:latVal.toLocaleString()+'台',sub:`${COMP_MONTH_LABELS[latMo]||'—'} ｜ ${d.label}`,ac:'#c8f55a'},
-    {label:'細分市場排名',value:latVals.length>0?`第 ${rank} 名`:'待填入',sub:`共 ${latVals.length} 款競品有數據`,ac:rank<=2?'var(--green)':rank<=4?'var(--yellow)':'var(--red)'},
-    {label:'細分市場佔比',value:share>0?share+'%':'—',sub:`${d.segment} 合計 ${total.toLocaleString()} 台`,ac:'var(--accent2)'},
-    {label:'競品數據完整度',value:`${filled}/${d.models.length}`,sub:'已填入 / 全部競品',ac:filled===d.models.length?'var(--green)':'var(--yellow)'},
+    {label:'NISSAN 最新月掛牌',value:(n.lat!=null?n.lat.toLocaleString():'—')+'台',sub:`${COMP_MONTH_LABELS[s.latMo]||'—'} ｜ MoM ${momH}（級距 ${segMomH}）`,ac:'#c8f55a'},
+    {label:'級距排名（YTD）',value:`第 ${n.rank} 名`,sub:`共 ${s.rows.length} 款表列競品`,ac:n.rank<=2?'var(--green)':n.rank<=4?'var(--yellow)':'var(--red)'},
+    {label:'級距市占（YTD）',value:n.share.toFixed(1)+'%',sub:`級距合計 ${s.segTotal.toLocaleString()} 台`,ac:'var(--accent2)'},
+    {label:'落後冠軍',value:gap.toLocaleString()+'台',sub:`冠軍 ${s.leader.brand} ${s.leader.name}（YTD ${s.leader.ytd.toLocaleString()}台）`,ac:'#f87171'},
   ].map(k=>`<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;position:relative;overflow:hidden">
     <div style="position:absolute;top:0;left:0;right:0;height:2px;background:${k.ac}"></div>
     <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:.06em;margin-bottom:6px">${k.label}</div>
@@ -1832,66 +1888,70 @@ function buildCompLineChart() {
 }
 
 function buildCompTable() {
-  const d = COMP_DATA[compModel];
-  document.getElementById('compTableTitle').textContent = `${d.label} vs 競品 — 掛牌數明細（${d.segment}）`;
+  const s = compStats(compModel), d = s.d;
+  document.getElementById('compTableTitle').textContent = `${d.label}｜${d.segment} — 掛牌明細`;
 
   const thStyle = `padding:8px 12px;text-align:right;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:.06em`;
   const thStyleL = thStyle.replace('text-align:right','text-align:left');
-
-  // 去年同期資料
-  const yoyData = {};
   const moToNum = {jan:1,feb:2,mar:3,apr:4,may:5,jun:6};
-  d.models.forEach(m=>{
-    yoyData[m.name] = {};
-    COMP_MONTHS.forEach(mo=>{
-      // 找去年同月資料（若 brand=NISSAN 從 RAW 取，否則從 COMP_DATA 找歷史）
-      if(m.brand==='NISSAN'){
-        const row = RAW.find(r=>r.yr===2025&&r.mo===moToNum[mo]);
-        yoyData[m.name][mo] = row ? row[d.nissanKey||'xtrail'] : null;
-      } else {
-        // 其他品牌暫無去年資料，標為 null
-        yoyData[m.name][mo] = null;
-      }
-    });
-  });
 
   let html = `<thead><tr style="background:var(--surface2)">
-    <th style="${thStyleL}">品牌 / 車款</th>`;
+    <th style="${thStyleL}">排名</th><th style="${thStyleL}">品牌 / 車款</th>`;
   COMP_MONTHS.forEach(mo=>{html+=`<th style="${thStyle}">${COMP_MONTH_LABELS[mo]}</th>`;});
-  html+=`<th style="${thStyle}">合計</th><th style="${thStyle}">月均</th><th style="${thStyle}">去年同期YoY</th></tr></thead><tbody>`;
+  html+=`<th style="${thStyle}">YTD</th><th style="${thStyle}">月均</th><th style="${thStyle}">級距市占</th><th style="${thStyle}">最新月MoM</th><th style="${thStyle}">去年同期YoY</th><th style="${thStyleL}">備註</th></tr></thead><tbody>`;
 
-  d.models.forEach(m=>{
+  const tdBase = `padding:8px 12px;border-bottom:1px solid var(--border);text-align:right;font-family:'DM Mono',monospace`;
+  s.rows.forEach(m=>{
     const isN = m.brand==='NISSAN';
-    const vals = COMP_MONTHS.map(mo=>m.data[mo]);
-    const filled = vals.filter(v=>v!=null);
-    const q1 = filled.reduce((s,v)=>s+v,0);
-    const avg = filled.length>0?(q1/filled.length).toFixed(0):'—';
-    const rowStyle = isN?`background:rgba(200,245,90,.04);border-left:2px solid #c8f55a`:``;
+    const rowStyle = (isN?`background:rgba(200,245,90,.04);border-left:2px solid #c8f55a;`:``)+(m.ext?`opacity:.62;`:``);
     html+=`<tr style="${rowStyle}">
-      <td style="padding:8px 12px;border-bottom:1px solid var(--border);font-size:12px">
+      <td style="padding:8px 12px;border-bottom:1px solid var(--border)"><span class="rank-badge ${m.rank===1?'top':''}">${m.rank}</span></td>
+      <td style="padding:8px 12px;border-bottom:1px solid var(--border);font-size:12px;white-space:nowrap">
         <span style="display:inline-block;background:${m.color}22;border:1px solid ${m.color}44;color:${m.color};font-family:'DM Mono',monospace;font-size:9px;padding:1px 5px;border-radius:3px;margin-right:5px">${m.brand}</span>
         <span style="color:var(--text);font-weight:${isN?500:400}">${m.name}</span>
         ${isN?'<span style="font-size:10px;margin-left:4px">★</span>':''}
+        ${m.ext?`<span style="font-size:9px;margin-left:5px;padding:1px 6px;border-radius:100px;border:1px solid var(--border2);color:var(--text3)">${m.ext}</span>`:''}
       </td>`;
     COMP_MONTHS.forEach(mo=>{
       const v = m.data[mo];
-      html+=`<td style="padding:8px 12px;border-bottom:1px solid var(--border);text-align:right;font-family:'DM Mono',monospace;font-size:15px;font-weight:${isN?600:400};color:${v!=null?(isN?'#c8f55a':'#ffffff'):'var(--text3)'}">${v!=null?v.toLocaleString():'—'}</td>`;
+      const zero = v===0;
+      html+=`<td style="${tdBase};font-size:15px;font-weight:${isN?600:400};color:${v==null?'var(--text3)':zero?'#f87171':(isN?'#c8f55a':'#ffffff')}"${zero&&m.note?` title="${m.note.replace(/"/g,'&quot;')}"`:''}>${v!=null?(zero&&m.note?'⚠ ':'')+v.toLocaleString():'—'}</td>`;
     });
-    html+=`<td style="padding:8px 12px;border-bottom:1px solid var(--border);text-align:right;font-family:'DM Mono',monospace;font-size:12px;font-weight:500;color:${isN?'#c8f55a':'var(--text)'}">${filled.length>0?q1.toLocaleString():'—'}</td>
-      <td style="padding:8px 12px;border-bottom:1px solid var(--border);text-align:right;font-family:'DM Mono',monospace;font-size:15px;font-weight:${isN?600:400};color:#ffffff">${avg}</td>
-      <td style="padding:8px 12px;border-bottom:1px solid var(--border);text-align:right;font-family:'DM Mono',monospace;font-size:13px">${(()=>{
-        if(m.brand!=='NISSAN') return '<span style="color:var(--text3)">—</span>';
-        const curTotal=filled.reduce((s,v)=>s+v,0);
-        const yoyVals=COMP_MONTHS.map(mo=>yoyData[m.name][mo]).filter(v=>v!=null);
-        const yoyTotal=yoyVals.reduce((s,v)=>s+v,0);
+    html+=`<td style="${tdBase};font-size:13px;font-weight:600;color:${isN?'#c8f55a':'var(--text)'}">${m.ytd.toLocaleString()}</td>
+      <td style="${tdBase};font-size:14px;color:#ffffff">${m.avg!=null?m.avg.toLocaleString():'—'}</td>
+      <td style="${tdBase};font-size:13px;color:${isN?'#c8f55a':'#ffffff'}">${m.share.toFixed(1)}%</td>
+      <td style="${tdBase};font-size:12px">${_momHtml(m.mom,m.note)}</td>
+      <td style="${tdBase};font-size:13px">${(()=>{
+        if(!isN) return '<span style="color:var(--text3)">—</span>';
+        const yoyVals=COMP_MONTHS.map(mo=>{const r=RAW.find(x=>x.yr===2025&&x.mo===moToNum[mo]);return r?r[d.nissanKey]:null}).filter(v=>v!=null);
+        const yoyTotal=yoyVals.reduce((a,b)=>a+b,0);
         if(!yoyTotal) return '<span style="color:var(--text3)">—</span>';
-        const diff=curTotal-yoyTotal,pct=(diff/yoyTotal*100).toFixed(1);
-        const up=diff>=0;
-        return `<span style="color:${up?'#34d399':'#f87171'}">${up?'▲':'▼'}${Math.abs(pct)}%</span><span style="color:var(--text3);font-size:11px;margin-left:4px">(去年${yoyTotal.toLocaleString()}台)</span>`;
-      })()}</td></tr>`;
+        const diff=m.ytd-yoyTotal,pct=(diff/yoyTotal*100).toFixed(1),up=diff>=0;
+        return `<span style="color:${up?'#34d399':'#f87171'}">${up?'▲':'▼'}${Math.abs(pct)}%</span><span style="color:var(--text3);font-size:11px;margin-left:4px">(去年${yoyTotal.toLocaleString()})</span>`;
+      })()}</td>
+      <td style="padding:8px 12px;border-bottom:1px solid var(--border);font-size:11px;color:var(--text2);max-width:220px;line-height:1.5">${m.note||''}</td></tr>`;
   });
+
+  // 級距合計列
+  const sums = COMP_MONTHS.map(mo=>s.rows.reduce((a,r)=>a+(r.data[mo]||0),0));
+  html+=`<tr style="border-top:1px solid var(--border2);background:var(--surface2)">
+    <td style="padding:8px 12px"></td>
+    <td style="padding:8px 12px;font-size:12px;font-weight:600;color:var(--text)">級距合計</td>
+    ${sums.map(v=>`<td style="${tdBase};font-size:13px;font-weight:600;color:var(--accent2)">${v.toLocaleString()}</td>`).join('')}
+    <td style="${tdBase};font-size:13px;font-weight:700;color:var(--accent2)">${s.segTotal.toLocaleString()}</td>
+    <td style="${tdBase};color:var(--text3)">—</td>
+    <td style="${tdBase};font-size:13px;color:var(--accent2)">100.0%</td>
+    <td style="${tdBase};font-size:12px">${_momHtml(s.segMom)}</td>
+    <td style="${tdBase};color:var(--text3)">—</td><td style="padding:8px 12px"></td></tr>`;
   html+='</tbody>';
   document.getElementById('compTable').innerHTML=html;
+
+  // 判讀註腳
+  const foot=document.getElementById('compTableFoot');
+  if(foot) foot.innerHTML=`
+    <span>註1：級距市占＝該車款 YTD ÷ 表列競品 YTD 合計（競品組市占，非全市場市占）；「延伸參考」車款已計入合計。</span>
+    <span>註2：2 月受春節影響為全市場低點，判讀 MoM 建議跳過 2 月直接比較 1→3 月。</span>
+    <span>註3：⚠ 表示異常值（停產／大改款交替／促銷暴增），滑鼠移上可見說明，詳見備註欄。</span>`;
 }
 
 // Update switchPage to handle comp page
