@@ -2780,7 +2780,7 @@ function buildActionsPage(){
   ).join('');
   const scope=document.getElementById('actionsScopeTag');
   if(isAll){
-    if(scope) scope.textContent='投放 × 成果 象限圖 ｜ 泡泡大小＝促銷火力';
+    if(scope) scope.textContent='銷量走勢 × 月增熱力 × 投放成果 ｜ 點任一品牌進入單頁視圖';
     _ax=null;
     axRenderOverview();
     return;
@@ -3148,6 +3148,77 @@ function axRenderOverview(){
   const det=document.getElementById('actionsDetail');
   if(det) det.innerHTML='';
   if(!el) return;
+  // ── 三區塊共用矩陣資料：M[品牌][月]={sales,mom,fire,sov,som,ev} ──
+  const M={};
+  MONTHS_AVAIL.forEach(mo=>{
+    axOverviewRows(mo).forEach(r=>{
+      M[r.label]=M[r.label]||{};
+      M[r.label][mo]={sales:r.sales,fire:r.fire,sov:r.sov,som:r.som,
+        ev:(typeof LAUNCH_2026!=='undefined')?LAUNCH_2026.filter(g=>g.ym===TL_YM[mo]).flatMap(g=>g.items.filter(i=>i.brand===r.label)):[]};
+    });
+  });
+  MONTHS_AVAIL.forEach((mo,i)=>AX_BRANDS.forEach(b=>{
+    const p=i>0?M[b.label][MONTHS_AVAIL[i-1]].sales:0;
+    M[b.label][mo].mom=(i>0&&p>0)?(M[b.label][mo].sales-p)/p*100:null;
+  }));
+  const lastMo=MONTHS_AVAIL[MONTHS_AVAIL.length-1];
+  const order=[...AX_BRANDS].sort((a,b)=>M[b.label][lastMo].sales-M[a.label][lastMo].sales);
+  // ── 區塊一：Sparkline 品牌走勢列（方案 B）──
+  const SW=430,SH=44,SP=8;
+  const sparkRows=order.map(b=>{
+    const vs=MONTHS_AVAIL.map(mo=>M[b.label][mo].sales);
+    const mn=Math.min(...vs),mx=Math.max(...vs);
+    const SX=i=>SP+i*(SW-2*SP)/(MONTHS_AVAIL.length-1);
+    const SY=v=>SH-SP-(mx>mn?(v-mn)/(mx-mn):0.5)*(SH-2*SP);
+    const pts=vs.map((v,i)=>`${SX(i)},${SY(v)}`).join(' ');
+    let dots='';
+    MONTHS_AVAIL.forEach((mo,i)=>{
+      dots+=M[b.label][mo].ev.length
+        ?`<circle class="ax-sev" data-b="${b.label}" data-mo="${mo}" cx="${SX(i)}" cy="${SY(vs[i])}" r="4.5" fill="${b.color}" stroke="#13161d" stroke-width="1.5" style="cursor:pointer"/>`
+        :`<circle class="ax-sev" data-b="${b.label}" data-mo="${mo}" cx="${SX(i)}" cy="${SY(vs[i])}" r="2" fill="${b.color}88" style="cursor:pointer"/>`;
+    });
+    const last=vs[vs.length-1],m=M[b.label][lastMo].mom;
+    const mc=m>3?'var(--green)':m<-3?'var(--red)':'var(--text3)';
+    return `<div class="ax-sprow" data-b="${b.label}" style="display:flex;align-items:center;gap:14px;padding:8px 0;border-bottom:1px solid var(--border);cursor:pointer">
+      <span style="font-family:'DM Mono',monospace;width:74px;flex-shrink:0;font-size:11.5px;font-weight:700;color:${b.color}">${b.label}</span>
+      <svg viewBox="0 0 ${SW} ${SH}" style="width:${SW}px;height:${SH}px;flex-shrink:0"><polyline points="${pts}" fill="none" stroke="${b.color}" stroke-width="2" stroke-linejoin="round"/>${dots}</svg>
+      <span style="font-family:'DM Mono',monospace;width:60px;text-align:right;font-size:13px;font-weight:600;color:var(--text)">${last.toLocaleString()}</span>
+      <span style="font-family:'DM Mono',monospace;width:56px;font-size:10.5px;color:${mc}">${m!=null?(m>=0?'▲ +':'▼ ')+m.toFixed(0)+'%':'—'}</span>
+      <span style="font-family:'DM Mono',monospace;width:90px;font-size:10px;color:var(--text3)">SOV ${M[b.label][lastMo].sov}%</span>
+    </div>`;
+  }).join('');
+  const sparkHtml=`<div style="margin-bottom:16px">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:6px">
+      <span class="card-title">📈 銷量走勢（${MONTH_LABELS[MONTHS_AVAIL[0]]}–${MONTH_LABELS[lastMo]}，各列獨立縮放，看形狀不比高度）</span>
+      <span class="card-tag">大點＝該月有上市/特仕事件 ｜ 行尾＝${MONTH_LABELS[lastMo]}數字</span>
+    </div>
+    <div style="overflow-x:auto"><div style="min-width:760px">${sparkRows}</div></div>
+  </div>`;
+  // ── 區塊二：銷量月增熱力圖（方案 A）──
+  const heatRows=order.map(b=>{
+    const tds=MONTHS_AVAIL.map(mo=>{
+      const m=M[b.label][mo].mom;
+      let bg='rgba(255,255,255,.03)',txt='—',tc='var(--text3)';
+      if(m!=null){
+        const a=(Math.min(Math.abs(m)/60,1)*0.42+0.05).toFixed(2);
+        bg=m>=0?`rgba(52,211,153,${a})`:`rgba(248,113,113,${a})`;
+        txt=(m>=0?'+':'')+m.toFixed(0)+'%';tc='var(--text)';
+      }
+      const ev=M[b.label][mo].ev.length?'<span style="position:absolute;top:4px;right:6px;font-size:8px">●</span>':'';
+      return `<td class="ax-hc" data-b="${b.label}" data-mo="${mo}" style="background:${bg};color:${tc};font-family:'DM Mono',monospace;font-size:11.5px;border-radius:6px;padding:8px 6px;text-align:center;cursor:pointer;min-width:80px;position:relative">${txt}${ev}</td>`;
+    }).join('');
+    return `<tr><td style="font-family:'DM Mono',monospace;font-size:11px;font-weight:700;color:${b.color};padding-right:8px;white-space:nowrap">${b.label}</td>${tds}</tr>`;
+  }).join('');
+  const heatHtml=`<div style="margin-bottom:16px;border-top:1px solid var(--border);padding-top:14px">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:6px">
+      <span class="card-title">🔥 銷量月增熱力圖（哪個月誰爆量／誰崩了）</span>
+      <span class="card-tag">底色＝月增減幅度（±60% 封頂） ｜ ●＝上市/特仕事件 ｜ 1月為基期</span>
+    </div>
+    <div style="overflow-x:auto"><table style="border-collapse:separate;border-spacing:4px;min-width:640px">
+      <tr><th></th>${MONTHS_AVAIL.map(m=>`<th style="font-family:'DM Mono',monospace;font-size:10.5px;color:var(--text3);font-weight:500;padding:2px 6px">${MONTH_LABELS[m]}</th>`).join('')}</tr>
+      ${heatRows}</table></div>
+  </div>`;
+  // ── 區塊三：投放 × 成果 象限（原有）──
   const rows=axOverviewRows(axOvMo);
   const W=760,H=470,P={l:56,r:20,t:18,b:48};
   const iw=W-P.l-P.r,ih=H-P.t-P.b;
@@ -3182,10 +3253,13 @@ function axRenderOverview(){
     s+=`<text x="${left?p.x-p.r-6:p.x+p.r+6}" y="${ly}" fill="#e8eaf0" font-size="10.5" font-weight="600" text-anchor="${left?'end':'start'}" font-family="'DM Mono',monospace">${p.label}</text>`;
   });
   const moLabel=NIELSEN_MONTHLY[axOvMo]?.label||`2026年${MONTH_LABELS[axOvMo]}`;
-  el.innerHTML=`
-    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px">
-      <div class="tab-group">${MONTHS_AVAIL.map(m=>`<button class="tab-btn ${m===axOvMo?'active':''}" onclick="setAxOvMo('${m}')">${MONTH_LABELS[m]}</button>`).join('')}</div>
-      <span class="card-tag">${moLabel} ｜ 投放 × 成果</span>
+  el.innerHTML=sparkHtml+heatHtml+`
+    <div style="border-top:1px solid var(--border);padding-top:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px">
+      <span class="card-title">🎯 投放 × 成果 象限（泡泡＝促銷火力）</span>
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <div class="tab-group">${MONTHS_AVAIL.map(m=>`<button class="tab-btn ${m===axOvMo?'active':''}" onclick="setAxOvMo('${m}')">${MONTH_LABELS[m]}</button>`).join('')}</div>
+        <span class="card-tag">${moLabel}</span>
+      </div>
     </div>
     <div style="overflow-x:auto"><svg viewBox="0 0 ${W} ${H}" style="width:100%;max-width:820px;display:block">${s}</svg></div>
     <div style="margin-top:10px;font-size:10.5px;color:var(--text3);line-height:1.8">
@@ -3202,15 +3276,33 @@ function axRenderOverview(){
     c.onmouseleave=axHideTip;
     c.onclick=()=>{axHideTip();setActionsBrand(b);};
   });
+  // 走勢點與熱力格：hover 明細、點擊進入品牌單頁
+  const ovTip=(b,mo)=>{
+    const d=M[b][mo];
+    const bc=AX_BRANDS.find(x=>x.label===b).color;
+    const evs=d.ev.map(it=>`【${it.type}】${it.title}`).join('<br>');
+    return `<b style="color:${bc}">${b}</b>　2026年${MONTH_LABELS[mo]}<br>銷量 ${d.sales.toLocaleString()} 台${d.mom!=null?`（${d.mom>=0?'+':''}${d.mom.toFixed(0)}%）`:''}<br>促銷火力 ${d.fire.toFixed(1)}／SOV ${d.sov}%／SOM ${d.som}%${evs?'<br>'+evs:''}`;
+  };
+  el.querySelectorAll('.ax-hc,.ax-sev').forEach(c=>{
+    c.onmouseenter=e=>axShowTip(e,ovTip(c.dataset.b,c.dataset.mo));
+    c.onmousemove=axMoveTip;
+    c.onmouseleave=axHideTip;
+    c.onclick=ev=>{ev.stopPropagation();axHideTip();setActionsBrand(c.dataset.b);};
+  });
+  el.querySelectorAll('.ax-sprow').forEach(r=>{r.onclick=()=>{axHideTip();setActionsBrand(r.dataset.b)}});
 }
 
 // 品牌行動×銷量：目前品牌的月份×軌道攤平清單；總覽模式匯出六品牌 投放×成果 指標
 function exportActionsCSV(){
   if(actionsBrand==='ALL'){
-    const rows=[['月份','品牌','銷量(追蹤車款)','SOV%','SOM%','ESOV(pp)','促銷火力(0-5)']];
-    MONTHS_AVAIL.forEach(mo=>axOverviewRows(mo).forEach(r=>
-      rows.push([`2026/${MONTH_LABELS[mo]}`,r.label,r.sales,r.sov,r.som,(r.sov-r.som).toFixed(1),r.fire])));
-    downloadCSV(rows,'品牌總覽_投放×成果.csv');
+    const rows=[['月份','品牌','銷量(追蹤車款)','月增率%','SOV%','SOM%','ESOV(pp)','促銷火力(0-5)']];
+    const prev={};
+    MONTHS_AVAIL.forEach(mo=>axOverviewRows(mo).forEach(r=>{
+      const m=prev[r.label]>0?((r.sales-prev[r.label])/prev[r.label]*100).toFixed(0):'';
+      rows.push([`2026/${MONTH_LABELS[mo]}`,r.label,r.sales,m,r.sov,r.som,(r.sov-r.som).toFixed(1),r.fire]);
+      prev[r.label]=r.sales;
+    }));
+    downloadCSV(rows,'品牌總覽_走勢×投放成果.csv');
     return;
   }
   if(!_ax) buildActionsPage();
