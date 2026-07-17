@@ -332,7 +332,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
 <!-- PAGE: 品牌行動 × 銷量 -->
 <div class="page" id="page-actions">
   <div style="background:linear-gradient(90deg,rgba(200,245,90,.08),rgba(200,245,90,.02));border:1px solid rgba(200,245,90,.25);border-left:3px solid var(--accent);border-radius:8px;padding:10px 16px;margin-bottom:14px;font-size:11px;color:#b0b8cc">
-    <b style="color:var(--accent);font-family:'DM Mono',monospace">🧩 品牌行動 × 銷量 對照</b>　把單一品牌「做過的所有事」（上市/特仕、促銷、數位投放、市場訊號、手動補強事件）沿同一條月份軸與掛牌數上下對齊，供視覺化判讀行動與銷量的對應；本頁只做時間對齊，不做因果量化
+    <b style="color:var(--accent);font-family:'DM Mono',monospace">🧩 品牌行動 × 銷量 對照</b>　把單一品牌「做過的所有事」（上市/特仕、促銷、行銷活動、線下活動、數位投放、車媒報導、市場訊號、補強事件）沿同一條月份軸與掛牌數上下對齊，供視覺化判讀行動與銷量的對應；本頁只做時間對齊，不做因果量化
   </div>
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
     <div class="tab-group" id="actionsBrandGroup"></div>
@@ -347,9 +347,12 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
       <span style="font-family:'DM Mono',monospace;color:var(--text2)">ⓘ 口徑說明：</span>
       銷量＝四戰場追蹤車款合計（見「競品掛牌比對」，非品牌總掛牌，TOYOTA/HONDA 等未含全部車系）｜
       促銷火力＝規則式 0–5 分全車款平均（同「競車促銷方案」頁）｜
+      🎪 行銷活動＝促銷方案「品牌活動」列＋手動收錄（cat:'行銷活動'）｜
+      📍 線下活動＝上市月曆「活動」類＋手動收錄（cat:'線下活動'）｜
       SOV＝當月六品牌 Nielsen 數位花費份額（花費單位僅同月內可比）｜
+      📰 車媒報導＝手動收錄（cat:'車媒報導'，媒體名錄見「車媒風格檢索」）｜
       市場訊號＝車市觀察月報中提及該品牌／車款的條目（關鍵字自動比對）｜
-      ✍️ 補強＝data/actions.js 手動收錄事件。點任一格子可展開該月詳情。
+      ✍️ 補強＝data/actions.js 其他類別手動事件。點任一格子可展開該月詳情。
     </div>
   </div>
 </div>
@@ -2704,7 +2707,9 @@ const AX_BRANDS=[
   {label:'MAZDA',  key:'mazda',  color:'#34d399'},
 ];
 const AX_TYPE_C={'新車':'#34d399','特仕':'#fbbf24','改款':'#7dd3fc','預售':'#fb923c','年式':'#a78bfa','活動':'#f472b6','動態':'#94a3b8','預告':'#7dd3fc'};
-const AX_CAT_C={'定價':'#f87171','產品':'#34d399','廣告':'#7dd3fc','通路':'#fbbf24','口碑':'#f472b6','供給':'#fb923c','其他':'#94a3b8'};
+const AX_CAT_C={'定價':'#f87171','產品':'#34d399','廣告':'#7dd3fc','通路':'#fbbf24','口碑':'#f472b6','供給':'#fb923c','其他':'#94a3b8','行銷活動':'#f472b6','線下活動':'#fbbf24','車媒報導':'#7dd3fc'};
+// 這三個 cat 各自有專屬軌道，不再進「補強事件」軌道
+const AX_LANE_CATS=['行銷活動','線下活動','車媒報導'];
 const AX_INTEL_ID={jan:'26.01',feb:'26.02',mar:'26.03',apr:'26.04',may:'26.05',jun:'26.06',jul:'26.07',aug:'26.08',sep:'26.09',oct:'26.10',nov:'26.11',dec:'26.12'};
 // 市場訊號關鍵字：品牌名＋追蹤車款＋常見別稱（月報條目自動比對用）
 const AX_KEYWORDS={
@@ -2773,19 +2778,29 @@ function buildActionsPage(){
 
   // ── 彙整五條軌道 ──
   const models=axModels(brand.label);
-  const sales={},launch={},promo={},ad={},intel={},manual={};
+  const sales={},launch={},promo={},mkt={},offline={},media={},ad={},intel={},manual={};
   MONTHS_AVAIL.forEach(mo=>{
     const per=models.map(m=>({name:m.name,color:m.color,ext:m.ext,v:m.data?.[mo]??null}));
     sales[mo]={per,total:per.reduce((s,x)=>s+(x.v||0),0)};
-    launch[mo]=(typeof LAUNCH_2026!=='undefined')?LAUNCH_2026.filter(g=>g.ym===TL_YM[mo]).flatMap(g=>g.items.filter(it=>it.brand===brand.label)):[];
+    const lc=(typeof LAUNCH_2026!=='undefined')?LAUNCH_2026.filter(g=>g.ym===TL_YM[mo]).flatMap(g=>g.items.filter(it=>it.brand===brand.label)):[];
+    launch[mo]=lc.filter(it=>it.type!=='活動'); // 「活動」類改列入線下活動軌道
     promo[mo]=promoBrandIndex(brand.label,mo);
+    const acts=(typeof ACTIONS!=='undefined')?ACTIONS.filter(a=>a.brand===brand.label&&a.ym===TL_YM[mo]):[];
+    // 行銷活動＝促銷資料的「品牌活動」列（試乘禮/抽獎/主題 campaign）＋手動收錄
+    const brandRow=PROMO.find(r=>r.brand===brand.label&&r.cat==='品牌活動');
+    const bTxt=brandRow?.[mo];
+    mkt[mo]={promoText:(bTxt&&bTxt!=='—')?bTxt:null,manual:acts.filter(a=>a.cat==='行銷活動')};
+    // 線下活動＝上市月曆「活動」類＋手動收錄
+    offline[mo]={launch:lc.filter(it=>it.type==='活動'),manual:acts.filter(a=>a.cat==='線下活動')};
+    // 車媒報導＝手動收錄（媒體名錄見「車媒風格檢索」頁）
+    media[mo]=acts.filter(a=>a.cat==='車媒報導');
     const share=nielsenShare(mo);
     const nd=NIELSEN_MONTHLY[mo]?.[brand.key]||null;
     ad[mo]={d:nd,sov:share?(share.find(x=>x.key===brand.key)?.sov||0):0,focus:nd?.vehicles?.[0]?.name||null};
     intel[mo]=axIntelItems(brand.label,mo);
-    manual[mo]=(typeof ACTIONS!=='undefined')?ACTIONS.filter(a=>a.brand===brand.label&&a.ym===TL_YM[mo]):[];
+    manual[mo]=acts.filter(a=>!AX_LANE_CATS.includes(a.cat));
   });
-  _ax={brand,models,sales,launch,promo,ad,intel,manual};
+  _ax={brand,models,sales,launch,promo,mkt,offline,media,ad,intel,manual};
   axRenderGrid();
   axRenderDetail();
 }
@@ -2793,7 +2808,7 @@ function buildActionsPage(){
 function axRenderGrid(){
   const el=document.getElementById('actionsGrid');
   if(!el||!_ax) return;
-  const {brand,sales,launch,promo,ad,intel,manual}=_ax;
+  const {brand,sales,launch,promo,mkt,offline,media,ad,intel,manual}=_ax;
   const maxTotal=Math.max(...MONTHS_AVAIL.map(mo=>sales[mo].total),1);
   const cellBase='border:1px solid var(--border);border-radius:6px;padding:6px;min-height:44px;cursor:pointer;transition:.12s;display:flex;flex-direction:column;gap:4px;justify-content:center';
   const selStyle=(lane,mo)=>_axSel&&_axSel.lane===lane&&_axSel.mo===mo?`outline:1.5px solid ${brand.color};background:${brand.color}0d;`:'';
@@ -2842,6 +2857,28 @@ function axRenderGrid(){
       <div style="font-size:9px;color:var(--text3);text-align:center">${p.active}/${p.n} 車款有方案</div>`:empty;
     return `<div onclick="axSel('promo','${mo}')" style="${cellBase};${selStyle('promo',mo)}">${inner}</div>`;
   }).join('');
+  // 行銷活動列（品牌活動方案＋手動收錄）
+  h+=laneLabel('🎪','行銷活動','promos·actions.js');
+  h+=MONTHS_AVAIL.map(mo=>{
+    const m=mkt[mo];
+    const lines=[];
+    if(m.promoText) lines.push(...m.promoText.split('\n').slice(0,2));
+    m.manual.forEach(a=>lines.push(a.title));
+    const more=(m.promoText?m.promoText.split('\n').length-Math.min(2,m.promoText.split('\n').length):0);
+    const inner=lines.length?lines.map(t=>
+      `<div style="font-size:10px;line-height:1.45;color:var(--text2)">${t.length>26?t.slice(0,25)+'…':t}</div>`).join('')+
+      (more>0?`<div style="font-size:9px;color:var(--text3)">＋${more} 項</div>`:''):empty;
+    return `<div onclick="axSel('mkt','${mo}')" style="${cellBase};${selStyle('mkt',mo)}">${inner}</div>`;
+  }).join('');
+  // 線下活動列（上市月曆「活動」類＋手動收錄）
+  h+=laneLabel('📍','線下活動','launch·actions.js');
+  h+=MONTHS_AVAIL.map(mo=>{
+    const o=offline[mo];
+    const items=[...o.launch.map(it=>it.title),...o.manual.map(a=>a.title)];
+    const inner=items.length?items.map(t=>
+      `<div style="font-size:10px;line-height:1.45;color:var(--text2)">${t.length>26?t.slice(0,25)+'…':t}</div>`).join(''):empty;
+    return `<div onclick="axSel('offline','${mo}')" style="${cellBase};${selStyle('offline',mo)}">${inner}</div>`;
+  }).join('');
   // 數位投放列
   h+=laneLabel('📡','數位投放','Nielsen·同月份額');
   h+=MONTHS_AVAIL.map(mo=>{
@@ -2853,6 +2890,14 @@ function axRenderGrid(){
       <div style="background:var(--surface2);border-radius:2px;height:5px;overflow:hidden"><div style="width:${Math.min(100,a.sov)}%;height:100%;background:${brand.color}"></div></div>
       ${a.focus?`<div style="font-size:9px;color:var(--text3);text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">重心：${a.focus}</div>`:''}`:empty;
     return `<div onclick="axSel('ad','${mo}')" style="${cellBase};${selStyle('ad',mo)}">${inner}</div>`;
+  }).join('');
+  // 車媒報導列（手動收錄）
+  h+=laneLabel('📰','車媒報導','data/actions.js');
+  h+=MONTHS_AVAIL.map(mo=>{
+    const items=media[mo];
+    const inner=items.length?items.map(a=>
+      `<div style="font-size:10px;line-height:1.45;color:var(--text2)">${a.title.length>26?a.title.slice(0,25)+'…':a.title}</div>`).join(''):empty;
+    return `<div onclick="axSel('media','${mo}')" style="${cellBase};${selStyle('media',mo)}">${inner}</div>`;
   }).join('');
   // 市場訊號列
   h+=laneLabel('💬','市場訊號','intel.js 關鍵字比對');
@@ -2886,8 +2931,17 @@ function axRenderDetail(){
     el.innerHTML=`<div style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);padding:4px 2px">👆 點上方任一格子，展開該月該軌道的完整內容</div>`;
     return;
   }
-  const {brand,sales,launch,promo,ad,intel,manual}=_ax;
+  const {brand,sales,launch,promo,mkt,offline,media,ad,intel,manual}=_ax;
   const {lane,mo}=_axSel;
+  // 手動收錄事件的共用卡片
+  const actCard=a=>{
+    const cc=AX_CAT_C[a.cat]||'#94a3b8';
+    return `<div style="padding:10px 12px;background:var(--surface2);border-radius:8px;border-left:3px solid ${cc};margin-bottom:8px">
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:${a.note?'6px':'0'}">
+        <span style="font-size:10px;padding:1px 8px;border-radius:100px;color:${cc};border:1px solid ${cc}55;background:${cc}12">${a.cat}</span>
+        <span style="font-size:13px;font-weight:600;color:#fff">${a.title}</span></div>
+      ${a.note?`<div style="font-size:11.5px;color:var(--text2);line-height:1.7">${a.note}</div>`:''}</div>`;
+  };
   const moLabel=`2026年${MONTH_LABELS[mo]}`;
   const card=(title,tag,body)=>`<div class="chart-card full" style="border-top:2px solid ${brand.color};margin-bottom:0">
     <div class="card-header"><span class="card-title" style="color:${brand.color}">${title}</span><span class="card-tag">${tag}</span></div>${body}</div>`;
@@ -2928,6 +2982,34 @@ function axRenderDetail(){
           <div style="font-size:11.5px;color:var(--text2);line-height:1.7;white-space:pre-line">${t&&t!=='—'?t:'—（本月無方案）'}</div></div>`;
       }).join('')}</div>`);
   }
+  if(lane==='mkt'){
+    const m=mkt[mo];
+    const hasAny=m.promoText||m.manual.length;
+    html=card(`🎪 ${brand.label} 行銷活動 — ${moLabel}`,'來源：促銷方案「品牌活動」列＋data/actions.js',
+      hasAny?`${m.promoText?`<div style="padding:10px 12px;background:var(--surface2);border-radius:8px;border-left:3px solid ${brand.color};margin-bottom:8px">
+          <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);margin-bottom:6px">品牌活動方案（試乘禮／抽獎／主題 campaign）</div>
+          <div style="font-size:11.5px;color:var(--text2);line-height:1.7;white-space:pre-line">${m.promoText}</div></div>`:''}
+        ${m.manual.map(actCard).join('')}`
+      :`<div style="font-size:12px;color:var(--text3)">本月無收錄行銷活動；品牌活動方案來自 data/promos.js，其他 campaign（代言、跨界合作、社群操作…）可於 data/actions.js 以 cat:'行銷活動' 收錄</div>`);
+  }
+  if(lane==='offline'){
+    const o=offline[mo];
+    const hasAny=o.launch.length||o.manual.length;
+    html=card(`📍 ${brand.label} 線下活動 — ${moLabel}`,'來源：新車上市月曆「活動」類＋data/actions.js',
+      hasAny?`${o.launch.map(it=>`<div style="padding:10px 12px;background:var(--surface2);border-radius:8px;border-left:3px solid ${brand.color};margin-bottom:8px">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:${it.points&&it.points.length?'7px':'0'}">
+            <span style="font-size:13px;font-weight:600;color:#fff">${it.title}</span>
+            <span style="font-size:10px;padding:1px 8px;border-radius:100px;color:#f472b6;border:1px solid #f472b655;background:#f472b612">活動</span></div>
+          ${it.points&&it.points.length?`<ul style="margin:0;padding-left:18px">${it.points.map(p=>`<li style="font-size:12px;color:var(--text2);line-height:1.7">${p}</li>`).join('')}</ul>`:''}</div>`).join('')}
+        ${o.manual.map(actCard).join('')}`
+      :`<div style="font-size:12px;color:var(--text3)">本月無收錄線下活動；車展、快閃、巡迴展示、試駕會等可於 data/actions.js 以 cat:'線下活動' 收錄，或於 data/launch.js 以 type:'活動' 收錄</div>`);
+  }
+  if(lane==='media'){
+    const items=media[mo];
+    html=card(`📰 ${brand.label} 車媒報導 — ${moLabel}`,'來源：data/actions.js（手動收錄）',
+      items.length?items.map(actCard).join('')
+      :`<div style="font-size:12px;color:var(--text3)">本月無收錄車媒報導；重點試駕/開箱/專題報導可於 data/actions.js 以 cat:'車媒報導' 收錄（媒體名錄參見「🎬 車媒風格檢索」頁）</div>`);
+  }
   if(lane==='ad'){
     const a=ad[mo],d=a.d;
     html=card(`📡 ${brand.label} 數位投放 — ${moLabel}`,'來源：Nielsen（花費單位僅同月內可比）',
@@ -2960,14 +3042,8 @@ function axRenderDetail(){
   if(lane==='manual'){
     const items=manual[mo];
     html=card(`✍️ ${brand.label} 補強事件 — ${moLabel}`,'來源：data/actions.js（手動收錄）',
-      items.length?items.map(a=>{
-        const cc=AX_CAT_C[a.cat]||'#94a3b8';
-        return `<div style="padding:10px 12px;background:var(--surface2);border-radius:8px;border-left:3px solid ${cc};margin-bottom:8px">
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:${a.note?'6px':'0'}">
-            <span style="font-size:10px;padding:1px 8px;border-radius:100px;color:${cc};border:1px solid ${cc}55;background:${cc}12">${a.cat}</span>
-            <span style="font-size:13px;font-weight:600;color:#fff">${a.title}</span></div>
-          ${a.note?`<div style="font-size:11.5px;color:var(--text2);line-height:1.7">${a.note}</div>`:''}</div>`;
-      }).join(''):`<div style="font-size:12px;color:var(--text3)">本月無手動收錄事件；可於 data/actions.js 的 ACTIONS 補充（線下活動、KOL 操作、定價調整、供給異動…）</div>`);
+      items.length?items.map(actCard).join('')
+      :`<div style="font-size:12px;color:var(--text3)">本月無手動收錄事件；可於 data/actions.js 的 ACTIONS 補充（定價調整、口碑事件、供給異動、通路操作…；行銷活動／線下活動／車媒報導請用對應 cat，會顯示於各自軌道）</div>`);
   }
   el.innerHTML=html;
 }
@@ -2976,7 +3052,7 @@ function axRenderDetail(){
 function exportActionsCSV(){
   if(!_ax) buildActionsPage();
   if(!_ax) return;
-  const {brand,sales,launch,promo,ad,intel,manual}=_ax;
+  const {brand,sales,launch,promo,mkt,offline,media,ad,intel,manual}=_ax;
   const rows=[['月份','軌道','內容']];
   MONTHS_AVAIL.forEach(mo=>{
     const L=`2026/${MONTH_LABELS[mo]}`;
@@ -2984,7 +3060,12 @@ function exportActionsCSV(){
     sales[mo].per.forEach(x=>rows.push([L,`銷量：${x.name}`,x.v!=null?x.v:'']));
     launch[mo].forEach(it=>rows.push([L,'產品·上市',`【${it.type}】${it.title}`]));
     const p=promo[mo];rows.push([L,'促銷火力（0–5）',`${p.avg}（${p.active}/${p.n} 車款有方案）`]);
+    if(mkt[mo].promoText) rows.push([L,'行銷活動（品牌活動方案）',mkt[mo].promoText.replace(/\n/g,'；')]);
+    mkt[mo].manual.forEach(x=>rows.push([L,'行銷活動',x.title+(x.note?`：${x.note}`:'')]));
+    offline[mo].launch.forEach(it=>rows.push([L,'線下活動',it.title]));
+    offline[mo].manual.forEach(x=>rows.push([L,'線下活動',x.title+(x.note?`：${x.note}`:'')]));
     const a=ad[mo];rows.push([L,'數位投放',a.d?`SOV ${a.sov.toFixed(1)}%${a.focus?`｜重心 ${a.focus}`:''}`:'無監測資料']);
+    media[mo].forEach(x=>rows.push([L,'車媒報導',x.title+(x.note?`：${x.note}`:'')]));
     intel[mo].forEach(it=>rows.push([L,'市場訊號',axStrip(it)]));
     manual[mo].forEach(x=>rows.push([L,`補強事件（${x.cat}）`,x.title+(x.note?`：${x.note}`:'')]));
   });
