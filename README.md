@@ -16,6 +16,7 @@ data/                 純資料檔，每月更新只改這裡
   nielsen.js          Nielsen 廣告監測（NIELSEN_MONTHLY 等）
   opview.js           Opview 社群聲量（OPVIEW_MONTHLY）
   launch.js           新車上市日曆（LAUNCH_CALENDAR）
+  actions.js          品牌行動×銷量 手動補強事件庫（ACTIONS）
   strategy.js         品牌策略大表（STRAT_DATA / CASES）
   q1_report.js        Q1 整合報告（Q1_AD / Q1_PROMO_SUMMARY / Q1_REG）
   kol.js              車媒 / KOL 名錄（KOL_DATA）
@@ -33,6 +34,8 @@ data/                 純資料檔，每月更新只改這裡
 3. Nielsen：在 `data/nielsen.js` 的 `NIELSEN_MONTHLY` 新增月份物件；SOV 趨勢、SOV vs SOM（ESOV）、品牌整合時間軸的月份軸會自動延長。
    注意：各月花費單位只需「同月內一致」，跨月比較一律以份額（%）計算。
 4. 聲量 / 上市日曆：同理更新 `data/opview.js`、`data/launch.js`。
+   「品牌行動×銷量」頁會自動彙整以上檔案；其他資料檔沒涵蓋的品牌行動
+   （線下活動、KOL 操作、定價調整、供給異動…）可選填至 `data/actions.js` 的 `ACTIONS`。
 5. 素材截圖：透過頁面上的上傳功能（Storage API），或更新 `data/creatives.js`。
 
 ## 分享特定視圖（URL 深連結）
@@ -43,9 +46,11 @@ data/                 純資料檔，每月更新只改這裡
 - `#nielsen/jun/ford` — 6 月 + FORD 品牌整合時間軸
 - `#promo/apr/HONDA` — 4 月 HONDA 促銷方案
 - `#sales/2025`、`#intel/26.03`、`#strategy/MAZDA`、`#kol/matrix`、`#opview/may`
+- `#actions/MAZDA` — 品牌行動×銷量（MAZDA 視圖）
 
 ## 分析模組說明
 
 - **促銷火力指數**：把文字方案量化為 0–5 分（價格讓利 +1.5、0利率 +1、低月付 +1、配件金/贈品 +1、舊換新/貨物稅 +0.5、延長保固 +0.5、試乘禮/抽獎 +0.5，讓利 ≥10 萬再 +0.5）。規則透明可稽核，徽章 tooltip 列出命中訊號；屬相對比較指標，非實際讓利金額。
 - **SOV vs SOM（ESOV）**：數位投放聲量份額 vs 六品牌內掛牌份額；ESOV 為正代表投放領先市場地位。SOV 僅含 Nielsen 可監測之數位 Display/Video，不含電視/戶外等傳統媒體。
 - **品牌整合時間軸**：單一品牌的 SOV、SOM、促銷火力沿同一月份軸對齊，並在 tooltip 帶出該月上市事件，用於判讀「投放 → 聲量 → 掛牌」的因果對應。
+- **品牌行動×銷量**：把單一品牌「做過的所有事」沿同一條月份軸與掛牌數上下對齊成時間軸網格，點任一格子展開該月詳情。軌道包含：行銷主軸（actions.js THEMES 每月一句話）、產品·上市（launch.js）、促銷火力（promos.js）、行銷活動（promos.js 品牌活動列＋actions.js）、線下活動（launch.js 活動類＋actions.js）、數位投放（nielsen.js）、廣告素材（nielsen.js 高成效版位＋q1_report.js 主打素材＋actions.js）、車媒報導（actions.js）、市場訊號（intel.js 關鍵字比對）、補強事件（actions.js 其他類別）。只做時間對齊供視覺判讀，不做因果量化；銷量口徑為四戰場追蹤車款合計（非品牌總掛牌）。另有「🗺 全品牌總覽」視圖（`#actions/ALL`）：六品牌銷量走勢 Sparkline（事件點標於線上）、銷量月增熱力圖、投放×成果象限圖（SOV×SOM，泡泡＝促銷火力，平方根刻度），點任一品牌即進入該品牌單頁視圖。
