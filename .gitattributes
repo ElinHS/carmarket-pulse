@@ -1,0 +1,11 @@
+# 跨平台（Windows / Mac）統一換行符為 LF，避免因 CRLF/LF 差異產生假 diff。
+* text=auto eol=lf
+
+# 二進位檔不做換行處理
+*.ttf   binary
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.pdf   binary
+*.pptx  binary
+*.xlsx  binary

@@ -15,7 +15,7 @@ data/                 純資料檔，每月更新只改這裡
   promos.js           競品促銷方案文字（PROMO）
   nielsen.js          Nielsen 廣告監測（NIELSEN_MONTHLY 等）
   opview.js           Opview 社群聲量（OPVIEW_MONTHLY）
-  launch.js           新車上市日曆（LAUNCH_CALENDAR）
+  launch.js           新車上市月曆（LAUNCH_2026；另導出扁平 LAUNCH_CALENDAR 供時間軸 tooltip）
   actions.js          品牌行動×銷量 手動補強事件庫（ACTIONS）
   strategy.js         品牌策略大表（STRAT_DATA / CASES）
   q1_report.js        Q1 整合報告（Q1_AD / Q1_PROMO_SUMMARY / Q1_REG）
@@ -26,6 +26,31 @@ data/                 純資料檔，每月更新只改這裡
 `data/*.js` 以一般 `<script>` 於 `index.html` 主程式之前載入，宣告全域常數供頁面使用；
 因此本機直接雙擊 `index.html`（file://）也能運作，不需起 server。
 
+## 本機預覽與跨平台（Windows / Mac）
+
+整個專案以 GitHub 為唯一真相，換電腦只需 clone：
+
+```bash
+git clone https://github.com/ElinHS/carmarket-pulse.git
+cd carmarket-pulse
+```
+
+本機預覽（雙擊 `index.html` 即可，但部分瀏覽器對 `file://` 載入外部 JS 較嚴，建議起簡易 server）：
+
+```bash
+# Mac / Linux（內建 Python3）
+python3 -m http.server 8000        # 開 http://localhost:8000
+
+# Windows（PowerShell，如無 Python 可用內建方式，或裝 Python 後同上）
+python -m http.server 8000
+```
+
+跨平台注意事項：
+
+- **換行符**：本 repo 以 `.gitattributes` 統一為 LF，Windows/Mac 交替編輯不會產生「沒改內容卻整檔 diff」的假變更。
+- **原始來源檔**（掛牌／促銷等 Excel）放在 `OneDrive - dentsu`；Mac 裝 OneDrive 用戶端登入同一帳號即可同步取得，不需放進 repo。
+- **多環境／多對話同步紀律**：動手前先 `git pull`（確保基底最新）→ 改完立即 `git commit && git push` → 同一時間只在一台推送，避免互相覆蓋。
+
 ## 每月更新流程
 
 1. 掛牌數：在 `data/registrations.js` 的 `RAW` 追加一列 `{yr, mo, kicks, ...}`；
@@ -33,7 +58,7 @@ data/                 純資料檔，每月更新只改這裡
 2. 促銷方案：在 `data/promos.js` 各車款列補上新月份欄位；促銷火力指數（0–5，規則式評分）會自動計算。
 3. Nielsen：在 `data/nielsen.js` 的 `NIELSEN_MONTHLY` 新增月份物件；SOV 趨勢、SOV vs SOM（ESOV）、品牌整合時間軸的月份軸會自動延長。
    注意：各月花費單位只需「同月內一致」，跨月比較一律以份額（%）計算。
-4. 聲量 / 上市日曆：同理更新 `data/opview.js`、`data/launch.js`。
+4. 聲量 / 上市月曆：同理更新 `data/opview.js`、`data/launch.js`（月曆結構為 `LAUNCH_2026`，依月份分組）。
    「品牌行動×銷量」頁會自動彙整以上檔案；其他資料檔沒涵蓋的品牌行動
    （線下活動、KOL 操作、定價調整、供給異動…）可選填至 `data/actions.js` 的 `ACTIONS`。
 5. 素材截圖：透過頁面上的上傳功能（Storage API），或更新 `data/creatives.js`。
