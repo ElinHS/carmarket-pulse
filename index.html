@@ -190,6 +190,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
         <button class="tab-btn" onclick="setPromoMonth('apr',event)">4月</button>
         <button class="tab-btn" onclick="setPromoMonth('may',event)">5月</button>
         <button class="tab-btn" onclick="setPromoMonth('jun',event)">6月</button>
+        <button class="tab-btn" onclick="setPromoMonth('jul',event)">7月</button>
       </div>
       <div class="tab-group">
         <button class="tab-btn active" onclick="setPromoBrand('ALL',event)">全品牌</button>
@@ -627,7 +628,7 @@ function updateAll(){buildKPI();buildTrendChart();buildModelChart();buildStacked
 // ── PROMO DATA ──
 const BRAND_COLORS={NISSAN:'var(--accent)',HONDA:'#fb7185',FORD:'#60a5fa',HYUNDAI:'#a78bfa',MAZDA:'#34d399',TOYOTA:'#f97316'};
 const BRAND_BG={NISSAN:'rgba(200,245,90,.07)',HONDA:'rgba(251,113,133,.07)',FORD:'rgba(96,165,250,.07)',HYUNDAI:'rgba(167,139,250,.07)',MAZDA:'rgba(52,211,153,.07)',TOYOTA:'rgba(249,115,22,.07)'};
-const MONTHS_AVAIL=['jan','feb','mar','apr','may','jun'];
+const MONTHS_AVAIL=['jan','feb','mar','apr','may','jun','jul'];
 const MONTH_LABELS={jan:'1月',feb:'2月',mar:'3月',apr:'4月',may:'5月',jun:'6月',jul:'7月',aug:'8月',sep:'9月',oct:'10月',nov:'11月',dec:'12月'};
 let promoMonth='jan', promoBrand='ALL';
 
