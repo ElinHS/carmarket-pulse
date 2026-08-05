@@ -1739,8 +1739,8 @@ document.addEventListener('keydown',e=>{
 // 資料結構：每個車款的競品清單，每個品牌每月掛牌數
 // 📦 資料已抽離 → data/comp.js（競品掛牌比對 COMP_DATA）
 
-const COMP_MONTHS = ['jan','feb','mar','apr','may','jun'];
-const COMP_MONTH_LABELS = {jan:'1月',feb:'2月',mar:'3月',apr:'4月',may:'5月',jun:'6月'};
+const COMP_MONTHS = ['jan','feb','mar','apr','may','jun','jul'];
+const COMP_MONTH_LABELS = {jan:'1月',feb:'2月',mar:'3月',apr:'4月',may:'5月',jun:'6月',jul:'7月'};
 const COMP_KEYS = ['kicks','sentra','xtrail','xtraile']; // 戰場①→④ 順序
 let compModel = 'kicks';
 let compCharts = {};
@@ -2516,7 +2516,7 @@ const BRAND_PROMO_MO = (function(){
   const brandMap = {NISSAN:'nissan',TOYOTA:'toyota',FORD:'ford',HYUNDAI:'hyundai',MAZDA:'mazda',HONDA:'honda'};
   const result = {};
   ['nissan','toyota','ford','hyundai','mazda','honda'].forEach(k=>{ result[k]={}; });
-  ['jan','feb','mar','apr','may','jun'].forEach(mo=>{
+  ['jan','feb','mar','apr','may','jun','jul'].forEach(mo=>{
     ['nissan','toyota','ford','hyundai','mazda','honda'].forEach(k=>{ result[k][mo]=[]; });
     PROMO.forEach(row=>{
       const bk = brandMap[row.brand];
