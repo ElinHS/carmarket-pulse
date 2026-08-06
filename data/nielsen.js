@@ -245,7 +245,7 @@ const NIELSEN_MONTHLY={
       ],
     },
     mazda:{totalImp:18906784,totalSp:1267.21,dispSp:825.96,vidSp:441.25,cpm:67,reg:1208,
-      note:'MAZDA 7月127萬（千元），CX-60為當月投放主力（Yahoo奇摩運動）；影音佔34.8%（YouTube+Instagram）為CX-5大改款預售橋接。舊款CX-5靠價格出清576台、數位重心已轉向8月新車預售',
+      note:'MAZDA 7月127萬（千元），CX-60為當月投放主力（Yahoo奇摩運動）；影音佔34.8%（YouTube+Instagram）為CX-5大改款預售橋接。舊款CX-5靠價格出清576台、數位重心已轉向8月新車預售。素材策略：CX-5用影片說新車故事搶預售、CX-60靠Yahoo體育／新聞版位衝刺大量曝光並搭配影片與零星展示型廣告補強、品牌全車系則靠IG維持社群聲量與導流。',
       channels:[{name:'Yahoo奇摩',sp:774.21,pct:61.1},{name:'YouTube',sp:264.25,pct:20.9},{name:'instagram',sp:150.69,pct:11.9},{name:'愛料理',sp:51.61,pct:4.1},{name:'facebook',sp:26.32,pct:2.1}],
       vehicles:[
         {name:'CX-60',sp:1052.64,imp:17176019,vidPct:20},
