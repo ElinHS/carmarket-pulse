@@ -520,8 +520,8 @@ function exportLaunchCSV(){
 }
 // 車媒風格檢索：媒體名單
 function exportKolCSV(){
-  const rows=[['分類','名稱','主持人／型態','FB 粉絲','YT 訂閱','定位','風格摘要','合作建議','受眾輪廓']];
-  KOL_DATA.forEach(k=>rows.push([k.catLabel||k.cat,k.name,k.person,k.fb,k.yt,k.positioning,k.summary,k.collab,k.audience]));
+  const rows=[['分類','名稱','主持人／型態','FB 粉絲','YT 訂閱','IG 粉絲','定位','風格摘要','合作建議','受眾輪廓']];
+  KOL_DATA.forEach(k=>rows.push([k.catLabel||k.cat,k.name,k.person,k.fb,k.yt,k.ig||'',k.positioning,k.summary,k.collab,k.audience]));
   downloadCSV(rows,'車媒風格檢索清單.csv');
 }
 
@@ -2061,6 +2061,8 @@ function buildKolProfiles() {
                     ? `<div style="font-family:'DM Mono',monospace;font-size:10px;color:#f87171">▶ ${k.yt}</div>` : ''}
                   ${k.fb && k.fb!=='X' && k.fb!=='—' && k.fb!=='_' && k.fb!=='PODCAST'
                     ? `<div style="font-family:'DM Mono',monospace;font-size:10px;color:#60a5fa">f ${k.fb}</div>` : ''}
+                  ${k.ig && k.ig!=='X' && k.ig!=='—' && k.ig!=='_'
+                    ? `<div style="font-family:'DM Mono',monospace;font-size:10px;color:#e879f9">ig ${k.ig}</div>` : ''}
                 </div>
               </div>
               <div style="font-size:11px;font-weight:500;color:${k.styleColor};line-height:1.4">${k.positioning}</div>
