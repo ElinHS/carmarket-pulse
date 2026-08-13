@@ -2016,9 +2016,26 @@ function setKolView(v, e) {
   if(v==='impact') buildKolImpact();
 }
 
+// 「17.9萬」→179000、「7834」→7834；X／停更／PODCAST／_／空白為無資料，回傳 null
+function kolFansNum(v) {
+  const m = String(v||'').trim().match(/^([\d.]+)(萬)?$/);
+  return m ? parseFloat(m[1]) * (m[2] ? 10000 : 1) : null;
+}
+// 總追蹤數＝FB＋YT＋IG（僅加總有數字者）；三個平台皆無數字時回傳 -1，排序時墊底
+function kolFansTotal(k) {
+  const ns = [k.fb, k.yt, k.ig].map(kolFansNum).filter(n=>n!==null);
+  return ns.length ? ns.reduce((a,b)=>a+b, 0) : -1;
+}
+// 179000→「17.9萬」、7834→「7834」
+function kolFansLabel(n) {
+  if (n < 0) return '—';
+  return n >= 10000 ? (n/10000).toFixed(n%10000===0?0:1).replace(/\.0$/,'') + '萬' : String(n);
+}
+
 function buildKolProfiles() {
   const el = document.getElementById('kolProfileView');
   const activeCat = el.dataset.cat || 'ALL';
+  const activeSort = el.dataset.sort || 'default';
   const cats = [
     {id:'ALL',label:'全部'},
     {id:'A',  label:'影響力車媒'},
@@ -2027,7 +2044,27 @@ function buildKolProfiles() {
     {id:'D',  label:'車圈網紅 KOL'},
     {id:'E',  label:'Influencer KOC'},
   ];
-  const filtered = activeCat==='ALL' ? KOL_DATA : KOL_DATA.filter(k=>k.cat===activeCat);
+  const sorts = [
+    {id:'default', label:'名單順序'},
+    {id:'fans',    label:'總追蹤數 多→少'},
+    {id:'new',     label:'成立日期 新→舊'},
+    {id:'old',     label:'成立日期 舊→新'},
+  ];
+  let filtered = activeCat==='ALL' ? KOL_DATA.slice() : KOL_DATA.filter(k=>k.cat===activeCat);
+  // 無資料者一律墊底，不參與正逆序翻轉
+  if (activeSort==='fans') {
+    filtered.sort((a,b)=>kolFansTotal(b)-kolFansTotal(a));
+  } else if (activeSort==='new' || activeSort==='old') {
+    const dir = activeSort==='new' ? 1 : -1;
+    filtered.sort((a,b)=>{
+      if(!a.founded && !b.founded) return 0;
+      if(!a.founded) return 1;
+      if(!b.founded) return -1;
+      return a.founded < b.founded ? dir : a.founded > b.founded ? -dir : 0;
+    });
+  }
+  const noData = activeSort==='fans' ? filtered.filter(k=>kolFansTotal(k)<0).length
+               : (activeSort==='new'||activeSort==='old') ? filtered.filter(k=>!k.founded).length : 0;
 
   el.innerHTML = `
     <div class="controls" style="padding:8px 0;background:transparent;border:none">
@@ -2039,6 +2076,12 @@ function buildKolProfiles() {
         }).join('')}
       </div>
       <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);margin-left:12px">${filtered.length} 個</span>
+      <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);margin-left:16px;margin-right:6px">排序</span>
+      <div class="tab-group">
+        ${sorts.map(s=>`<button class="tab-btn ${s.id===activeSort?'active':''}" onclick="document.getElementById('kolProfileView').dataset.sort='${s.id}';buildKolProfiles()">${s.label}</button>`).join('')}
+      </div>
+      ${noData>0
+        ? `<span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);margin-left:10px">${noData} 筆無資料，置於末尾</span>` : ''}
     </div>
     ${filtered.length===0
       ? `<div style="padding:48px;text-align:center;color:var(--text3);font-family:'DM Mono',monospace;font-size:13px">此分類尚無資料（KOC 名單待建置）</div>`
@@ -2068,6 +2111,8 @@ function buildKolProfiles() {
                     ? `<div style="font-family:'DM Mono',monospace;font-size:10px;color:#60a5fa">f ${k.fb}</div>` : ''}
                   ${k.ig && k.ig!=='X' && k.ig!=='—' && k.ig!=='_'
                     ? `<div style="font-family:'DM Mono',monospace;font-size:10px;color:#e879f9">ig ${k.ig}</div>` : ''}
+                  ${activeSort==='fans'
+                    ? `<div style="font-family:'DM Mono',monospace;font-size:10px;color:${k.styleColor};border-top:1px solid var(--border2);margin-top:3px;padding-top:3px">總 ${kolFansLabel(kolFansTotal(k))}</div>` : ''}
                 </div>
               </div>
               <div style="font-size:11px;font-weight:500;color:${k.styleColor};line-height:1.4">${k.positioning}</div>
