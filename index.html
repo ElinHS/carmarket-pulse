@@ -520,8 +520,8 @@ function exportLaunchCSV(){
 }
 // 車媒風格檢索：媒體名單
 function exportKolCSV(){
-  const rows=[['分類','名稱','主持人／型態','FB 粉絲','YT 訂閱','定位','風格摘要','合作建議','受眾輪廓']];
-  KOL_DATA.forEach(k=>rows.push([k.catLabel||k.cat,k.name,k.person,k.fb,k.yt,k.positioning,k.summary,k.collab,k.audience]));
+  const rows=[['分類','名稱','主持人／型態','FB 粉絲','YT 訂閱','IG 粉絲','定位','風格摘要','合作建議','受眾輪廓','連結','成立日期']];
+  KOL_DATA.forEach(k=>rows.push([k.catLabel||k.cat,k.name,k.person,k.fb,k.yt,k.ig||'',k.positioning,k.summary,k.collab,k.audience,k.link||'',k.founded||'']));
   downloadCSV(rows,'車媒風格檢索清單.csv');
 }
 
@@ -1998,6 +1998,8 @@ window.switchPage=function(p,e){
 // 📦 資料已抽離 → data/kol.js（車媒風格檢索 KOL_DATA）
 const KOL_BRAND_COLORS = {NISSAN:'#c8f55a',TOYOTA:'#f97316',HONDA:'#fb7185',HYUNDAI:'#a78bfa',FORD:'#60a5fa',MAZDA:'#34d399'};
 const KOL_BRANDS = Object.keys(KOL_BRAND_COLORS); // 矩陣/影響力視圖用的品牌欄位順序
+// 分類色：畫面上不顯示 A/B/C/D/E 代號，改以顏色＋中文標籤辨識（代號僅作為資料鍵值）
+const KOL_CAT_COLORS = {A:'#c8f55a',B:'#60a5fa',C:'#f97316',D:'#a78bfa',E:'#f472b6'};
 const KOL_MONTHS = ['jan','feb','mar'];
 const KOL_MONTH_LABELS = {jan:'1月',feb:'2月',mar:'3月'};
 let kolView = 'profile';
@@ -2019,18 +2021,22 @@ function buildKolProfiles() {
   const activeCat = el.dataset.cat || 'ALL';
   const cats = [
     {id:'ALL',label:'全部'},
-    {id:'A',  label:'A｜影響力車媒'},
-    {id:'B',  label:'B｜汽車頻道'},
-    {id:'C',  label:'C｜新聞頻道汽車線'},
-    {id:'D',  label:'D｜車圈網紅 KOL'},
-    {id:'E',  label:'E｜Influencer KOC'},
+    {id:'A',  label:'影響力車媒'},
+    {id:'B',  label:'汽車頻道'},
+    {id:'C',  label:'新聞頻道汽車線'},
+    {id:'D',  label:'車圈網紅 KOL'},
+    {id:'E',  label:'Influencer KOC'},
   ];
   const filtered = activeCat==='ALL' ? KOL_DATA : KOL_DATA.filter(k=>k.cat===activeCat);
 
   el.innerHTML = `
     <div class="controls" style="padding:8px 0;background:transparent;border:none">
       <div class="tab-group">
-        ${cats.map(ca=>`<button class="tab-btn ${ca.id===activeCat?'active':''}" onclick="document.getElementById('kolProfileView').dataset.cat='${ca.id}';buildKolProfiles()">${ca.label}</button>`).join('')}
+        ${cats.map(ca=>{
+          const dot = KOL_CAT_COLORS[ca.id]
+            ? `<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${KOL_CAT_COLORS[ca.id]};margin-right:5px;vertical-align:0"></span>` : '';
+          return `<button class="tab-btn ${ca.id===activeCat?'active':''}" onclick="document.getElementById('kolProfileView').dataset.cat='${ca.id}';buildKolProfiles()">${dot}${ca.label}</button>`;
+        }).join('')}
       </div>
       <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);margin-left:12px">${filtered.length} 個</span>
     </div>
@@ -2043,11 +2049,16 @@ function buildKolProfiles() {
               <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:7px">
                 <div>
                   <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">
-                    <span style="background:${k.styleColor}22;border:1px solid ${k.styleColor}44;color:${k.styleColor};font-family:'DM Mono',monospace;font-size:9px;padding:1px 6px;border-radius:3px">${k.cat}</span>
-                    <span style="font-size:13px;font-weight:500;color:var(--text)">${k.name}</span>
+                    <span style="background:${k.styleColor}22;border:1px solid ${k.styleColor}44;color:${k.styleColor};font-size:9px;padding:1px 6px;border-radius:3px;letter-spacing:.03em;white-space:nowrap">${k.catLabel||''}</span>
+                    ${k.link
+                      ? `<a href="${k.link}" target="_blank" rel="noopener noreferrer" style="font-size:13px;font-weight:500;color:var(--text);text-decoration:none;border-bottom:1px dotted ${k.styleColor}88" title="${k.link}">${k.name} <span style="font-size:9px;color:${k.styleColor}">↗</span></a>`
+                      : `<span style="font-size:13px;font-weight:500;color:var(--text)">${k.name}</span>`}
                   </div>
                   ${k.person && k.person!=='媒體網站' && k.person!=='—'
                     ? `<div style="font-size:11px;color:var(--text3)">${k.person}</div>`
+                    : ''}
+                  ${k.founded
+                    ? `<div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text3);margin-top:2px">成立 ${k.founded}</div>`
                     : ''}
                 </div>
                 <div style="text-align:right;flex-shrink:0;line-height:1.6">
@@ -2055,6 +2066,8 @@ function buildKolProfiles() {
                     ? `<div style="font-family:'DM Mono',monospace;font-size:10px;color:#f87171">▶ ${k.yt}</div>` : ''}
                   ${k.fb && k.fb!=='X' && k.fb!=='—' && k.fb!=='_' && k.fb!=='PODCAST'
                     ? `<div style="font-family:'DM Mono',monospace;font-size:10px;color:#60a5fa">f ${k.fb}</div>` : ''}
+                  ${k.ig && k.ig!=='X' && k.ig!=='—' && k.ig!=='_'
+                    ? `<div style="font-family:'DM Mono',monospace;font-size:10px;color:#e879f9">ig ${k.ig}</div>` : ''}
                 </div>
               </div>
               <div style="font-size:11px;font-weight:500;color:${k.styleColor};line-height:1.4">${k.positioning}</div>
