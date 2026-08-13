@@ -520,8 +520,8 @@ function exportLaunchCSV(){
 }
 // 車媒風格檢索：媒體名單
 function exportKolCSV(){
-  const rows=[['分類','名稱','主持人／型態','FB 粉絲','YT 訂閱','IG 粉絲','定位','風格摘要','合作建議','受眾輪廓']];
-  KOL_DATA.forEach(k=>rows.push([k.catLabel||k.cat,k.name,k.person,k.fb,k.yt,k.ig||'',k.positioning,k.summary,k.collab,k.audience]));
+  const rows=[['分類','名稱','主持人／型態','FB 粉絲','YT 訂閱','IG 粉絲','定位','風格摘要','合作建議','受眾輪廓','連結','成立日期']];
+  KOL_DATA.forEach(k=>rows.push([k.catLabel||k.cat,k.name,k.person,k.fb,k.yt,k.ig||'',k.positioning,k.summary,k.collab,k.audience,k.link||'',k.founded||'']));
   downloadCSV(rows,'車媒風格檢索清單.csv');
 }
 
@@ -2050,10 +2050,15 @@ function buildKolProfiles() {
                 <div>
                   <div style="display:flex;align-items:center;gap:6px;margin-bottom:3px">
                     <span style="background:${k.styleColor}22;border:1px solid ${k.styleColor}44;color:${k.styleColor};font-size:9px;padding:1px 6px;border-radius:3px;letter-spacing:.03em;white-space:nowrap">${k.catLabel||''}</span>
-                    <span style="font-size:13px;font-weight:500;color:var(--text)">${k.name}</span>
+                    ${k.link
+                      ? `<a href="${k.link}" target="_blank" rel="noopener noreferrer" style="font-size:13px;font-weight:500;color:var(--text);text-decoration:none;border-bottom:1px dotted ${k.styleColor}88" title="${k.link}">${k.name} <span style="font-size:9px;color:${k.styleColor}">↗</span></a>`
+                      : `<span style="font-size:13px;font-weight:500;color:var(--text)">${k.name}</span>`}
                   </div>
                   ${k.person && k.person!=='媒體網站' && k.person!=='—'
                     ? `<div style="font-size:11px;color:var(--text3)">${k.person}</div>`
+                    : ''}
+                  ${k.founded
+                    ? `<div style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text3);margin-top:2px">成立 ${k.founded}</div>`
                     : ''}
                 </div>
                 <div style="text-align:right;flex-shrink:0;line-height:1.6">
