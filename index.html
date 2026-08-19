@@ -2021,15 +2021,10 @@ function kolFansNum(v) {
   const m = String(v||'').trim().match(/^([\d.]+)(萬)?$/);
   return m ? parseFloat(m[1]) * (m[2] ? 10000 : 1) : null;
 }
-// 總追蹤數＝FB＋YT＋IG（僅加總有數字者）；三個平台皆無數字時回傳 -1，排序時墊底
-function kolFansTotal(k) {
-  const ns = [k.fb, k.yt, k.ig].map(kolFansNum).filter(n=>n!==null);
-  return ns.length ? ns.reduce((a,b)=>a+b, 0) : -1;
-}
-// 179000→「17.9萬」、7834→「7834」
-function kolFansLabel(n) {
-  if (n < 0) return '—';
-  return n >= 10000 ? (n/10000).toFixed(n%10000===0?0:1).replace(/\.0$/,'') + '萬' : String(n);
+// 排序用的 YT 訂閱數；無 YT 資料者回傳 -1，排序時墊底
+function kolYtNum(k) {
+  const n = kolFansNum(k.yt);
+  return n === null ? -1 : n;
 }
 
 function buildKolProfiles() {
@@ -2046,14 +2041,14 @@ function buildKolProfiles() {
   ];
   const sorts = [
     {id:'default', label:'名單順序'},
-    {id:'fans',    label:'總追蹤數 多→少'},
+    {id:'yt',      label:'YT 訂閱 多→少'},
     {id:'new',     label:'成立日期 新→舊'},
     {id:'old',     label:'成立日期 舊→新'},
   ];
   let filtered = activeCat==='ALL' ? KOL_DATA.slice() : KOL_DATA.filter(k=>k.cat===activeCat);
   // 無資料者一律墊底，不參與正逆序翻轉
-  if (activeSort==='fans') {
-    filtered.sort((a,b)=>kolFansTotal(b)-kolFansTotal(a));
+  if (activeSort==='yt') {
+    filtered.sort((a,b)=>kolYtNum(b)-kolYtNum(a));
   } else if (activeSort==='new' || activeSort==='old') {
     const dir = activeSort==='new' ? 1 : -1;
     filtered.sort((a,b)=>{
@@ -2063,7 +2058,7 @@ function buildKolProfiles() {
       return a.founded < b.founded ? dir : a.founded > b.founded ? -dir : 0;
     });
   }
-  const noData = activeSort==='fans' ? filtered.filter(k=>kolFansTotal(k)<0).length
+  const noData = activeSort==='yt' ? filtered.filter(k=>kolYtNum(k)<0).length
                : (activeSort==='new'||activeSort==='old') ? filtered.filter(k=>!k.founded).length : 0;
 
   el.innerHTML = `
@@ -2105,14 +2100,10 @@ function buildKolProfiles() {
                     : ''}
                 </div>
                 <div style="text-align:right;flex-shrink:0;line-height:1.6">
-                  ${k.yt && k.yt!=='X' && k.yt!=='—' && k.yt!=='停更' && k.yt!=='PODCAST'
-                    ? `<div style="font-family:'DM Mono',monospace;font-size:10px;color:#f87171">▶ ${k.yt}</div>` : ''}
-                  ${k.fb && k.fb!=='X' && k.fb!=='—' && k.fb!=='_' && k.fb!=='PODCAST'
-                    ? `<div style="font-family:'DM Mono',monospace;font-size:10px;color:#60a5fa">f ${k.fb}</div>` : ''}
-                  ${k.ig && k.ig!=='X' && k.ig!=='—' && k.ig!=='_'
-                    ? `<div style="font-family:'DM Mono',monospace;font-size:10px;color:#e879f9">ig ${k.ig}</div>` : ''}
-                  ${activeSort==='fans'
-                    ? `<div style="font-family:'DM Mono',monospace;font-size:10px;color:${k.styleColor};border-top:1px solid var(--border2);margin-top:3px;padding-top:3px">總 ${kolFansLabel(kolFansTotal(k))}</div>` : ''}
+                  ${[['▶',k.yt,'#f87171'],['f',k.fb,'#60a5fa'],['ig',k.ig,'#e879f9']]
+                    .filter(([,v])=>kolFansNum(v)!==null)   // X／停更／PODCAST／_／空白皆不顯示
+                    .map(([icon,v,c])=>`<div style="font-family:'DM Mono',monospace;font-size:10px;color:${c}">${icon} ${v}</div>`)
+                    .join('')}
                 </div>
               </div>
               <div style="font-size:11px;font-weight:500;color:${k.styleColor};line-height:1.4">${k.positioning}</div>
