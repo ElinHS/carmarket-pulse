@@ -2110,10 +2110,10 @@ function buildKolProfiles() {
             </div>
             <div style="padding:11px 15px;display:flex;flex-direction:column;gap:8px">
               <div style="font-size:11px;color:var(--text2);line-height:1.7">${k.summary}</div>
-              <div style="padding:8px 10px;background:${k.styleColor}0d;border-left:2px solid ${k.styleColor};border-radius:0 5px 5px 0">
+              ${k.collab ? `<div style="padding:8px 10px;background:${k.styleColor}0d;border-left:2px solid ${k.styleColor};border-radius:0 5px 5px 0">
                 <div style="font-family:'DM Mono',monospace;font-size:9px;color:${k.styleColor};margin-bottom:3px;text-transform:uppercase">合作內容建議</div>
                 <div style="font-size:11px;color:var(--text2)">${k.collab}</div>
-              </div>
+              </div>` : ''}
               <div style="font-size:10px;color:var(--text3);line-height:1.6">
                 <span style="font-family:'DM Mono',monospace;font-size:9px;color:var(--text3);margin-right:4px">受眾</span>${k.audience}
               </div>
