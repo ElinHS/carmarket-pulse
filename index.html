@@ -2847,7 +2847,8 @@ function buildActionsPage(){
   const sales={},launch={},promo={},mkt={},offline={},media={},theme={},adc={},ad={},intel={},manual={};
   MONTHS_AVAIL.forEach(mo=>{
     const per=models.map(m=>({name:m.name,color:m.color,ext:m.ext,v:m.data?.[mo]??null}));
-    sales[mo]={per,total:per.reduce((s,x)=>s+(x.v||0),0)};
+    // hasData：該月是否已有掛牌資料。全部為 null＝尚未公布，與「真的賣 0 台」不同
+    sales[mo]={per,total:per.reduce((s,x)=>s+(x.v||0),0),hasData:per.some(x=>x.v!=null)};
     const lc=(typeof LAUNCH_2026!=='undefined')?LAUNCH_2026.filter(g=>g.ym===TL_YM[mo]).flatMap(g=>g.items.filter(it=>it.brand===brand.label)):[];
     launch[mo]=lc.filter(it=>it.type!=='活動'); // 「活動」類改列入線下活動軌道
     promo[mo]=promoBrandIndex(brand.label,mo);
@@ -2898,7 +2899,7 @@ function axRenderGrid(){
     const segs=s.per.filter(x=>(x.v||0)>0).map(x=>
       `<div title="${x.name} ${x.v}台" style="height:${Math.max(2,x.v/maxTotal*100)}px;background:${x.color}${x.ext?'88':'cc'};border-radius:1px"></div>`).join('');
     return `<div onclick="axSel('sales','${mo}')" style="${cellBase};${selStyle('sales',mo)}align-items:center;justify-content:flex-end;min-height:130px">
-      <span style="font-family:'DM Mono',monospace;font-size:12px;font-weight:600;color:${brand.color}">${s.total.toLocaleString()}</span>
+      <span style="font-family:'DM Mono',monospace;font-size:12px;font-weight:600;color:${s.hasData?brand.color:'var(--text3)'}" ${s.hasData?'':'title="掛牌資料尚未公布"'}>${s.hasData?s.total.toLocaleString():'—'}</span>
       <div style="display:flex;flex-direction:column-reverse;gap:1px;width:34px">${segs||''}</div>
     </div>`;
   }).join('');
@@ -3366,7 +3367,7 @@ function exportActionsCSV(){
   const rows=[['月份','軌道','內容']];
   MONTHS_AVAIL.forEach(mo=>{
     const L=`2026/${MONTH_LABELS[mo]}`;
-    rows.push([L,'銷量（追蹤車款合計）',sales[mo].total]);
+    rows.push([L,'銷量（追蹤車款合計）',sales[mo].hasData?sales[mo].total:'']);
     sales[mo].per.forEach(x=>rows.push([L,`銷量：${x.name}`,x.v!=null?x.v:'']));
     if(theme[mo].text) rows.push([L,'行銷主軸',theme[mo].text]);
     theme[mo].manual.forEach(x=>rows.push([L,'行銷主軸',x.title+(x.note?`：${x.note}`:'')]));
