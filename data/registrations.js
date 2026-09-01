@@ -19,7 +19,7 @@ const RAW=[
   {yr:2025,mo:3,kicks:263,kickse:349,sentra:263,xtrail:249,xtraile:140,ariya:0,note:null},
   {yr:2025,mo:4,kicks:368,kickse:79,sentra:291,xtrail:166,xtraile:44,ariya:0,note:null},
   {yr:2025,mo:5,kicks:276,kickse:217,sentra:254,xtrail:161,xtraile:61,ariya:0,note:null},
-  {yr:2025,mo:6,kicks:337,kickse:238,sentra:224,xtrail:96,xtraile:327,ariya:0,note:'夏季競賽月'},
+  {yr:2025,mo:6,kicks:337,kickse:238,sentra:224,xtrail:327,xtraile:96,ariya:0,note:'夏季競賽月'},
   {yr:2025,mo:7,kicks:397,kickse:153,sentra:260,xtrail:336,xtraile:100,ariya:0,note:'夏季競賽月'},
   {yr:2025,mo:8,kicks:207,kickse:95,sentra:155,xtrail:267,xtraile:65,ariya:0,note:'民俗月'},
   {yr:2025,mo:9,kicks:325,kickse:60,sentra:261,xtrail:228,xtraile:150,ariya:0,note:null},
