@@ -163,7 +163,8 @@ function nielsenShare(mo){
     const d=m[b.key]||{};
     const sov=tSp>0?(d.totalSp||0)/tSp*100:0;
     const som=tReg>0?(d.reg||0)/tReg*100:0;
-    return {...b,sov,som,esov:sov-som,reg:d.reg||0};
+    // hasReg：當月掛牌數是否已公布。未公布時 SOM／ESOV 無意義，不可當 0 呈現
+    return {...b,sov,som,esov:sov-som,reg:d.reg||0,hasReg:tReg>0};
   });
 }
 const TL_YM={jan:'2026-01',feb:'2026-02',mar:'2026-03',apr:'2026-04',may:'2026-05',jun:'2026-06',jul:'2026-07',aug:'2026-08',sep:'2026-09',oct:'2026-10',nov:'2026-11',dec:'2026-12'};
