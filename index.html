@@ -54,7 +54,10 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
 <div id="navBar">
   <button class="nav-tab active" data-page="sales" onclick="switchPage('sales',event)">📊 掛牌數追蹤</button>
   <button class="nav-tab" data-page="comp" onclick="switchPage('comp',event)">🔍 競品掛牌比對</button>
+  <!-- 🧩 品牌行動×銷量頁籤暫時隱藏（2026/09）：頁面、程式與 data/actions.js 均保留，
+       獨立測試頁見 lab/actions.html。恢復方式：解除下面這行註解。
   <button class="nav-tab" data-page="actions" onclick="switchPage('actions',event)">🧩 品牌行動×銷量</button>
+  -->
   <button class="nav-tab" data-page="intel" onclick="switchPage('intel',event)">🗞 車市銷售觀察</button>
   <button class="nav-tab" data-page="promo" onclick="switchPage('promo',event)">🎯 競車促銷方案</button>
   <button class="nav-tab" data-page="nielsen" onclick="switchPage('nielsen',event)">📡 數位廣告監測</button>
@@ -2614,7 +2617,7 @@ const BRAND_PROMO_MO = (function(){
   btnLc.className = 'nav-tab'; btnLc.textContent = '🗓 新車上市月曆'; btnLc.dataset.page = 'launch';
   btnLc.onclick = e=>switchPage('launch',e);
   nav.insertBefore(btnLc, nav.firstElementChild);
-  // 品牌行動×銷量頁籤固定排最前，月曆次之
+  // 品牌行動×銷量頁籤若存在則固定排最前，月曆次之（該頁籤目前隱藏，此處為還原後生效）
   const btnAx = nav.querySelector('[data-page="actions"]');
   if(btnAx) nav.insertBefore(btnAx, nav.firstElementChild);
   // 資料狀態標示固定排在所有頁籤（含動態注入的）最後方
