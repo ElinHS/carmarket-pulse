@@ -1462,19 +1462,16 @@ function buildQ1Strip(){
   // 計算本期市場總花費和掛牌
   const brands=Q1_BRAND_ORDER;
   const totalSp=brands.reduce((s,b)=>s+(Q1_AD[b][mo]?.sp||0),0);
-  const totalReg=brands.reduce((s,b)=>s+(Q1_REG[b][mo]||0),0);
   const totalImp=brands.reduce((s,b)=>s+(Q1_AD[b][mo]?.imp||0),0);
   const nisAd=Q1_AD.NISSAN[mo];
-  const nisReg=Q1_REG.NISSAN[mo]||0;
   const nisSp=nisAd?.sp||0;
-  const nisCpr=nisReg>0&&nisSp>0?Math.round(nisSp*1000/nisReg):0;
   const nisShare=totalSp>0?(nisSp/totalSp*100).toFixed(1):0;
 
   el.innerHTML=[
     {label:'監測期間',value:mo==='q1'?'2026 Q1':mo==='jan'?'2026年 1月':mo==='feb'?'2026年 2月':'2026年 3月',sub:'競品廣告監測',ac:'var(--accent2)'},
     {label:'市場監測總花費',value:(totalSp/100).toFixed(1)+'萬',sub:`六品牌合計`,ac:'var(--accent)'},
     {label:'市場總曝光',value:(totalImp/100).toFixed(0)+'百萬',sub:'Display+Video',ac:'#a78bfa'},
-    {label:'NISSAN 廣告市占',value:nisShare+'%',sub:`花費 ${(nisSp/100).toFixed(1)}萬 / 每台成本 ${nisCpr.toLocaleString()}元`,ac:'#c8f55a'},
+    {label:'NISSAN 廣告市占',value:nisShare+'%',sub:`花費 ${(nisSp/100).toFixed(1)}萬`,ac:'#c8f55a'},
   ].map(k=>`<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 18px;position:relative;overflow:hidden">
     <div style="position:absolute;top:0;left:0;right:0;height:2px;background:${k.ac}"></div>
     <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:.08em;margin-bottom:6px;text-transform:uppercase">${k.label}</div>
@@ -1494,7 +1491,6 @@ function buildQ1BrandGrid(){
     const reg=Q1_REG[brand][mo]||0;
     const sp=ad.sp||0;
     const imp=ad.imp||0;
-    const cpr=reg>0&&sp>0?Math.round(sp*1000/reg):0;
     const cpm=imp>0?Math.round(sp*1000*1000/imp):0;
     const isNissan=brand==='NISSAN';
 
@@ -1506,7 +1502,7 @@ function buildQ1BrandGrid(){
       <div style="display:flex;align-items:center;gap:12px;padding:14px 20px;background:${bc}0d;border-bottom:1px solid ${bc}22">
         <span style="font-family:'DM Mono',monospace;font-size:13px;font-weight:500;color:${bc}">${brand}</span>
         <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text3)">${Q1_MONTHS[mo]} 掛牌 <strong style="color:var(--text)">${reg.toLocaleString()}</strong> 台</span>
-        <span style="margin-left:auto;font-family:'DM Mono',monospace;font-size:10px;color:var(--text3)">廣告花費 <strong style="color:${bc}">${(sp/100).toFixed(1)}萬</strong> ｜ 每台廣告成本 <strong style="color:var(--text)">${cpr>0?cpr.toLocaleString()+'元':'—'}</strong></span>
+        <span style="margin-left:auto;font-family:'DM Mono',monospace;font-size:10px;color:var(--text3)">廣告花費 <strong style="color:${bc}">${(sp/100).toFixed(1)}萬</strong></span>
       </div>
       <!-- Three-column body -->
       <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:0">
