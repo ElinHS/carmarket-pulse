@@ -33,5 +33,6 @@ const RAW=[
   {yr:2026,mo:5,kicks:467,kickse:0,sentra:286,xtrail:192,xtraile:70,ariya:0,note:'櫻花特仕版(KICKS/SENTRA)'},
   {yr:2026,mo:6,kicks:481,kickse:0,sentra:304,xtrail:260,xtraile:93,ariya:0,note:'夏季競賽月'},
   {yr:2026,mo:7,kicks:478,kickse:0,sentra:265,xtrail:305,xtraile:72,ariya:0,note:'X-Trail 粋．月國產小改款上市'},
+  {yr:2026,mo:8,kicks:338,kickse:0,sentra:191,xtrail:222,xtraile:56,ariya:0,note:'民俗月；X-Trail 擴大召回輿情'},
 ];
 

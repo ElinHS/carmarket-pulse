@@ -1357,7 +1357,7 @@ function buildEsovChart(){
       plugins:{legend:{labels:{color:'#8892a4',font:{size:10},boxWidth:10,boxHeight:10}},
         tooltip:{backgroundColor:'#1a1e28',borderColor:'#2e3548',borderWidth:1,bodyColor:'#e8eaf0',footerColor:'#b0b8cc',mode:'index',intersect:false,
           callbacks:{label:c=>` ${c.dataset.label}: ${c.parsed.y}%`,
-            footer:items=>{const r=rows[items[0].dataIndex];return r.hasReg?`ESOV ${r.esov>=0?'+':''}${r.esov.toFixed(1)} 百分點 ｜ 掛牌 ${r.reg.toLocaleString()} 台`:'掛牌數尚未公布，ESOV 無法計算'}}}},
+            footer:items=>{const r=rows[items[0].dataIndex];return r.hasReg?`ESOV ${r.esov>=0?'+':''}${r.esov.toFixed(1)} 百分點 ｜ 掛牌 ${r.reg.toLocaleString()} 台`:'本月未設定掛牌對照值，ESOV 無法計算'}}}},
       scales:{x:{ticks:{color:'#8892a4',font:{size:11}},grid:{color:'#1a1e28'},border:{color:'#252a38'}},
         y:{min:0,ticks:{color:'#8896b0',font:{size:10},callback:v=>v+'%'},grid:{color:'#1a1e28'},border:{color:'#252a38'}}}}});
   const bEl=document.getElementById('esovBadges');
@@ -1365,8 +1365,8 @@ function buildEsovChart(){
     const pos=r.esov>=0;
     return `<div style="background:var(--surface2);border:1px solid ${r.color}33;border-radius:8px;padding:8px 10px;text-align:center">
       <div style="font-family:'DM Mono',monospace;font-size:10px;color:${r.color};margin-bottom:3px">${r.label}</div>
-      <div style="font-family:'DM Mono',monospace;font-size:15px;font-weight:600;color:${r.hasReg?(pos?'var(--green)':'var(--red)'):'var(--text3)'}" ${r.hasReg?'':'title="當月掛牌數尚未公布，ESOV 無法計算"'}>${r.hasReg?`${pos?'▲ +':'▼ '}${r.esov.toFixed(1)}`:'—'}</div>
-      <div style="font-size:9px;color:var(--text3)">SOV ${r.sov.toFixed(1)}% ${r.hasReg?`− SOM ${r.som.toFixed(1)}%`:'｜掛牌未公布'}</div>
+      <div style="font-family:'DM Mono',monospace;font-size:15px;font-weight:600;color:${r.hasReg?(pos?'var(--green)':'var(--red)'):'var(--text3)'}" ${r.hasReg?'':'title="本月未設定掛牌對照值，ESOV 無法計算"'}>${r.hasReg?`${pos?'▲ +':'▼ '}${r.esov.toFixed(1)}`:'—'}</div>
+      <div style="font-size:9px;color:var(--text3)">SOV ${r.sov.toFixed(1)}% ${r.hasReg?`− SOM ${r.som.toFixed(1)}%`:'｜無掛牌對照'}</div>
     </div>`;
   }).join('');
 }
@@ -1746,8 +1746,8 @@ document.addEventListener('keydown',e=>{
 // 資料結構：每個車款的競品清單，每個品牌每月掛牌數
 // 📦 資料已抽離 → data/comp.js（競品掛牌比對 COMP_DATA）
 
-const COMP_MONTHS = ['jan','feb','mar','apr','may','jun','jul'];
-const COMP_MONTH_LABELS = {jan:'1月',feb:'2月',mar:'3月',apr:'4月',may:'5月',jun:'6月',jul:'7月'};
+const COMP_MONTHS = ['jan','feb','mar','apr','may','jun','jul','aug'];
+const COMP_MONTH_LABELS = {jan:'1月',feb:'2月',mar:'3月',apr:'4月',may:'5月',jun:'6月',jul:'7月',aug:'8月'};
 const COMP_KEYS = ['kicks','sentra','xtrail','xtraile']; // 戰場①→④ 順序
 let compModel = 'kicks';
 let compCharts = {};
