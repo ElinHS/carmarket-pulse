@@ -273,27 +273,14 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
       <div class="chart-wrap" style="height:180px"><canvas id="nielsenChannelChart"></canvas></div>
     </div>
   </div>
-  <!-- SOV vs SOM 超額聲量分析（ESOV = 聲量份額 − 市場份額，投放領先/落後市場地位的先行指標） -->
-  <div class="chart-card full" style="margin-bottom:16px">
-    <div class="card-header">
-      <span class="card-title">SOV vs SOM — 超額聲量 ESOV 分析<span class="info-tip" data-tip="ESOV（Excess Share of Voice）＝SOV − SOM（掛牌份額）。正值代表投放聲量領先市場地位，理論上有利擴大市占；負值代表投放低於市占，靠品牌慣性消耗。注意廣告對掛牌的影響通常有 1–2 個月時滯，判讀跨月變化時建議往後推移對照。">ⓘ</span></span>
-      <span class="card-tag" id="esovTag">聲量份額 vs 掛牌份額（六品牌內）</span>
-    </div>
-    <div class="chart-wrap" style="height:240px"><canvas id="esovChart"></canvas></div>
-    <div id="esovBadges" style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:12px"></div>
-    <div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--border);font-size:10px;color:var(--text3);line-height:1.7">
-      ⓘ ESOV（Excess Share of Voice）= SOV − SOM。行銷理論上 ESOV 為正的品牌傾向擴大市占、為負則靠品牌慣性消耗。
-      SOV 僅含 Nielsen 可監測數位 Display/Video 花費；SOM 為六監測品牌內的掛牌相對份額（部分品牌掛牌數為估計值）；兩者皆非全市場絕對值，適合看相對強弱與跨月變化。
-    </div>
-  </div>
   <!-- 品牌整合時間軸：投放 × 促銷 × 掛牌 三線索同框，看因果對應 -->
   <div class="chart-card full" style="margin-bottom:16px">
     <div class="card-header">
-      <span class="card-title">品牌整合時間軸 — 投放 SOV × 掛牌 SOM × 促銷火力</span>
+      <span class="card-title">品牌整合時間軸 — 投放 SOV × 促銷火力</span>
       <span class="card-tag">2026 年 1–6 月</span>
     </div>
     <div style="display:flex;gap:6px;margin-bottom:10px;flex-wrap:wrap" id="timelineBrandBtns"></div>
-    <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);margin-bottom:4px">SOV%（投放聲量份額） vs SOM%（掛牌份額）</div>
+    <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);margin-bottom:4px">SOV%（投放聲量份額）</div>
     <div class="chart-wrap" style="height:200px"><canvas id="timelineShareChart"></canvas></div>
     <div style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);margin:10px 0 4px">促銷火力指數（0–5，全車款平均）</div>
     <div class="chart-wrap" style="height:110px"><canvas id="timelinePromoChart"></canvas></div>
@@ -310,15 +297,11 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
           <th style="padding:10px 14px;text-align:right;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:.08em">曝光</th>
           <th style="padding:10px 14px;text-align:right;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:.08em">CPM（元）</th>
           <th style="padding:10px 14px;text-align:right;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:.08em">Video%</th>
-          <th style="padding:10px 14px;text-align:right;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:.08em">數位每台成本<span style="display:block;font-size:9px;color:rgba(251,146,60,.7);font-weight:400;letter-spacing:0">當月數位花費÷當月掛牌</span></th>
         </tr></thead>
         <tbody id="nielsenVehicleTable"></tbody>
       </table>
     </div>
     <div style="padding:8px 14px 4px;border-top:1px solid var(--border);display:flex;flex-wrap:wrap;gap:16px">
-      <span style="font-size:10px;color:var(--text3);font-family:'DM Mono',monospace">
-        ⓘ <b style="color:rgba(251,146,60,.8)">數位每台成本</b> = 當月 Nielsen 可監測數位花費估算 ÷ 當月品牌掛牌量
-      </span>
       <span style="font-size:10px;color:var(--text3);font-family:'DM Mono',monospace">
         ⚠ 分子僅含 Display／Video，不含電視廣告；偏好傳統媒體的品牌數值會系統性偏低
       </span>
@@ -1065,7 +1048,6 @@ function buildNielsenCharts(){
       const vid  = d && d.totalSp>0 ? (d.vidSp/d.totalSp*100).toFixed(0)+'%' : '—';
       const sov  = totalSp>0 ? (sp*100/( totalSp/100)*100/100).toFixed(0) : 0;
       const sovPct = totalSp>0 ? ((d?.totalSp||0)/totalSp*100).toFixed(1) : '0';
-      const cpr  = d?.reg>0 && d?.totalSp>0 ? Math.round(d.totalSp*1000/d.reg).toLocaleString()+'元' : '—';
       const cpmColor = !cpm?'var(--text3)':cpm<100?'#34d399':cpm<150?'#fbbf24':'#f87171';
       return `<div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 16px;position:relative;overflow:hidden">
         <div style="position:absolute;top:0;left:0;right:0;height:2px;background:${b.color}"></div>
@@ -1088,8 +1070,7 @@ function buildNielsenCharts(){
             <span style="font-family:'DM Mono',monospace;color:var(--text2)">${vid}</span>
           </div>
           <div style="display:flex;justify-content:space-between;font-size:10px">
-            <span style="color:var(--text3)">數位每台成本</span>
-            <span style="font-family:'DM Mono',monospace;color:var(--text2)">${cpr}</span>
+
           </div>
         </div>
       </div>`;
@@ -1165,9 +1146,6 @@ function buildNielsenCharts(){
       const cpm=b.d.cpm||0;
       const share=totalSp>0?sp/totalSp*100:0;
       const vidPct=b.d.totalSp>0?(b.d.vidSp||0)/b.d.totalSp*100:0;
-      const reg=b.d.reg||0;
-      const cpr=reg>0&&b.d?.totalSp>0?Math.round(b.d.totalSp*1000/reg):0;
-      const cprColor=!cpr?'var(--text3)':cpr<1000?'var(--green)':cpr<10000?'var(--yellow)':'var(--red)';
       return `<tr>
         <td style="padding:9px 14px;border-bottom:1px solid var(--border)"><span style="background:${b.color}22;border:1px solid ${b.color}44;color:${b.color};font-family:'DM Mono',monospace;font-size:10px;padding:2px 7px;border-radius:3px">${b.label}</span></td>
         <td style="padding:9px 14px;border-bottom:1px solid var(--border);text-align:right;font-family:'DM Mono',monospace;font-size:13px;font-weight:500;color:${b.color}">${sp.toFixed(2)}</td>
@@ -1175,7 +1153,6 @@ function buildNielsenCharts(){
         <td style="padding:9px 14px;border-bottom:1px solid var(--border);text-align:right;font-family:'DM Mono',monospace;font-size:12px;color:var(--text2)">${imp>=1?imp.toFixed(0)+'萬':((b.d.totalImp||0)/1000).toFixed(0)+'千'}</td>
         <td style="padding:9px 14px;border-bottom:1px solid var(--border);text-align:right;font-family:'DM Mono',monospace;font-size:13px;font-weight:500;color:${cpm>0?(cpm<100?'var(--green)':cpm<150?'var(--yellow)':'var(--red)'):'var(--text3)'}">${cpm>0?cpm:'—'}</td>
         <td style="padding:9px 14px;border-bottom:1px solid var(--border);text-align:right;font-family:'DM Mono',monospace;font-size:12px;color:${vidPct>15?'var(--green)':vidPct>5?'var(--yellow)':'var(--text3)'}">${vidPct.toFixed(0)}%</td>
-        <td style="padding:9px 14px;border-bottom:1px solid var(--border);text-align:right;font-family:'DM Mono',monospace;font-size:12px;font-weight:500;color:${cprColor}">${cpr>0?cpr.toLocaleString()+'元':'—'}</td>
       </tr>`;
     }).join('') + `<tr style="background:var(--surface2)">
       <td style="padding:9px 14px;font-family:'DM Mono',monospace;font-size:10px;color:var(--text3)">合計</td>
@@ -1195,8 +1172,7 @@ function buildNielsenCharts(){
         <th style="padding:10px 14px;text-align:right;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:.08em">花費市占</th>
         <th style="padding:10px 14px;text-align:right;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:.08em">曝光</th>
         <th style="padding:10px 14px;text-align:right;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:.08em">CPM（元）</th>
-        <th style="padding:10px 14px;text-align:right;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:.08em">Video%</th>
-        <th style="padding:10px 14px;text-align:right;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:.08em">數位每台成本<span style=\"display:block;font-size:9px;color:rgba(251,146,60,.7);font-weight:400\">當月花費÷當月掛牌</span></th>`;
+        <th style="padding:10px 14px;text-align:right;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;font-size:10px;color:var(--text3);letter-spacing:.08em">Video%</th>`;
     }
   }
 
@@ -1297,9 +1273,6 @@ function buildNielsenCharts(){
     const cpm=b.d.cpm||0;
     const share=totalSp4>0?sp/totalSp4*100:0;
     const vidPct=b.d.totalSp>0?(b.d.vidSp||0)/b.d.totalSp*100:0;
-    const reg=b.d.reg||0;
-    const cpr=reg>0&&b.d?.totalSp>0?Math.round(b.d.totalSp*1000/reg):0;
-    const cprColor=!cpr?'var(--text3)':cpr<1000?'var(--green)':cpr<10000?'var(--yellow)':'var(--red)';
     return `<tr>
       <td style="padding:9px 14px;border-bottom:1px solid var(--border)"><span style="background:${b.color}22;border:1px solid ${b.color}44;color:${b.color};font-family:'DM Mono',monospace;font-size:10px;padding:2px 7px;border-radius:3px">${b.label}</span></td>
       <td style="padding:9px 14px;border-bottom:1px solid var(--border);text-align:right;font-family:'DM Mono',monospace;font-size:13px;font-weight:500;color:${b.color}">${sp.toFixed(2)}</td>
@@ -1307,7 +1280,6 @@ function buildNielsenCharts(){
       <td style="padding:9px 14px;border-bottom:1px solid var(--border);text-align:right;font-family:'DM Mono',monospace;font-size:12px;color:var(--text2)">${imp>=1?imp.toFixed(0)+'萬':((b.d.totalImp||0)/1000).toFixed(0)+'千'}</td>
       <td style="padding:9px 14px;border-bottom:1px solid var(--border);text-align:right;font-family:'DM Mono',monospace;font-size:13px;font-weight:500;color:${cpm>0?(cpm<100?'var(--green)':cpm<150?'var(--yellow)':'var(--red)'):'var(--text3)'}">${cpm>0?cpm:'—'}</td>
       <td style="padding:9px 14px;border-bottom:1px solid var(--border);text-align:right;font-family:'DM Mono',monospace;font-size:12px;color:${vidPct>15?'var(--green)':vidPct>5?'var(--yellow)':'var(--text3)'}">${vidPct.toFixed(0)}%</td>
-      <td style="padding:9px 14px;border-bottom:1px solid var(--border);text-align:right;font-family:'DM Mono',monospace;font-size:12px;font-weight:500;color:${cprColor}">${cpr>0?cpr.toLocaleString()+'元':'—'}</td>
     </tr>`;
   }).join('') + `<tr style="background:var(--surface2)">
     <td style="padding:9px 14px;font-family:'DM Mono',monospace;font-size:10px;color:var(--text3)">合計</td>
@@ -1330,46 +1302,12 @@ function nielsenShare(mo){
   const m=NIELSEN_MONTHLY[mo];
   if(!m) return null;
   const tSp=ESOV_BRANDS.reduce((s,b)=>s+(m[b.key]?.totalSp||0),0);
-  const tReg=ESOV_BRANDS.reduce((s,b)=>s+(m[b.key]?.reg||0),0);
   return ESOV_BRANDS.map(b=>{
     const d=m[b.key]||{};
-    const sov=tSp>0?(d.totalSp||0)/tSp*100:0;
-    const som=tReg>0?(d.reg||0)/tReg*100:0;
-    // hasReg：當月掛牌數是否已公布。未公布時 SOM／ESOV 無意義，不可當 0 呈現
-    return {...b,sov,som,esov:sov-som,reg:d.reg||0,hasReg:tReg>0};
+    return {...b,sov:tSp>0?(d.totalSp||0)/tSp*100:0};
   });
 }
 
-function buildEsovChart(){
-  const cv=document.getElementById('esovChart');
-  if(!cv||typeof Chart==='undefined') return;
-  const rows=nielsenShare(nielsenPeriod);
-  if(!rows) return;
-  const tagEl=document.getElementById('esovTag');
-  if(tagEl) tagEl.textContent=`${NIELSEN_MONTHLY[nielsenPeriod].label} ｜ 聲量份額 vs 掛牌份額（六品牌內）`;
-  if(nielsenCharts.esov) nielsenCharts.esov.destroy();
-  nielsenCharts.esov=new Chart(cv.getContext('2d'),{type:'bar',
-    data:{labels:rows.map(r=>r.label),datasets:[
-      {label:'SOV 投放聲量份額',data:rows.map(r=>+r.sov.toFixed(1)),backgroundColor:rows.map(r=>r.color+'cc'),borderColor:rows.map(r=>r.color),borderWidth:1,borderRadius:3},
-      {label:'SOM 掛牌份額',data:rows.map(r=>+r.som.toFixed(1)),backgroundColor:rows.map(r=>r.color+'44'),borderColor:rows.map(r=>r.color+'88'),borderWidth:1,borderRadius:3},
-    ]},
-    options:{responsive:true,maintainAspectRatio:false,
-      plugins:{legend:{labels:{color:'#8892a4',font:{size:10},boxWidth:10,boxHeight:10}},
-        tooltip:{backgroundColor:'#1a1e28',borderColor:'#2e3548',borderWidth:1,bodyColor:'#e8eaf0',footerColor:'#b0b8cc',mode:'index',intersect:false,
-          callbacks:{label:c=>` ${c.dataset.label}: ${c.parsed.y}%`,
-            footer:items=>{const r=rows[items[0].dataIndex];return r.hasReg?`ESOV ${r.esov>=0?'+':''}${r.esov.toFixed(1)} 百分點 ｜ 掛牌 ${r.reg.toLocaleString()} 台`:'本月未設定掛牌對照值，ESOV 無法計算'}}}},
-      scales:{x:{ticks:{color:'#8892a4',font:{size:11}},grid:{color:'#1a1e28'},border:{color:'#252a38'}},
-        y:{min:0,ticks:{color:'#8896b0',font:{size:10},callback:v=>v+'%'},grid:{color:'#1a1e28'},border:{color:'#252a38'}}}}});
-  const bEl=document.getElementById('esovBadges');
-  if(bEl) bEl.innerHTML=rows.map(r=>{
-    const pos=r.esov>=0;
-    return `<div style="background:var(--surface2);border:1px solid ${r.color}33;border-radius:8px;padding:8px 10px;text-align:center">
-      <div style="font-family:'DM Mono',monospace;font-size:10px;color:${r.color};margin-bottom:3px">${r.label}</div>
-      <div style="font-family:'DM Mono',monospace;font-size:15px;font-weight:600;color:${r.hasReg?(pos?'var(--green)':'var(--red)'):'var(--text3)'}" ${r.hasReg?'':'title="本月未設定掛牌對照值，ESOV 無法計算"'}>${r.hasReg?`${pos?'▲ +':'▼ '}${r.esov.toFixed(1)}`:'—'}</div>
-      <div style="font-size:9px;color:var(--text3)">SOV ${r.sov.toFixed(1)}% ${r.hasReg?`− SOM ${r.som.toFixed(1)}%`:'｜無掛牌對照'}</div>
-    </div>`;
-  }).join('');
-}
 
 // 品牌整合時間軸：同一品牌的 SOV / SOM / 促銷火力沿月份對齊，供判讀「投了什麼 → 賣得如何」
 let timelineBrand='nissan';
@@ -1389,8 +1327,6 @@ function buildBrandTimeline(){
   const labels=months.map(m=>MONTH_LABELS[m]||m);
   const shares=months.map(m=>{const s=nielsenShare(m);return s?s.find(x=>x.key===brand.key):null});
   const sov=shares.map(s=>s?+s.sov.toFixed(1):null);
-  const som=shares.map(s=>s?+s.som.toFixed(1):null);
-  const regs=shares.map(s=>s?s.reg:0);
   const promo=months.map(m=>promoBrandIndex(brand.label,m).avg);
   const launches=months.map(m=>LAUNCH_CALENDAR.filter(it=>it.brand===brand.label&&it.ym===TL_YM[m]));
 
@@ -1398,7 +1334,6 @@ function buildBrandTimeline(){
   nielsenCharts.tlShare=new Chart(document.getElementById('timelineShareChart').getContext('2d'),{type:'line',
     data:{labels,datasets:[
       {label:'SOV 投放聲量份額',data:sov,borderColor:brand.color,backgroundColor:brand.color+'22',borderWidth:2.5,pointRadius:4,pointHoverRadius:6,tension:0.3,fill:false},
-      {label:'SOM 掛牌份額',data:som,borderColor:brand.color,borderDash:[5,4],borderWidth:1.5,pointRadius:3,pointHoverRadius:5,pointStyle:'rect',tension:0.3,fill:false},
     ]},
     options:{responsive:true,maintainAspectRatio:false,
       plugins:{legend:{labels:{color:'#8892a4',font:{size:10},padding:8,boxWidth:20,boxHeight:2,usePointStyle:true,pointStyle:'line'}},
@@ -1436,7 +1371,7 @@ function buildBrandTimeline(){
 // buildNielsenCharts 在各月份分支內會提早 return，故統一在外層包裝加掛 ESOV 與時間軸
 {
   const _obnc=buildNielsenCharts;
-  window.buildNielsenCharts=function(){ _obnc(); buildEsovChart(); buildBrandTimeline(); };
+  window.buildNielsenCharts=function(){ _obnc(); buildBrandTimeline(); };
 }
 
 // 📦 資料已抽離 → data/strategy.js（品牌策略 STRAT_DATA / CASES）
@@ -1532,8 +1467,8 @@ function buildQ1Strip(){
   const nisAd=Q1_AD.NISSAN[mo];
   const nisReg=Q1_REG.NISSAN[mo]||0;
   const nisSp=nisAd?.sp||0;
-  const nisShare=totalSp>0?(nisSp/totalSp*100).toFixed(1):0;
   const nisCpr=nisReg>0&&nisSp>0?Math.round(nisSp*1000/nisReg):0;
+  const nisShare=totalSp>0?(nisSp/totalSp*100).toFixed(1):0;
 
   el.innerHTML=[
     {label:'監測期間',value:mo==='q1'?'2026 Q1':mo==='jan'?'2026年 1月':mo==='feb'?'2026年 2月':'2026年 3月',sub:'競品廣告監測',ac:'var(--accent2)'},
@@ -2478,8 +2413,6 @@ async function buildNielsenBrandCards(period){
     const sp       = (d.totalSp/100).toFixed(1);
     const sov      = totalSp>0?(d.totalSp/totalSp*100).toFixed(1):'0';
     const cpm      = d.cpm||0;
-    const reg      = d.reg||0;
-    const cpr      = reg>0&&d.totalSp>0?Math.round(d.totalSp*1000/reg).toLocaleString()+'元':'—';
     const vid      = d.totalSp>0?((d.vidSp||0)/d.totalSp*100).toFixed(0):0;
     const chs      = (d.channels||[]).slice(0,3).map(ch=>ch.name+' '+ch.pct+'%').join(' / ');
     const note     = d.note||'';
@@ -2493,9 +2426,8 @@ async function buildNielsenBrandCards(period){
       <!-- 品牌標頭 -->
       <div style="display:flex;align-items:center;gap:12px;padding:12px 18px;background:${b.color}0d;border-bottom:1px solid ${b.color}22">
         <span style="font-family:'DM Mono',monospace;font-size:13px;font-weight:600;color:${b.color}">${b.label}</span>
-        <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--text3)">掛牌 <strong style="color:var(--text)">${reg>0?reg.toLocaleString():'—'}</strong> 台</span>
         <span style="background:${b.color}18;color:${b.color};font-family:'DM Mono',monospace;font-size:9px;padding:2px 8px;border-radius:3px">SOV ${sov}%</span>
-        <span style="margin-left:auto;font-family:'DM Mono',monospace;font-size:10px;color:var(--text3)">花費 <strong style="color:${b.color}">${sp}萬</strong> ｜ 每台成本 <strong style="color:var(--text)">${cpr}</strong></span>
+        <span style="margin-left:auto;font-family:'DM Mono',monospace;font-size:10px;color:var(--text3)">花費 <strong style="color:${b.color}">${sp}萬</strong></span>
       </div>
       <!-- 三欄 -->
       <div style="display:grid;grid-template-columns:1fr 1fr 2fr;gap:0">
