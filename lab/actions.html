@@ -108,7 +108,7 @@ function downloadCSV(rows,filename){
   a.click();
   URL.revokeObjectURL(a.href);
 }
-const MONTHS_AVAIL=['jan','feb','mar','apr','may','jun','jul','aug'];
+const MONTHS_AVAIL=['jan','feb','mar','apr','may','jun','jul','aug','sep'];
 const MONTH_LABELS={jan:'1月',feb:'2月',mar:'3月',apr:'4月',may:'5月',jun:'6月',jul:'7月',aug:'8月',sep:'9月',oct:'10月',nov:'11月',dec:'12月'};
 const PROMO_SIGNALS=[
   {key:'cash',    label:'價格讓利／專案價', w:1.5, re:/現金|直折|折價|折讓|優惠價|專案價|保證購回|\d{2,3}(?:\.\d)?萬(?:元)?起|最高(?:價值)?\s*\d+(?:\.\d+)?萬/},
