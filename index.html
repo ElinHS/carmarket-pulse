@@ -66,7 +66,10 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
   <button class="nav-tab" data-page="models" onclick="switchPage('models',event)">🚘 汽車品牌活動動態</button>
   <span id="dataStatus" style="align-self:center;font-family:'DM Mono',monospace;font-size:11px;color:var(--text2);white-space:nowrap;padding-left:14px"></span>
 </div>
+<!-- ⬇ CSV 匯出按鈕暫時停用（2026/09）：CSV_EXPORTERS 與各頁 exportXxxCSV() 程式碼均保留，
+     只停用這個入口。恢復方式：解除下面這行註解。
 <button id="csvFab" class="csv-fab" onclick="exportCurrentCSV()" title="下載目前頁面的資料（CSV）">⬇ 匯出 CSV</button>
+-->
 <div id="pageWrap">
 
 <!-- PAGE 1: 掛牌數追蹤 -->
