@@ -527,7 +527,9 @@ function exportLaunchCSV(){
 }
 // ── 汽車品牌活動動態 ──
 const MODELS_BC={NISSAN:'#c8f55a',TOYOTA:'#f97316',HONDA:'#fb7185',FORD:'#60a5fa',HYUNDAI:'#a78bfa',MAZDA:'#34d399',MITSUBISHI:'#ef4444',VOLKSWAGEN:'#22d3ee',MG:'#facc15',KIA:'#94a3b8'};
-const MODELS_TC={'異業合作':'#f472b6','代言':'#c8f55a','體驗活動':'#fbbf24','產品話題':'#7dd3fc','通路':'#fb923c','其他':'#94a3b8'};
+const MODELS_TC={'異業合作':'#f472b6','代言':'#c8f55a','體驗活動':'#fbbf24','產品話題':'#7dd3fc','通路':'#fb923c','展間活動':'#a78bfa','KOL合作':'#34d399','車主活動':'#fca5a5','其他':'#94a3b8'};
+// type 可用「＆」串接多個類型（例：'異業合作＆產品話題'），渲染時拆成多顆徽章
+function modelsTypes(t){return String(t||'').split(/[＆&]/).map(s=>s.trim()).filter(Boolean)}
 let modelsBrand='ALL';
 function setModelsBrand(b,e){ modelsBrand=b; buildModelsPage(); }
 
@@ -560,13 +562,13 @@ function buildModelsPage(){
     const label=`${ym.slice(0,4)} 年 ${parseInt(ym.slice(5),10)} 月`;
     const items=groups[ym].map(it=>{
       const bc=MODELS_BC[it.brand]||'#94a3b8';
-      const tc=MODELS_TC[it.type]||'#94a3b8';
       return `<div style="background:var(--surface);border:1px solid var(--border);border-left:3px solid ${bc};border-radius:8px;padding:15px 18px">
         <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px">
           <span style="font-family:'DM Mono',monospace;font-size:11px;font-weight:700;color:${bc};background:${bc}15;border:1px solid ${bc}40;padding:2px 9px;border-radius:3px">${it.brand}</span>
           <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text2)">${it.model}</span>
           <span style="font-size:15px;font-weight:700;color:#fff">${it.title}</span>
-          <span style="font-size:10px;padding:2px 10px;border-radius:100px;color:${tc};border:1px solid ${tc}55;background:${tc}12">${it.type}</span>
+          ${modelsTypes(it.type).map(t=>{const tc=MODELS_TC[t]||'#94a3b8';
+            return `<span style="font-size:10px;padding:2px 10px;border-radius:100px;color:${tc};border:1px solid ${tc}55;background:${tc}12">${t}</span>`}).join('')}
           ${it.date?`<span style="margin-left:auto;font-family:'DM Mono',monospace;font-size:10px;color:var(--text3)">${it.date}</span>`:''}
         </div>
         ${it.summary?`<div style="font-size:12.5px;color:var(--text2);line-height:1.8;margin-bottom:${it.points&&it.points.length?'9px':'0'}">${it.summary}</div>`:''}
