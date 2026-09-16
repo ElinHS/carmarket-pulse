@@ -13,13 +13,58 @@
 //   date    ：顯示用日期字串，可為區間（'2026/10/03–10/04'）或單日；未定可省略
 //   brand   ：品牌（對應品牌色，未列入配色者顯示灰色）
 //   model   ：車款名稱
-//   type    ：異業合作｜代言｜體驗活動｜產品話題｜通路｜其他（決定徽章顏色）
+//   type    ：異業合作｜代言｜體驗活動｜產品話題｜通路｜展間活動｜KOL合作｜車主活動｜其他
+//             （決定徽章顏色；一則活動橫跨多個類型時用「＆」串接，例 '異業合作＆產品話題'，
+//               會拆成多顆徽章顯示。未列入上表的類型顯示為灰色）
 //   title   ：一句話標題
 //   summary ：摘要段落，可省略
 //   points  ：重點條列（陣列），可省略
 //   links   ：出處連結 [{label, url}]，可省略；建議保留以便回查
 
 const MODEL_NEWS = [
+  {ym:'2026-09', date:'2026/09/07–10/07', brand:'FORD', model:'Territory',
+   type:'異業合作＆產品話題',
+   title:'Ford Territory ×「有飲 Youin」全台巡迴開跑',
+   summary:'Ford Territory 攜手「有飲 Youin」展開全台巡迴，於官方 Facebook 完成 #指定任務，即有機會獲得有飲烏龍奶茶包。',
+   points:[
+     '活動時間：2026 年 9 月 7 日至 10 月 7 日',
+     '參與方式：於 Ford 官方 Facebook 貼文完成 #指定任務',
+     '活動好禮：有飲烏龍奶茶包',
+   ],
+   links:[
+     {label:'Ford Facebook 活動貼文', url:'https://www.facebook.com/share/p/14qyZvvhDGA/'},
+   ]},
+
+  {ym:'2026-09', date:'2026/09–10/04', brand:'FORD', model:'Territory',
+   type:'異業合作＆車主活動',
+   title:'FORD × SKRABUR 黑膠漢堡 ｜ #FORD牛肉就是比較多',
+   summary:'FORD 與 SKRABUR 黑膠漢堡（信義店、台南店）合作，9 月起至 10/4 出示 FORD 車主鑰匙即可兌換福特專屬餐點，並以限動或打卡搭配指定 hashtag 完成社群任務。',
+   points:[
+     '活動時間：2026 年 9 月起至 10 月 4 日',
+     '合作店點：SKRABUR 黑膠漢堡 信義店、台南店',
+     '參與資格：出示 FORD 車主鑰匙',
+     '車主權益：兌換福特專屬餐點',
+     '社群任務：上傳限動或打卡並搭配指定 hashtag ＃FORD牛肉就是比較多',
+   ],
+   links:[
+     {label:'Ford Facebook 活動貼文', url:'https://www.facebook.com/share/p/1Ym1MUy7YD/'},
+   ]},
+
+  {ym:'2026-08', date:'2026/08/29', brand:'FORD', model:'Territory',
+   type:'展間活動＆KOL合作',
+   title:'小小造車家',
+   summary:'活動邀請知名親子教育作家「神老師＆神媽咪」與社團法人台灣麵包花與紙黏土推展協會跨界合作，帶領現場超過 60 位大小朋友一起捏出專屬的夢想車車 Ford Territory。',
+   points:[
+     '活動日期：2026 年 8 月 29 日',
+     '合作對象：親子教育作家 神老師＆神媽咪、社團法人台灣麵包花與紙黏土推展協會',
+     '現場規模：超過 60 位大小朋友參與',
+     '延伸操作：9/1 起透過各經銷商電話預約領取時間，免費領取黏土材料包',
+     '領取期間：9/5–9/20 至 Ford 指定展間領取',
+   ],
+   links:[
+     {label:'Ford Facebook 活動貼文', url:'https://www.facebook.com/share/p/1DRKziY4MZ/'},
+   ]},
+
   {ym:'2026-10', date:'2026/10/03–10/04', brand:'MITSUBISHI', model:'XFORCE',
    type:'異業合作',
    title:'XFORCE × 2026 呼聲 VOICES 音樂節',
