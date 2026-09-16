@@ -165,11 +165,11 @@ const LAUNCH_2026 = [
        '動力：e-POWER 電驅（馬達驅動）搭配 e-4ORCE 四驅',
        '鎖定 RAV4 Hybrid 等進口中大型 SUV 對手',
      ]},
-    {brand:'HONDA', title:'ZR-V e:HEV 國內正式發表（9/15）', type:'新車',
+    {brand:'HONDA', title:'ZR-V e:HEV 上市（9/15）', type:'新車',
      points:[
-       '9 月 15 日正式發表',
+       '9 月 15 日正式發表，單一車型售價 119.9 萬',
        '動力：2.0L e:HEV 油電、單一動力前驅設定，油耗約 20.4 km/L',
-       '售價待公布，媒體推測約 110～130 萬級距',
+       '原廠設定年販售目標 3,000 台',
      ]},
     {brand:'TOYOTA', title:'Crown Crossover 新年式', type:'年式',
      points:[
