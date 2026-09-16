@@ -13,7 +13,8 @@
 //   date    ：顯示用日期字串，可為區間（'2026/10/03–10/04'）或單日；未定可省略
 //   brand   ：品牌（對應品牌色，未列入配色者顯示灰色）
 //   model   ：車款名稱
-//   type    ：異業合作｜代言｜體驗活動｜產品話題｜通路｜展間活動｜KOL合作｜車主活動｜其他
+//   type    ：異業合作｜代言｜體驗活動｜產品話題｜通路｜展間活動｜KOL合作｜車主活動
+//             ｜戶外展車｜品牌活動｜其他
 //             （決定徽章顏色；一則活動橫跨多個類型時用「＆」串接，例 '異業合作＆產品話題'，
 //               會拆成多顆徽章顯示。未列入上表的類型顯示為灰色）
 //   title   ：一句話標題
@@ -22,6 +23,33 @@
 //   links   ：出處連結 [{label, url}]，可省略；建議保留以便回查
 
 const MODEL_NEWS = [
+  {ym:'2026-10', date:'2026/10/03', brand:'TOYOTA', model:'GR',
+   type:'體驗活動＆產品話題',
+   title:'GR 嘉年華（台南）',
+   summary:'GR 嘉年華首度移師南部，並規劃「首度封街展演」；更邀請到全球車迷矚目的兩大新世代旗艦超跑 GR GT 與 GR GT3 首度在台亮相，是 2026 年台灣車壇不容錯過的熱血重頭戲。',
+   points:[
+     '活動日期：2026 年 10 月 3 日',
+     '活動地點：台南（首度移師南部）',
+     '活動亮點：首度封街展演',
+     '重點展演車款：GR GT、GR GT3 兩款新世代旗艦超跑首度在台亮相',
+   ],
+   links:[
+     {label:'TOYOTA GAZOO Racing 活動官網', url:'https://www.toyota.com.tw/toyotagazooracing/2026GRcityshowrun/'},
+   ]},
+
+  {ym:'2026-10', date:'2026/10/31', brand:'TOYOTA', model:'BRANDING',
+   type:'品牌活動',
+   title:'TOYOTA RUN ＃挺你一起跑',
+   summary:'以「關懷」為核心，串連北中南四場主題路跑，讓參與者和毛孩、視障者或家人一起慢跑。',
+   points:[
+     '活動日期：2026 年 10 月 31 日',
+     '場次規劃：台北、新竹 寵物專場｜台中 視障場｜高雄 樂齡場，共四場',
+     '溝通核心：以「關懷」為主軸，結合陪跑對象設計各場主題',
+   ],
+   links:[
+     {label:'TOYOTA RUN 活動官網', url:'https://www.toyota.com.tw/event/toyotarun/'},
+   ]},
+
   {ym:'2026-09', date:'2026/09/07–10/07', brand:'FORD', model:'Territory',
    type:'異業合作＆產品話題',
    title:'Ford Territory ×「有飲 Youin」全台巡迴開跑',
@@ -48,6 +76,20 @@ const MODEL_NEWS = [
    ],
    links:[
      {label:'Ford Facebook 活動貼文', url:'https://www.facebook.com/share/p/1Ym1MUy7YD/'},
+   ]},
+
+  {ym:'2026-08', date:'2026/08/29–08/30', brand:'TOYOTA', model:'COROLLA CROSS',
+   type:'異業合作＆戶外展車',
+   title:'《500碗》精選全台人氣小吃（高雄場）',
+   summary:'《500碗》精選全台人氣小吃高雄場於 8/29–8/30 在高雄夢時代登場，以「開著 COROLLA CROSS 一起來尋找旅途中屬於你的那一碗」串連自駕出遊情境，現場並抽出限量《500碗》500 元折價券。',
+   points:[
+     '活動時間：2026 年 8 月 29 日至 8 月 30 日',
+     '活動地點：高雄夢時代',
+     '溝通主軸：帶上家人朋友，開著 COROLLA CROSS 尋找旅途中屬於你的那一碗',
+     '活動好禮：限量抽《500碗》500 元折價券',
+   ],
+   links:[
+     {label:'TOYOTA Facebook 活動貼文', url:'https://www.facebook.com/share/p/1Gt4xZgzKQ/'},
    ]},
 
   {ym:'2026-08', date:'2026/08/29', brand:'FORD', model:'Territory',
