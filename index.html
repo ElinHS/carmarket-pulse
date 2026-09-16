@@ -63,7 +63,7 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
   <button class="nav-tab" data-page="nielsen" onclick="switchPage('nielsen',event)">📡 數位廣告監測</button>
   <button class="nav-tab" data-page="strategy" onclick="switchPage('strategy',event)">🧭 2025國產車品牌策略</button>
   <button class="nav-tab" data-page="kol" onclick="switchPage('kol',event)">🎬 車媒風格檢索</button>
-  <button class="nav-tab" data-page="models" onclick="switchPage('models',event)">🚘 車款動態</button>
+  <button class="nav-tab" data-page="models" onclick="switchPage('models',event)">🚘 汽車品牌活動動態</button>
   <span id="dataStatus" style="align-self:center;font-family:'DM Mono',monospace;font-size:11px;color:var(--text2);white-space:nowrap;padding-left:14px"></span>
 </div>
 <button id="csvFab" class="csv-fab" onclick="exportCurrentCSV()" title="下載目前頁面的資料（CSV）">⬇ 匯出 CSV</button>
@@ -390,10 +390,10 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
   <div id="kolImpactView" style="display:none"></div>
 </div>
 
-<!-- PAGE: 車款動態 -->
+<!-- PAGE: 汽車品牌活動動態 -->
 <div class="page" id="page-models">
   <div style="background:linear-gradient(90deg,rgba(200,245,90,.08),rgba(200,245,90,.02));border:1px solid rgba(200,245,90,.25);border-left:3px solid var(--accent);border-radius:8px;padding:10px 16px;margin-bottom:14px;font-size:11px;color:#b0b8cc">
-    <b style="color:var(--accent);font-family:'DM Mono',monospace">🚘 車款動態</b>　收錄單一車款層級的市場動態：異業合作、代言、體驗活動、產品話題與通路操作。上市／改款／特仕請見「新車上市月曆」，價格與方案請見「競車促銷方案」。
+    <b style="color:var(--accent);font-family:'DM Mono',monospace">🚘 汽車品牌活動動態</b>　收錄各品牌繞著特定車款推動的市場活動：異業合作、代言、體驗活動、產品話題與通路操作。上市／改款／特仕請見「新車上市月曆」，價格與方案請見「競車促銷方案」。
   </div>
   <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
     <div class="tab-group" id="modelsBrandGroup"></div>
@@ -521,7 +521,7 @@ function exportLaunchCSV(){
   LAUNCH_2026.forEach(g=>g.items.forEach(it=>rows.push([g.label,it.brand,it.title,it.type,(it.points||[]).join('；')])));
   downloadCSV(rows,'2026新車上市月曆.csv');
 }
-// ── 車款動態 ──
+// ── 汽車品牌活動動態 ──
 const MODELS_BC={NISSAN:'#c8f55a',TOYOTA:'#f97316',HONDA:'#fb7185',FORD:'#60a5fa',HYUNDAI:'#a78bfa',MAZDA:'#34d399',MITSUBISHI:'#ef4444',VOLKSWAGEN:'#22d3ee',MG:'#facc15',KIA:'#94a3b8'};
 const MODELS_TC={'異業合作':'#f472b6','代言':'#c8f55a','體驗活動':'#fbbf24','產品話題':'#7dd3fc','通路':'#fb923c','其他':'#94a3b8'};
 let modelsBrand='ALL';
@@ -592,7 +592,7 @@ function exportModelsCSV(){
   (modelsBrand==='ALL'?all:all.filter(x=>x.brand===modelsBrand)).forEach(r=>rows.push([
     r.ym, r.date||'', r.brand, r.model, r.type, r.title, r.summary||'',
     (r.points||[]).join('；'), (r.links||[]).map(l=>l.label+' '+l.url).join('；')]));
-  downloadCSV(rows,`車款動態${modelsBrand==='ALL'?'':'_'+modelsBrand}.csv`);
+  downloadCSV(rows,`汽車品牌活動動態${modelsBrand==='ALL'?'':'_'+modelsBrand}.csv`);
 }
 
 // 車媒風格檢索：媒體名單
