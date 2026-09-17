@@ -2704,73 +2704,50 @@ function buildLaunchPage(){
   });
   groups.sort((a,b)=>a.ym.localeCompare(b.ym));   // '2026-Q4' 之 Q 大於數字，恆排最後
 
-  // ── 總覽表：月份 × 品牌，一眼看出各品牌的檔期密度 ──
-  // 方塊＝該月上市時程項目數（品牌色），圓標＝品牌活動則數（粉色）；點月份跳到該月區塊。
-  const BRAND_ORDER = ['NISSAN','TOYOTA','HONDA','FORD','HYUNDAI','MAZDA','MITSUBISHI','VOLKSWAGEN','MG','KIA'];
-  const usedBrands = [...new Set([].concat(
-    ...groups.map(g=>g.items.map(i=>i.brand)),
-    ...groups.map(g=>g.news.map(n=>n.brand))))]
-    .sort((a,b)=>{
-      const ia=BRAND_ORDER.indexOf(a), ib=BRAND_ORDER.indexOf(b);
-      return (ia<0?99:ia)-(ib<0?99:ib) || a.localeCompare(b);
-    });
-  const chipL = (bc,n,t)=>`<span title="${t}" style="display:inline-block;min-width:20px;padding:1px 6px;border-radius:4px;font-family:'DM Mono',monospace;font-size:11px;font-weight:700;color:${bc};background:${bc}1f;border:1px solid ${bc}4d">${n}</span>`;
-  // 品牌活動用粉色圓標並加 🎪，與下方「🎪 品牌活動」分隔線呼應；
-  // 不靠顏色區分——MITSUBISHI 紅、HONDA 玫瑰色與粉色太接近。
-  const chipN = (n,t)=>`<span title="${t}" style="display:inline-block;padding:1px 7px;border-radius:100px;font-family:'DM Mono',monospace;font-size:11px;font-weight:700;color:#f472b6;background:rgba(244,114,182,.12);border:1px solid rgba(244,114,182,.42)"><span style="font-size:8px;vertical-align:1px">🎪</span>${n}</span>`;
-  const ovCell = (g,brand)=>{
-    const l=g.items.filter(i=>i.brand===brand).length;
-    const n=g.news.filter(x=>x.brand===brand).length;
-    if(!l&&!n) return `<span style="color:var(--text3);opacity:.3">·</span>`;
-    const bc=BC[brand]||'#94a3b8';
-    return [l?chipL(bc,l,`${brand} ${g.label} 上市時程 ${l} 項`):'',
-            n?chipN(n,`${brand} ${g.label} 品牌活動 ${n} 則`):''].filter(Boolean).join(' ');
+  // ── 總覽表：每月一列，上市時程與品牌活動各一欄，以點列逐項列出 ──
+  // 不用數量統計，直接看到每個月實際有哪些事；點月份跳到該月明細。
+  const bullet = (brand,text,dotColor)=>{
+    const bc = BC[brand]||'#94a3b8';
+    return `<div style="display:flex;gap:7px;align-items:baseline;padding:2px 0">
+      <span style="color:${dotColor||bc};font-size:8px;line-height:1.7;flex-shrink:0">●</span>
+      <span style="font-family:'DM Mono',monospace;font-size:9.5px;font-weight:700;color:${bc};flex-shrink:0;width:74px;letter-spacing:.02em">${brand}</span>
+      <span style="font-size:11.5px;color:var(--text2);line-height:1.65">${text}</span>
+    </div>`;
   };
-  const cellCss='text-align:center;padding:7px 8px;border-top:1px solid var(--border);white-space:nowrap';
-  const ovHead = `<tr>
-    <th style="text-align:left;padding:0 10px 8px 4px;font-family:'DM Mono',monospace;font-size:10.5px;font-weight:500;color:var(--text3)">月份</th>
-    ${usedBrands.map(b=>`<th style="text-align:center;padding:0 8px 8px;font-family:'DM Mono',monospace;font-size:10.5px;font-weight:700;color:${BC[b]||'#94a3b8'};white-space:nowrap">${b}</th>`).join('')}
-    <th style="text-align:center;padding:0 4px 8px 10px;font-family:'DM Mono',monospace;font-size:10.5px;font-weight:500;color:var(--text3)">合計</th>
-  </tr>`;
+  const dash = '<span style="color:var(--text3);opacity:.35;font-size:11.5px">—</span>';
   const ovBody = groups.map(g=>{
-    const isNow=g.ym===nowYm, tot=g.items.length+g.news.length;
+    const isNow = g.ym===nowYm;
+    const lCell = g.items.length
+      ? g.items.map(it=>bullet(it.brand,`${it.title}<span style="color:var(--text3);font-size:10px;margin-left:6px">${it.type}</span>`)).join('')
+      : dash;
+    const nCell = g.news.length
+      ? g.news.map(n=>bullet(n.brand,`${n.title}${n.date?`<span style="color:var(--text3);font-family:'DM Mono',monospace;font-size:9.5px;margin-left:6px">${n.date.replace(/^2026\//,'')}</span>`:''}`,'#f472b6')).join('')
+      : dash;
     return `<tr style="${isNow?'background:rgba(200,245,90,.07)':''}">
-      <td style="padding:7px 10px 7px 4px;border-top:1px solid var(--border);white-space:nowrap">
+      <td style="padding:10px 12px 10px 4px;border-top:1px solid var(--border);white-space:nowrap;vertical-align:top">
         <span onclick="document.getElementById('launchMo-${g.ym}').scrollIntoView({behavior:'smooth',block:'start'})"
-              style="font-family:'DM Mono',monospace;font-size:12px;font-weight:700;color:${isNow?'var(--accent)':'var(--text)'};cursor:pointer;border-bottom:1px dotted var(--border)">${g.label}</span>
-        ${isNow?'<span style="margin-left:6px;font-size:9px;padding:1px 7px;border-radius:100px;background:rgba(200,245,90,.12);color:var(--accent);border:1px solid rgba(200,245,90,.3)">本月</span>':''}
+              style="font-family:'DM Mono',monospace;font-size:13px;font-weight:700;color:${isNow?'var(--accent)':'var(--text)'};cursor:pointer;border-bottom:1px dotted var(--border)">${g.label}</span>
+        ${isNow?'<div style="margin-top:5px"><span style="font-size:9px;padding:1px 7px;border-radius:100px;background:rgba(200,245,90,.12);color:var(--accent);border:1px solid rgba(200,245,90,.3)">本月</span></div>':''}
       </td>
-      ${usedBrands.map(b=>`<td style="${cellCss}">${ovCell(g,b)}</td>`).join('')}
-      <td style="${cellCss};padding-right:4px;font-family:'DM Mono',monospace;font-size:11.5px;color:${tot?'var(--text2)':'var(--text3)'}">${tot||'·'}</td>
+      <td style="padding:8px 14px 8px 0;border-top:1px solid var(--border);vertical-align:top;width:52%">${lCell}</td>
+      <td style="padding:8px 4px 8px 0;border-top:1px solid var(--border);border-left:1px solid var(--border);padding-left:14px;vertical-align:top">${nCell}</td>
     </tr>`;
   }).join('');
-  const totL = groups.reduce((s,g)=>s+g.items.length,0);
-  const totN = groups.reduce((s,g)=>s+g.news.length,0);
-  const ovFoot = `<tr>
-    <td style="padding:7px 10px 0 4px;border-top:1px solid var(--border);font-family:'DM Mono',monospace;font-size:10.5px;color:var(--text3)">合計</td>
-    ${usedBrands.map(b=>{
-      const l=groups.reduce((s,g)=>s+g.items.filter(i=>i.brand===b).length,0);
-      const n=groups.reduce((s,g)=>s+g.news.filter(x=>x.brand===b).length,0);
-      return `<td style="${cellCss};padding-bottom:0">${[l?chipL(BC[b]||'#94a3b8',l,`${b} 全年上市時程 ${l} 項`):'',n?chipN(n,`${b} 全年品牌活動 ${n} 則`):''].filter(Boolean).join(' ')||'<span style="color:var(--text3);opacity:.3">·</span>'}</td>`;
-    }).join('')}
-    <td style="${cellCss};padding:7px 4px 0 8px;font-family:'DM Mono',monospace;font-size:11.5px;font-weight:700;color:var(--text)">${totL+totN}</td>
-  </tr>`;
   const overview = `
     <div class="chart-card full" style="margin-bottom:22px">
       <div class="card-header">
-        <span class="card-title">📋 年度總覽 — 月份 × 品牌</span>
-        <span class="card-tag">上市時程 ${totL} 項 ｜ 品牌活動 ${totN} 則</span>
+        <span class="card-title">📋 年度總覽</span>
+        <span class="card-tag">點月份可跳至該月明細</span>
       </div>
       <div style="overflow-x:auto">
-        <table style="width:100%;border-collapse:collapse;min-width:${150+usedBrands.length*72}px">
-          <thead>${ovHead}</thead>
-          <tbody>${ovBody}${ovFoot}</tbody>
+        <table style="width:100%;border-collapse:collapse;min-width:720px">
+          <thead><tr>
+            <th style="text-align:left;padding:0 12px 8px 4px;font-family:'DM Mono',monospace;font-size:10.5px;font-weight:500;color:var(--text3);white-space:nowrap">月份</th>
+            <th style="text-align:left;padding:0 14px 8px 0;font-family:'DM Mono',monospace;font-size:10.5px;font-weight:500;color:var(--text3)">🚀 上市時程</th>
+            <th style="text-align:left;padding:0 4px 8px 14px;font-family:'DM Mono',monospace;font-size:10.5px;font-weight:500;color:#f472b6">🎪 品牌活動</th>
+          </tr></thead>
+          <tbody>${ovBody}</tbody>
         </table>
-      </div>
-      <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-top:12px;padding-top:10px;border-top:1px solid var(--border);font-size:10.5px;color:var(--text3)">
-        <span style="display:inline-flex;align-items:center;gap:6px">${chipL('#8896b0','N','')}上市／改款／特仕／預售 項數</span>
-        <span style="display:inline-flex;align-items:center;gap:6px">${chipN('N','')}品牌活動則數</span>
-        <span>點月份可跳至該月明細</span>
       </div>
     </div>`;
 
