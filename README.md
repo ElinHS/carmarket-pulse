@@ -1,6 +1,6 @@
 # carmarket-pulse
 
-車市總覽 Dashboard — NISSAN 台灣市場競爭情報儀表板（掛牌追蹤、競品比對、Nielsen 數位廣告監測、促銷方案、社群聲量、車媒檢索、新車上市日曆）。
+車市總覽 Dashboard — NISSAN 台灣市場競爭情報儀表板（掛牌追蹤、競品比對、Nielsen 數位廣告監測、促銷方案、社群聲量、車媒檢索、品牌動態）。
 
 純靜態頁面，開啟 `index.html` 即可使用（GitHub Pages 部署亦同）。
 
@@ -15,7 +15,7 @@ data/                 純資料檔，每月更新只改這裡
   promos.js           競品促銷方案文字（PROMO）
   nielsen.js          Nielsen 廣告監測（NIELSEN_MONTHLY 等）
   opview.js           Opview 社群聲量（OPVIEW_MONTHLY）
-  launch.js           新車上市月曆（LAUNCH_2026；另導出扁平 LAUNCH_CALENDAR 供時間軸 tooltip）
+  launch.js           品牌動態／上市時程（LAUNCH_2026；另導出扁平 LAUNCH_CALENDAR 供時間軸 tooltip）
   actions.js          品牌行動×銷量 手動補強事件庫（ACTIONS）
   strategy.js         品牌策略大表（STRAT_DATA / CASES）
   q1_report.js        Q1 整合報告（Q1_AD / Q1_PROMO_SUMMARY / Q1_REG）

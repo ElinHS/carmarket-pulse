@@ -468,7 +468,7 @@ function axRenderDetail(){
   }
   if(lane==='launch'){
     const items=launch[mo];
-    html=card(`🚀 ${brand.label} 產品／上市事件 — ${moLabel}`,'來源：新車上市月曆',
+    html=card(`🚀 ${brand.label} 產品／上市事件 — ${moLabel}`,'來源：品牌動態（上市時程）',
       items.length?items.map(it=>{
         const tc=AX_TYPE_C[it.type]||'#94a3b8';
         return `<div style="padding:10px 12px;background:var(--surface2);border-radius:8px;border-left:3px solid ${brand.color};margin-bottom:8px">
@@ -532,7 +532,7 @@ function axRenderDetail(){
   if(lane==='offline'){
     const o=offline[mo];
     const hasAny=o.launch.length||o.manual.length;
-    html=card(`📍 ${brand.label} 線下活動 — ${moLabel}`,'來源：新車上市月曆「活動」類＋data/actions.js',
+    html=card(`📍 ${brand.label} 線下活動 — ${moLabel}`,'來源：品牌動態「活動」類＋data/actions.js',
       hasAny?`${o.launch.map(it=>`<div style="padding:10px 12px;background:var(--surface2);border-radius:8px;border-left:3px solid ${brand.color};margin-bottom:8px">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:${it.points&&it.points.length?'7px':'0'}">
             <span style="font-size:13px;font-weight:600;color:#fff">${it.title}</span>
