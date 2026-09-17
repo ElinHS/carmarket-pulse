@@ -63,7 +63,6 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
   <button class="nav-tab" data-page="nielsen" onclick="switchPage('nielsen',event)">📡 數位廣告監測</button>
   <button class="nav-tab" data-page="strategy" onclick="switchPage('strategy',event)">🧭 2025國產車品牌策略</button>
   <button class="nav-tab" data-page="kol" onclick="switchPage('kol',event)">🎬 車媒風格檢索</button>
-  <button class="nav-tab" data-page="models" onclick="switchPage('models',event)">🚘 汽車品牌活動動態</button>
   <span id="dataStatus" style="align-self:center;font-family:'DM Mono',monospace;font-size:11px;color:var(--text2);white-space:nowrap;padding-left:14px"></span>
 </div>
 <!-- ⬇ CSV 匯出按鈕暫時停用（2026/09）：CSV_EXPORTERS 與各頁 exportXxxCSV() 程式碼均保留，
@@ -394,17 +393,9 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
   <div id="kolImpactView" style="display:none"></div>
 </div>
 
-<!-- PAGE: 汽車品牌活動動態 -->
-<div class="page" id="page-models">
-  <div style="background:linear-gradient(90deg,rgba(200,245,90,.08),rgba(200,245,90,.02));border:1px solid rgba(200,245,90,.25);border-left:3px solid var(--accent);border-radius:8px;padding:10px 16px;margin-bottom:14px;font-size:11px;color:#b0b8cc">
-    <b style="color:var(--accent);font-family:'DM Mono',monospace">🚘 汽車品牌活動動態</b>　收錄各品牌繞著特定車款推動的市場活動：異業合作、代言、體驗活動、產品話題與通路操作。上市／改款／特仕請見「新車上市月曆」，價格與方案請見「競車促銷方案」。
-  </div>
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px">
-    <div class="tab-group" id="modelsBrandGroup"></div>
-    <span class="card-tag" id="modelsCountTag"></span>
-  </div>
-  <div id="modelsBody"></div>
-</div>
+<!-- 🚘 「汽車品牌活動動態」已於 2026/09 併入「新車上市月曆」：
+     MODEL_NEWS 改由 buildLaunchPage() 依月份插在各月上市項目之後，
+     本頁與 buildModelsPage() 不再存在。資料檔 data/models.js 維持不變。 -->
 
 </div><!-- end pageWrap -->
 </div><!-- end app -->
@@ -412,19 +403,19 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
 <!-- ⚠ 資料檔後面的 ?v=YYYYMMDD 是快取破除用的版本戳。GitHub Pages 會讓瀏覽器
      快取這些 .js，不加版本戳的話更新完資料要等快取過期才看得到新內容。
      每次更新 data/ 底下任何檔案後，請把所有 ?v= 一起改成當天日期。 -->
-<script src="data/creatives.js?v=20260916b"></script>
-<script src="data/registrations.js?v=20260916b"></script>
-<script src="data/intel.js?v=20260916b"></script>
-<script src="data/promos.js?v=20260916b"></script>
-<script src="data/nielsen.js?v=20260916b"></script>
-<script src="data/strategy.js?v=20260916b"></script>
-<script src="data/q1_report.js?v=20260916b"></script>
-<script src="data/comp.js?v=20260916b"></script>
-<script src="data/kol.js?v=20260916b"></script>
-<script src="data/opview.js?v=20260916b"></script>
-<script src="data/launch.js?v=20260916b"></script>
-<script src="data/actions.js?v=20260916b"></script>
-<script src="data/models.js?v=20260916b"></script>
+<script src="data/creatives.js?v=20260917"></script>
+<script src="data/registrations.js?v=20260917"></script>
+<script src="data/intel.js?v=20260917"></script>
+<script src="data/promos.js?v=20260917"></script>
+<script src="data/nielsen.js?v=20260917"></script>
+<script src="data/strategy.js?v=20260917"></script>
+<script src="data/q1_report.js?v=20260917"></script>
+<script src="data/comp.js?v=20260917"></script>
+<script src="data/kol.js?v=20260917"></script>
+<script src="data/opview.js?v=20260917"></script>
+<script src="data/launch.js?v=20260917"></script>
+<script src="data/actions.js?v=20260917"></script>
+<script src="data/models.js?v=20260917"></script>
 <script>
 
 // 📦 資料已抽離 → data/creatives.js（素材 base64 圖庫（window._cac 預載 / Q1_CREATIVE_IMGS））
@@ -522,10 +513,15 @@ function exportPromoCSV(){
   const t=document.querySelector('#promoTableWrap table');
   exportTableCSV(t,`競車促銷方案_${MONTH_LABELS[promoMonth]||promoMonth}_${promoBrand==='ALL'?'全品牌':promoBrand}.csv`);
 }
-// 新車上市月曆：月份／品牌／專案攤平清單
+// 新車上市月曆：月份／品牌／專案攤平清單（含併入的品牌活動）
 function exportLaunchCSV(){
-  const rows=[['月份','品牌','車款／專案','類型','亮點']];
-  LAUNCH_2026.forEach(g=>g.items.forEach(it=>rows.push([g.label,it.brand,it.title,it.type,(it.points||[]).join('；')])));
+  const rows=[['月份','區塊','品牌','車款／專案','類型','日期','摘要','亮點','連結']];
+  LAUNCH_2026.forEach(g=>g.items.forEach(it=>
+    rows.push([g.label,'上市時程',it.brand,it.title,it.type,'','',(it.points||[]).join('；'),''])));
+  ((typeof MODEL_NEWS!=='undefined')?MODEL_NEWS:[]).forEach(r=>
+    rows.push([`${parseInt(r.ym.slice(5),10)}月`,'品牌活動',r.brand,`${r.model}｜${r.title}`,r.type,
+      r.date||'',r.summary||'',(r.points||[]).join('；'),
+      (r.links||[]).map(l=>l.label+' '+l.url).join('；')]));
   downloadCSV(rows,'2026新車上市月曆.csv');
 }
 // ── 汽車品牌活動動態 ──
@@ -533,75 +529,26 @@ const MODELS_BC={NISSAN:'#c8f55a',TOYOTA:'#f97316',HONDA:'#fb7185',FORD:'#60a5fa
 const MODELS_TC={'異業合作':'#f472b6','代言':'#c8f55a','體驗活動':'#fbbf24','產品話題':'#7dd3fc','通路':'#fb923c','展間活動':'#a78bfa','KOL合作':'#34d399','車主活動':'#fca5a5','戶外展車':'#2dd4bf','品牌活動':'#818cf8','其他':'#94a3b8'};
 // type 可用「＆」串接多個類型（例：'異業合作＆產品話題'），渲染時拆成多顆徽章
 function modelsTypes(t){return String(t||'').split(/[＆&]/).map(s=>s.trim()).filter(Boolean)}
-let modelsBrand='ALL';
-function setModelsBrand(b,e){ modelsBrand=b; buildModelsPage(); }
-
-function buildModelsPage(){
-  const all=(typeof MODEL_NEWS!=='undefined')?MODEL_NEWS:[];
-  const brands=[...new Set(all.map(x=>x.brand))].sort();
-  const btnEl=document.getElementById('modelsBrandGroup');
-  if(btnEl) btnEl.innerHTML=[{k:'ALL',label:'全部'}].concat(brands.map(b=>({k:b,label:b})))
-    .map(b=>{
-      const c=MODELS_BC[b.k]||'var(--text3)';
-      const on=b.k===modelsBrand;
-      return `<button class="tab-btn ${on?'active':''}" style="${on&&b.k!=='ALL'?`color:${c};border-color:${c}66;background:${c}18`:''}" onclick="setModelsBrand('${b.k}',event)">${b.label}</button>`;
-    }).join('');
-
-  const rows=modelsBrand==='ALL'?all:all.filter(x=>x.brand===modelsBrand);
-  const tag=document.getElementById('modelsCountTag');
-  if(tag) tag.textContent=`${rows.length} 則 ｜ 依月份由新至舊`;
-
-  const el=document.getElementById('modelsBody');
-  if(!el) return;
-  if(!rows.length){ el.innerHTML=`<div style="padding:48px;text-align:center;color:var(--text3);font-family:'DM Mono',monospace;font-size:13px">尚無資料</div>`; return; }
-
-  const groups={};
-  rows.forEach(r=>{ (groups[r.ym]=groups[r.ym]||[]).push(r); });
-  const now=new Date();
-  const nowYm=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
-
-  el.innerHTML=Object.keys(groups).sort().reverse().map(ym=>{
-    const isNow=ym===nowYm, isFuture=ym>nowYm;
-    const label=`${ym.slice(0,4)} 年 ${parseInt(ym.slice(5),10)} 月`;
-    const items=groups[ym].map(it=>{
-      const bc=MODELS_BC[it.brand]||'#94a3b8';
-      return `<div style="background:var(--surface);border:1px solid var(--border);border-left:3px solid ${bc};border-radius:8px;padding:15px 18px">
-        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px">
-          <span style="font-family:'DM Mono',monospace;font-size:11px;font-weight:700;color:${bc};background:${bc}15;border:1px solid ${bc}40;padding:2px 9px;border-radius:3px">${it.brand}</span>
-          <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text2)">${it.model}</span>
-          <span style="font-size:15px;font-weight:700;color:#fff">${it.title}</span>
-          ${modelsTypes(it.type).map(t=>{const tc=MODELS_TC[t]||'#94a3b8';
-            return `<span style="font-size:10px;padding:2px 10px;border-radius:100px;color:${tc};border:1px solid ${tc}55;background:${tc}12">${t}</span>`}).join('')}
-          ${it.date?`<span style="margin-left:auto;font-family:'DM Mono',monospace;font-size:10px;color:var(--text3)">${it.date}</span>`:''}
-        </div>
-        ${it.summary?`<div style="font-size:12.5px;color:var(--text2);line-height:1.8;margin-bottom:${it.points&&it.points.length?'9px':'0'}">${it.summary}</div>`:''}
-        ${it.points&&it.points.length?`<ul style="margin:0;padding-left:20px;display:flex;flex-direction:column;gap:5px">
-          ${it.points.map(x=>`<li style="font-size:12.5px;color:var(--text2);line-height:1.75">${x}</li>`).join('')}
-        </ul>`:''}
-        ${it.links&&it.links.length?`<div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--border);display:flex;flex-wrap:wrap;gap:14px">
-          ${it.links.map(l=>`<a href="${l.url}" target="_blank" rel="noopener noreferrer" style="font-family:'DM Mono',monospace;font-size:10px;color:${bc};text-decoration:none;border-bottom:1px dotted ${bc}88">${l.label} ↗</a>`).join('')}
-        </div>`:''}
-      </div>`;
-    }).join('');
-    return `<div style="margin-bottom:26px">
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
-        <span style="font-family:'DM Mono',monospace;font-size:17px;font-weight:700;color:${isNow?'var(--accent)':isFuture?'#fb923c':'var(--text)'}">${label}</span>
-        ${isNow?'<span style="font-size:10px;padding:2px 10px;border-radius:100px;background:rgba(200,245,90,.12);color:var(--accent);border:1px solid rgba(200,245,90,.3)">本月</span>':''}
-        ${isFuture?'<span style="font-size:10px;padding:2px 10px;border-radius:100px;background:rgba(251,146,60,.12);color:#fb923c;border:1px solid rgba(251,146,60,.3)">未來時程</span>':''}
-        <div style="flex:1;height:1px;background:var(--border)"></div>
-      </div>
-      <div style="display:flex;flex-direction:column;gap:10px">${items}</div>
-    </div>`;
-  }).join('');
-}
-
-function exportModelsCSV(){
-  const all=(typeof MODEL_NEWS!=='undefined')?MODEL_NEWS:[];
-  const rows=[['年月','日期','品牌','車款','類型','標題','摘要','重點','連結']];
-  (modelsBrand==='ALL'?all:all.filter(x=>x.brand===modelsBrand)).forEach(r=>rows.push([
-    r.ym, r.date||'', r.brand, r.model, r.type, r.title, r.summary||'',
-    (r.points||[]).join('；'), (r.links||[]).map(l=>l.label+' '+l.url).join('；')]));
-  downloadCSV(rows,`汽車品牌活動動態${modelsBrand==='ALL'?'':'_'+modelsBrand}.csv`);
+// 單則品牌活動卡片。由 buildLaunchPage() 依月份插在各月上市項目之後。
+function modelNewsCard(it){
+  const bc=MODELS_BC[it.brand]||'#94a3b8';
+  return `<div style="background:var(--surface);border:1px solid var(--border);border-left:3px solid ${bc};border-radius:8px;padding:15px 18px">
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px">
+      <span style="font-family:'DM Mono',monospace;font-size:11px;font-weight:700;color:${bc};background:${bc}15;border:1px solid ${bc}40;padding:2px 9px;border-radius:3px">${it.brand}</span>
+      <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text2)">${it.model}</span>
+      <span style="font-size:15px;font-weight:700;color:#fff">${it.title}</span>
+      ${modelsTypes(it.type).map(t=>{const tc=MODELS_TC[t]||'#94a3b8';
+        return `<span style="font-size:10px;padding:2px 10px;border-radius:100px;color:${tc};border:1px solid ${tc}55;background:${tc}12">${t}</span>`}).join('')}
+      ${it.date?`<span style="margin-left:auto;font-family:'DM Mono',monospace;font-size:10px;color:var(--text3)">${it.date}</span>`:''}
+    </div>
+    ${it.summary?`<div style="font-size:12.5px;color:var(--text2);line-height:1.8;margin-bottom:${it.points&&it.points.length?'9px':'0'}">${it.summary}</div>`:''}
+    ${it.points&&it.points.length?`<ul style="margin:0;padding-left:20px;display:flex;flex-direction:column;gap:5px">
+      ${it.points.map(x=>`<li style="font-size:12.5px;color:var(--text2);line-height:1.75">${x}</li>`).join('')}
+    </ul>`:''}
+    ${it.links&&it.links.length?`<div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--border);display:flex;flex-wrap:wrap;gap:14px">
+      ${it.links.map(l=>`<a href="${l.url}" target="_blank" rel="noopener noreferrer" style="font-family:'DM Mono',monospace;font-size:10px;color:${bc};text-decoration:none;border-bottom:1px dotted ${bc}88">${l.label} ↗</a>`).join('')}
+    </div>`:''}
+  </div>`;
 }
 
 // 車媒風格檢索：媒體名單
@@ -2316,7 +2263,6 @@ function switchPage(p,e){
   if(p==='comp') setTimeout(buildCompSection,80);
   if(p==='kol'){ buildKolProfiles(); setKolView(kolView,null); }
   if(p==='actions') buildActionsPage();
-  if(p==='models') buildModelsPage();
 }
 
 // ── NIELSEN BRAND CARDS (async, Storage API backed) ──
@@ -2666,7 +2612,11 @@ const BRAND_PROMO_MO = (function(){
 
   const pgLc = document.createElement('div');
   pgLc.className = 'page'; pgLc.id = 'page-launch';
-  pgLc.innerHTML = `<div id="launchBody"></div>`;
+  pgLc.innerHTML = `
+    <div style="background:linear-gradient(90deg,rgba(200,245,90,.08),rgba(200,245,90,.02));border:1px solid rgba(200,245,90,.25);border-left:3px solid var(--accent);border-radius:8px;padding:10px 16px;margin-bottom:14px;font-size:11px;color:#b0b8cc">
+      <b style="color:var(--accent);font-family:'DM Mono',monospace">🗓 新車上市月曆</b>　六品牌每月產品時程 × 品牌活動一次看。價格與方案請見「競車促銷方案」。
+    </div>
+    <div id="launchBody"></div>`;
   wrap.appendChild(pgLc);
 
   // 擴充 switchPage 觸發渲染
@@ -2738,7 +2688,18 @@ function buildLaunchPage(){
   const now = new Date();
   const nowYm = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
 
-  const html = LAUNCH_2026.map(g=>{
+  // ── 併入品牌活動（MODEL_NEWS）──
+  // 依 ym 掛到對應月份；LAUNCH_2026 沒有的月份（例：只有活動、沒有上市項目）自動補一組。
+  const newsByYm = {};
+  ((typeof MODEL_NEWS!=='undefined')?MODEL_NEWS:[]).forEach(n=>{ (newsByYm[n.ym]=newsByYm[n.ym]||[]).push(n) });
+  const groups = LAUNCH_2026.map(g=>({...g, news:newsByYm[g.ym]||[]}));
+  Object.keys(newsByYm).forEach(ym=>{
+    if(groups.some(g=>g.ym===ym)) return;
+    groups.push({ym, label:`${parseInt(ym.slice(5),10)}月`, items:[], news:newsByYm[ym]});
+  });
+  groups.sort((a,b)=>a.ym.localeCompare(b.ym));   // '2026-Q4' 之 Q 大於數字，恆排最後
+
+  const html = groups.map(g=>{
     const isNow = g.ym === nowYm;
     const isFuture = g.ym > nowYm || g.ym.includes('Q4');
     const items = g.items.map(it=>{
@@ -2763,12 +2724,18 @@ function buildLaunchPage(){
         <div style="flex:1;height:1px;background:var(--border)"></div>
       </div>
       <div style="display:flex;flex-direction:column;gap:10px">${items}</div>
+      ${g.news.length?`
+      <div style="display:flex;align-items:center;gap:10px;margin:14px 0 10px">
+        <span style="font-family:'DM Mono',monospace;font-size:11px;color:#f472b6;letter-spacing:.04em">🎪 品牌活動 ${g.news.length}</span>
+        <div style="flex:1;height:1px;background:var(--border)"></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px">${g.news.map(modelNewsCard).join('')}</div>`:''}
     </div>`;
   }).join('');
 
   document.getElementById('launchBody').innerHTML = `
     <div style="font-size:17px;font-weight:700;color:#fff;margin-bottom:4px">2026 年新車時程表</div>
-    <div style="font-size:12px;color:var(--text2);margin-bottom:20px">六品牌新車上市、特仕企劃與預售動態</div>
+    <div style="font-size:12px;color:var(--text2);margin-bottom:20px">六品牌新車上市、特仕企劃與預售動態，各月下方併列該月品牌活動</div>
     ${html}
     <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:14px 18px;margin-top:8px">
       <div style="font-family:'DM Mono',monospace;font-size:11px;color:#fb923c;margin-bottom:8px">📌 使用提醒</div>
@@ -3512,7 +3479,7 @@ function exportActionsCSV(){
 })();
 
 // ── 固定匯出按鈕（右下角）：依當前頁面匯出對應 CSV，無可匯出資料的頁面自動隱藏 ──
-const CSV_EXPORTERS={models:exportModelsCSV,sales:exportSalesCSV,comp:exportCompCSV,promo:exportPromoCSV,nielsen:exportNielsenCSV,launch:exportLaunchCSV,kol:exportKolCSV,actions:exportActionsCSV};
+const CSV_EXPORTERS={sales:exportSalesCSV,comp:exportCompCSV,promo:exportPromoCSV,nielsen:exportNielsenCSV,launch:exportLaunchCSV,kol:exportKolCSV,actions:exportActionsCSV};
 function _activePageKey(){const p=document.querySelector('.page.active');return p?p.id.replace('page-',''):null}
 function exportCurrentCSV(){const f=CSV_EXPORTERS[_activePageKey()];if(f)f()}
 (function(){
