@@ -200,6 +200,14 @@ const LAUNCH_2026 = [
        '10/20 前預訂並於 12/31 前領牌，免費升級 5 年或 14 萬公里全車延長保固',
      ]},
   ]},
+  {ym:'2026-10', label:'10月', items:[
+    {brand:'HYUNDAI', title:'KONA Hybrid 正式發表', type:'新車',
+     points:[
+       '接續 9/19 起的預接單，10 月正式發表；正式售價待原廠公布',
+       '預售價參考：GLH-A 99 萬元、GLH-B 110 萬元',
+       '早鳥優惠收單至 10/20，須於 12/31 前完成領牌',
+     ]},
+  ]},
   {ym:'2026-Q4', label:'第4季', items:[
     {brand:'NISSAN', title:'Qashqai e-Power', type:'新車',
      points:[

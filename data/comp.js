@@ -19,7 +19,7 @@ const COMP_DATA = {
       { brand:'MITSUBISHI', name:'XFORCE',      color:'#f43f5e', data:{jan:634,feb:395,mar:473,apr:468,may:489,jun:499,jul:535,aug:327} },
       { brand:'MAZDA',      name:'CX-30',       color:'#34d399', ext:'進口延伸', data:{jan:187,feb:129,mar:474,apr:173,may:339,jun:215,jul:273,aug:266} },
       { brand:'HYUNDAI',    name:'VENUE',       color:'#a78bfa', data:{jan:310,feb:195,mar:250,apr:267,may:282,jun:207,jul:304,aug:186} },
-      { brand:'MG',         name:'ZS',          color:'#64748b', data:{jan:175,feb:122,mar:140,apr:169,may:142,jun:167,jul:273,aug:116} },
+      { brand:'MG',         name:'ZS',          color:'#64748b', note:'7月273台為2026年式出清高點；8月推ZS 2027年式（69.9–74.9萬），交接空窗使掛牌落至116台（-57.5%，全戰場最深）。屬年式交替造成的斷檔，非需求崩跌，與CX-5 576→61同類', data:{jan:175,feb:122,mar:140,apr:169,may:142,jun:167,jul:273,aug:116} },
       { brand:'MAZDA',      name:'CX-3',        color:'#6ee7b7', ext:'進口延伸', data:{jan:6,feb:21,mar:63,apr:30,may:38,jun:38,jul:52,aug:32} },
     ]
   },
@@ -60,7 +60,7 @@ const COMP_DATA = {
       { brand:'NISSAN', name:'X-Trail e-POWER', color:'#c8f55a', data:{jan:129,feb:57,mar:58,apr:76,may:70,jun:93,jul:72,aug:56} },
       { brand:'TOYOTA', name:'RAV4',            color:'#f97316', data:{jan:1822,feb:1796,mar:2063,apr:2028,may:1830,jun:2943,jul:2683,aug:1732} },
       { brand:'MAZDA',  name:'CX-5',            color:'#34d399', note:'8月61台為世代交替谷底：二代出清完畢、第三代8/18發表但9/1起才陸續交車，非需求消失', data:{jan:281,feb:358,mar:753,apr:320,may:773,jun:808,jul:576,aug:61} },
-      { brand:'KIA',    name:'Sportage',        color:'#94a3b8', note:'6月952台暴增：電池八年延保＋優惠；7月935台維持高檔；8月573台（-39%），跌幅大於同級距平均，惟未出現毀滅性退單，TNCAP二星影響屬減速而非崩盤', data:{jan:208,feb:164,mar:217,apr:158,may:338,jun:952,jul:935,aug:573} },
+      { brand:'KIA',    name:'Sportage',        color:'#94a3b8', note:'6月952台暴增：電池八年延保＋優惠；7月935台維持高檔——TNCAP二星負面聲量於6–7月爆發，該期間反為全年銷售最高的兩個月，促銷力道短期蓋過負面輿情；8月573台（-39%），惟同期戰場④整體-40.1%，Sportage並未跌得比級距合計深，須排除CX-5世代交替（-89.4%）後的-33.1%比較，才落後約5.6個百分點。TNCAP影響屬減速而非崩盤', data:{jan:208,feb:164,mar:217,apr:158,may:338,jun:952,jul:935,aug:573} },
       { brand:'VW',     name:'Tiguan',          color:'#7dd3fc', data:{jan:123,feb:99,mar:116,apr:137,may:165,jun:126,jul:148,aug:127} },
       { brand:'MAZDA',  name:'CX-60',           color:'#6ee7b7', data:{jan:131,feb:64,mar:80,apr:227,may:107,jun:110,jul:175,aug:198} },
     ]
