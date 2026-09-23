@@ -14,7 +14,7 @@
 //   brand   ：品牌（對應品牌色，未列入配色者顯示灰色）
 //   model   ：車款名稱
 //   type    ：異業合作｜代言｜體驗活動｜產品話題｜通路｜展間活動｜KOL合作｜車主活動
-//             ｜戶外展車｜品牌活動｜其他
+//             ｜戶外展車｜品牌活動｜新車上市｜社群招募｜特仕車｜其他
 //             （決定徽章顏色；一則活動橫跨多個類型時用「＆」串接，例 '異業合作＆產品話題'，
 //               會拆成多顆徽章顯示。未列入上表的類型顯示為灰色）
 //   title   ：一句話標題
@@ -50,6 +50,36 @@ const MODEL_NEWS = [
      {label:'TOYOTA RUN 活動官網', url:'https://www.toyota.com.tw/event/toyotarun/'},
    ]},
 
+  {ym:'2026-09', date:'2026/09/19–10/20', brand:'HYUNDAI', model:'KONA',
+   type:'新車上市＆展間活動',
+   title:'KONA Hybrid 全台巡迴預賞會 ｜ 99 萬元起',
+   summary:'南陽實業啟動 KONA Hybrid 大改款預接單，9/19 起於全台指定展示中心展開 VIP 巡迴預賞，讓消費者在 10 月正式發表前搶先看實車，並祭出限時早鳥預購優惠。',
+   points:[
+     '車型與預售價：雙車型編成，GLH-A 預售價 99 萬元、頂規 GLH-B 預售價 110 萬元',
+     '巡迴預賞：9 月 19 日起於全台指定展示中心展開 VIP 巡迴預賞活動',
+     '早鳥條件：2026 年 10 月 20 日前完成預訂，並於 12 月 31 日前完成領牌',
+     '早鳥好禮：免費升級「5 年或 14 萬公里」全車延長保固',
+     '電池保固：油電高壓電池提供 8 年不限里程保固',
+     '產品訴求：同級最佳油耗',
+   ],
+   links:[
+     {label:'HYUNDAI 官網新聞稿', url:'https://www.hyundai-motor.com.tw/news-in-588.html'},
+   ]},
+
+  {ym:'2026-09', date:'2026/09', brand:'HYUNDAI', model:'TUCSON L',
+   type:'社群招募',
+   title:'TUCSON L 車主最強油耗大募集',
+   summary:'邀請 TUCSON L 車主拍下儀錶板上的最強油耗或超猛續航里程照片投稿，以車主自發的實測數據支撐油耗訴求。',
+   points:[
+     '參與對象：TUCSON L 車主',
+     '參與方式：拍下儀錶板最強油耗或超猛續航里程照片投稿',
+     '獎勵：最高 3,500 點 HYUNDAI POINTS',
+     '溝通角度：UGC 型內容徵集，用車主實測數據取代品牌自述的油耗宣稱',
+   ],
+   links:[
+     {label:'HYUNDAI Facebook 活動貼文', url:'https://www.facebook.com/photo?fbid=1862276389274323&set=a.688402963328344&locale=zh_TW'},
+   ]},
+
   {ym:'2026-09', date:'2026/09/07–10/07', brand:'FORD', model:'Territory',
    type:'異業合作＆產品話題',
    title:'Ford Territory ×「有飲 Youin」全台巡迴開跑',
@@ -76,6 +106,21 @@ const MODEL_NEWS = [
    ],
    links:[
      {label:'Ford Facebook 活動貼文', url:'https://www.facebook.com/share/p/1Ym1MUy7YD/'},
+   ]},
+
+  {ym:'2026-08', date:'2026/08/18', brand:'HYUNDAI', model:'Palisade',
+   type:'代言＆新車上市',
+   title:'崔始源代言，一則脆創下史上最多新聞話題',
+   summary:'HYUNDAI 宣布由 SUPER JUNIOR 崔始源擔任 Palisade 代言人。其於脆（Threads）預告「8/20 現身信義區、不是拍戲」的神祕行程，在代言身分正式揭曉前即引爆大量媒體轉載與討論。',
+   points:[
+     '代言人：SUPER JUNIOR 崔始源',
+     '操作手法：先以「8/20 現身信義區、不是拍戲」的神祕預告貼文鋪陳，再揭曉代言身分與新車發表',
+     '成效：單則脆貼文創下品牌史上最多新聞話題量',
+     '可借鏡之處：代言效益來自「懸念先行」的節奏設計，而非單純的人選聲量',
+   ],
+   links:[
+     {label:'HYUNDAI 官網新聞稿', url:'https://www.hyundai-motor.com.tw/news-in-582.html'},
+     {label:'鏡週刊報導', url:'https://www.mirrormedia.mg/external/mirrordaily_78794'},
    ]},
 
   {ym:'2026-08', date:'2026/08/29–08/30', brand:'TOYOTA', model:'COROLLA CROSS',
@@ -105,6 +150,18 @@ const MODEL_NEWS = [
    ],
    links:[
      {label:'Ford Facebook 活動貼文', url:'https://www.facebook.com/share/p/1DRKziY4MZ/'},
+   ]},
+
+  {ym:'2026-04', date:'2026/04/01', brand:'HYUNDAI', model:'MUFASA Xplore',
+   type:'特仕車',
+   title:'MUFASA Xplore 超規格 SUV',
+   summary:'MUFASA 推出 Xplore 特仕車型，入主價 86.9 萬元起，並提供戶外露營配件選購，把車款定位延伸至戶外休閒情境。',
+   points:[
+     '入主價：86.9 萬元起',
+     '配件延伸：提供戶外露營配件選購',
+   ],
+   links:[
+     {label:'HYUNDAI 官網新聞稿', url:'https://www.hyundai-motor.com.tw/news-in-550.html'},
    ]},
 
   {ym:'2026-10', date:'2026/10/03–10/04', brand:'MITSUBISHI', model:'XFORCE',
