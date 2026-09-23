@@ -23,7 +23,7 @@ const NIELSEN_MONTHLY={
       ],
       note:'全車系廣告佔品牌花費83%，主攻Yahoo奇摩+痞客邦大版位，Kicks與X-Trail各分15%/5%',
     },
-    toyota:{totalImp:3452356830,totalSp:332657.17,cpm:96,channels:[{name:'Mobile01',sp:2037.61,pct:61.3},{name:'Yahoo奇摩',sp:993.38,pct:29.9},{name:'中時電子報',sp:229.8,pct:6.9},{name:'UDN',sp:24.02,pct:0.7},{name:'其他',sp:20.82,pct:0.6},{name:'Meta(FB/IG)',sp:8.27,pct:0.2},{name:'YouTube',sp:5.45,pct:0.2},{name:'自由時報',sp:3.94,pct:0.1},{name:'癮科技',sp:0.01,pct:0.0},{name:'ETtoday',sp:1.41,pct:0.0},{name:'痞客邦',sp:1.36,pct:0.0},{name:'三立',sp:0.51,pct:0.0},{name:'關鍵評論網',sp:0.01,pct:0.0}],note:'TOYOTA+LEXUS 合計 3,326.6萬。主力：TOYOTA休旅車1,310萬（Mobile01）+ LEXUS NX 1,129萬（Yahoo奇摩全版位）',vehicles:[{name:'TOYOTA 休旅車（全車系）',sp:131076,imp:815421062,vidPct:4},{name:'LEXUS NX',sp:112954,imp:1635368701,vidPct:0},{name:'LEXUS RX',sp:85885,imp:986340789,vidPct:0},{name:'其他',sp:2742,imp:14477278,vidPct:15}],topPlacements:[{name:'TOYOTA休旅車 300x278 Mobile01首頁',imp:238180186,sp:410.26},{name:'LEXUS NX 249x140 Yahoo奇摩新聞',imp:259062586,sp:105.32},{name:'LEXUS NX 249x140 Yahoo奇摩股市',imp:256921160,sp:100.19},{name:'LEXUS NX 249x140 Yahoo奇摩首頁',imp:221660314,sp:99.82},{name:'LEXUS NX 249x140 Yahoo奇摩運動',imp:183262085,sp:77.69}]},
+    toyota:{totalImp:3452356830,totalSp:332657.17,cpm:96,channels:[{name:'Mobile01',sp:2037.61,pct:61.3},{name:'Yahoo奇摩',sp:993.38,pct:29.9},{name:'中時電子報',sp:229.8,pct:6.9},{name:'UDN',sp:24.02,pct:0.7},{name:'其他',sp:20.82,pct:0.6},{name:'Meta(FB/IG)',sp:8.27,pct:0.2},{name:'YouTube',sp:5.45,pct:0.2},{name:'自由時報',sp:3.94,pct:0.1},{name:'癮科技',sp:0.01,pct:0.0},{name:'ETtoday',sp:1.41,pct:0.0},{name:'痞客邦',sp:1.36,pct:0.0},{name:'三立',sp:0.51,pct:0.0},{name:'關鍵評論網',sp:0.01,pct:0.0}],note:'TOYOTA+LEXUS 合計 3億3,266萬元（totalSp 332,657.17 千元，SOV 86.5%）。主力：TOYOTA休旅車1,310萬（Mobile01）+ LEXUS NX 1,129萬（Yahoo奇摩全版位）',vehicles:[{name:'TOYOTA 休旅車（全車系）',sp:131076,imp:815421062,vidPct:4},{name:'LEXUS NX',sp:112954,imp:1635368701,vidPct:0},{name:'LEXUS RX',sp:85885,imp:986340789,vidPct:0},{name:'其他',sp:2742,imp:14477278,vidPct:15}],topPlacements:[{name:'TOYOTA休旅車 300x278 Mobile01首頁',imp:238180186,sp:410.26},{name:'LEXUS NX 249x140 Yahoo奇摩新聞',imp:259062586,sp:105.32},{name:'LEXUS NX 249x140 Yahoo奇摩股市',imp:256921160,sp:100.19},{name:'LEXUS NX 249x140 Yahoo奇摩首頁',imp:221660314,sp:99.82},{name:'LEXUS NX 249x140 Yahoo奇摩運動',imp:183262085,sp:77.69}]},
        mazda:{totalImp:509664,totalSp:87.0,cpm:170,channels:[{name:'Meta(FB/IG)',sp:0.69,pct:79.2},{name:'其他',sp:0.18,pct:20.8}],note:'規模極小0.87萬，CX-5主打Facebook影片（1280x720），Video占61%，精品分眾策略，版位集中FB',vehicles:[{name:'CX-5',sp:58,imp:273271,vidPct:91},{name:'CX-30/全車系',sp:22,imp:154191,vidPct:0}],topPlacements:[{name:'CX-5 1280x720 Facebook首頁',imp:248918,sp:0.53},{name:'全車系 680x773 Facebook首頁',imp:81534,sp:0.07}]},
 
       honda:{totalImp:4840273,totalSp:835.0,vidSp:517,cpm:173,
@@ -235,7 +235,7 @@ const NIELSEN_MONTHLY={
       ],
     },
     ford:{totalImp:177696213,totalSp:23072.64,dispSp:22975.29,vidSp:97.35,cpm:130,
-      note:'福特六和7月2.31億（千元）、99.6%集中Mobile01——但幾乎全押MUSTANG跑車（176M曝光），主力休旅Territory僅萬元級投放（10k）本月數位近乎缺席；Territory賣963台靠先前動能與定價，非當月數位',
+      note:'福特六和7月2,307萬元（totalSp 23,072.64 千元，SOV 7.8%）、99.6%集中Mobile01——但幾乎全押MUSTANG跑車（176M曝光），主力休旅Territory僅萬元級投放（10k）本月數位近乎缺席；Territory賣963台靠先前動能與定價，非當月數位',
       channels:[{name:'Mobile01',sp:22975.29,pct:99.6},{name:'YouTube',sp:93.46,pct:0.4},{name:'facebook',sp:2.86,pct:0.0},{name:'instagram',sp:1.02,pct:0.0}],
       vehicles:[
         {name:'MUSTANG',sp:22978.15,imp:176055479,vidPct:0},
@@ -254,7 +254,7 @@ const NIELSEN_MONTHLY={
       ],
     },
     honda:{totalImp:283105495,totalSp:22527.87,dispSp:22136.64,vidSp:391.23,cpm:80,
-      note:'台灣本田7月2.25億（千元），CR-V回歸後獨佔94%（Yahoo奇摩64.7%＋Mobile01/自由/痞客邦/UDN多媒體鋪量）；另含少量重機（CB1000）與船外機廣告，屬品牌週邊',
+      note:'台灣本田7月2,253萬元（totalSp 22,527.87 千元，SOV 7.6%），CR-V回歸後獨佔94%（Yahoo奇摩64.7%＋Mobile01/自由/痞客邦/UDN多媒體鋪量）；另含少量重機（CB1000）與船外機廣告，屬品牌週邊',
       channels:[{name:'Yahoo奇摩',sp:14574.88,pct:64.7},{name:'Mobile01',sp:1601.76,pct:7.1},{name:'自由時報',sp:1369.62,pct:6.1},{name:'痞客邦',sp:1214.48,pct:5.4},{name:'UDN',sp:1159.63,pct:5.1},{name:'其他',sp:1111.43,pct:4.9},{name:'中時電子報',sp:607.66,pct:2.7},{name:'蘋果日報',sp:443.08,pct:2.0},{name:'YouTube',sp:329.60,pct:1.5}],
       vehicles:[
         {name:'CR-V',sp:21204.73,imp:268772760,vidPct:0},
