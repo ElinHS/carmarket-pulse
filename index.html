@@ -387,15 +387,22 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
     <div style="display:flex;align-items:center;gap:10px">
       <span style="background:rgba(200,245,90,.1);border:1px solid rgba(200,245,90,.3);color:var(--accent);font-family:'DM Mono',monospace;font-size:10px;padding:3px 10px;border-radius:3px;letter-spacing:.08em">車媒風格檢索</span>
     </div>
+    <!-- 🎬 矩陣圖／影響力分析暫時移除（2026/09）：兩者皆讀 KOL_DATA 的 mentions 欄位，
+         但該欄位 63 筆全無資料、KOL_MONTHS 也僅涵蓋 Q1，畫面長期為空值。
+         buildKolMatrix()／buildKolImpact() 程式碼保留，補上 mentions 資料後
+         解除下面兩處註解即可恢復。
     <div class="tab-group" id="kolViewGroup">
       <button class="tab-btn active" onclick="setKolView('profile',event)">媒體卡片</button>
       <button class="tab-btn" onclick="setKolView('matrix',event)">矩陣圖</button>
       <button class="tab-btn" onclick="setKolView('impact',event)">影響力分析</button>
     </div>
+    -->
   </div>
   <div id="kolProfileView"></div>
+  <!--
   <div id="kolMatrixView" style="display:none"></div>
   <div id="kolImpactView" style="display:none"></div>
+  -->
 </div>
 
 <!-- 🚘 「汽車品牌活動動態」已於 2026/09 併入「品牌動態」（原新車上市月曆）：
@@ -1992,15 +1999,18 @@ const KOL_MONTH_LABELS = {jan:'1月',feb:'2月',mar:'3月'};
 let kolView = 'profile';
 let kolCharts = {};
 
+// 矩陣圖／影響力分析的容器目前為註解狀態（見 page-kol），因此以 show() 做存在性防護；
+// 恢復那兩個檢視時本函式不需改動。
 function setKolView(v, e) {
   kolView = v;
   document.querySelectorAll('#kolViewGroup .tab-btn').forEach(b=>b.classList.remove('active'));
   if(e) e.target.classList.add('active');
-  document.getElementById('kolProfileView').style.display = v==='profile'?'':'none';
-  document.getElementById('kolMatrixView').style.display = v==='matrix'?'':'none';
-  document.getElementById('kolImpactView').style.display = v==='impact'?'':'none';
-  if(v==='matrix') buildKolMatrix();
-  if(v==='impact') buildKolImpact();
+  const show = (id,on)=>{ const el=document.getElementById(id); if(el) el.style.display = on?'':'none'; };
+  show('kolProfileView', v==='profile');
+  show('kolMatrixView',  v==='matrix');
+  show('kolImpactView',  v==='impact');
+  if(v==='matrix' && document.getElementById('kolMatrixView')) buildKolMatrix();
+  if(v==='impact' && document.getElementById('kolImpactView')) buildKolImpact();
 }
 
 // 「17.9萬」→179000、「7834」→7834；X／停更／PODCAST／_／空白為無資料，回傳 null
