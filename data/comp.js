@@ -19,7 +19,7 @@ const COMP_DATA = {
       { brand:'MITSUBISHI', name:'XFORCE',      color:'#f43f5e', data:{jan:634,feb:395,mar:473,apr:468,may:489,jun:499,jul:535,aug:327} },
       { brand:'MAZDA',      name:'CX-30',       color:'#34d399', ext:'進口延伸', data:{jan:187,feb:129,mar:474,apr:173,may:339,jun:215,jul:273,aug:266} },
       { brand:'HYUNDAI',    name:'VENUE',       color:'#a78bfa', data:{jan:310,feb:195,mar:250,apr:267,may:282,jun:207,jul:304,aug:186} },
-      { brand:'MG',         name:'ZS',          color:'#64748b', note:'7月273台為2026年式出清高點；8月推ZS 2027年式（69.9–74.9萬），交接空窗使掛牌落至116台（-57.5%，全戰場最深）。屬年式交替造成的斷檔，非需求崩跌，與CX-5 576→61同類', data:{jan:175,feb:122,mar:140,apr:169,may:142,jun:167,jul:273,aug:116} },
+      { brand:'MG',         name:'ZS',          color:'#64748b', note:'7月273台為2026年式出清高點；8月推ZS 2027年式（69.9–74.9萬），交接空窗使掛牌落至116台（-57.5%，全戰場最深）。屬年式交替造成的斷檔，非需求崩跌，與CX-5 576→61同類。⚠9/30 TNCAP 2026Q3公布ZS總評0星（國產第五順位受測、第二版新制）：安全輔助0星、成人保護2星，側撞與側柱撞時側氣簾未正常作動；台灣MG同步宣布主動召回2025/3–2026/9生產車輛免費檢修。對照KIA Sportage二星案例（6–7月負面聲量爆發當月反為全年銷售高點、8月才回落），ZS衝擊預期落在10–11月，且因8月已處年式交接低基期，判讀時須與交接效應分離', data:{jan:175,feb:122,mar:140,apr:169,may:142,jun:167,jul:273,aug:116} },
       { brand:'MAZDA',      name:'CX-3',        color:'#6ee7b7', ext:'進口延伸', data:{jan:6,feb:21,mar:63,apr:30,may:38,jun:38,jul:52,aug:32} },
     ]
   },
