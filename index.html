@@ -415,19 +415,19 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
 <!-- ⚠ 資料檔後面的 ?v=YYYYMMDD 是快取破除用的版本戳。GitHub Pages 會讓瀏覽器
      快取這些 .js，不加版本戳的話更新完資料要等快取過期才看得到新內容。
      每次更新 data/ 底下任何檔案後，請把所有 ?v= 一起改成當天日期。 -->
-<script src="data/creatives.js?v=20260930"></script>
-<script src="data/registrations.js?v=20260930"></script>
-<script src="data/intel.js?v=20260930"></script>
-<script src="data/promos.js?v=20260930"></script>
-<script src="data/nielsen.js?v=20260930"></script>
-<script src="data/strategy.js?v=20260930"></script>
-<script src="data/q1_report.js?v=20260930"></script>
-<script src="data/comp.js?v=20260930"></script>
-<script src="data/kol.js?v=20260930"></script>
-<script src="data/opview.js?v=20260930"></script>
-<script src="data/launch.js?v=20260930"></script>
-<script src="data/actions.js?v=20260930"></script>
-<script src="data/models.js?v=20260930"></script>
+<script src="data/creatives.js?v=20261001"></script>
+<script src="data/registrations.js?v=20261001"></script>
+<script src="data/intel.js?v=20261001"></script>
+<script src="data/promos.js?v=20261001"></script>
+<script src="data/nielsen.js?v=20261001"></script>
+<script src="data/strategy.js?v=20261001"></script>
+<script src="data/q1_report.js?v=20261001"></script>
+<script src="data/comp.js?v=20261001"></script>
+<script src="data/kol.js?v=20261001"></script>
+<script src="data/opview.js?v=20261001"></script>
+<script src="data/launch.js?v=20261001"></script>
+<script src="data/actions.js?v=20261001"></script>
+<script src="data/models.js?v=20261001"></script>
 <script>
 
 // 📦 資料已抽離 → data/creatives.js（素材 base64 圖庫（window._cac 預載 / Q1_CREATIVE_IMGS））
@@ -1734,8 +1734,8 @@ document.addEventListener('keydown',e=>{
 // 資料結構：每個車款的競品清單，每個品牌每月掛牌數
 // 📦 資料已抽離 → data/comp.js（競品掛牌比對 COMP_DATA）
 
-const COMP_MONTHS = ['jan','feb','mar','apr','may','jun','jul','aug'];
-const COMP_MONTH_LABELS = {jan:'1月',feb:'2月',mar:'3月',apr:'4月',may:'5月',jun:'6月',jul:'7月',aug:'8月'};
+const COMP_MONTHS = ['jan','feb','mar','apr','may','jun','jul','aug','sep'];
+const COMP_MONTH_LABELS = {jan:'1月',feb:'2月',mar:'3月',apr:'4月',may:'5月',jun:'6月',jul:'7月',aug:'8月',sep:'9月'};
 const COMP_KEYS = ['kicks','sentra','xtrail','xtraile']; // 戰場①→④ 順序
 let compModel = 'kicks';
 let compCharts = {};

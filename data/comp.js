@@ -13,14 +13,14 @@ const COMP_DATA = {
     color: '#c8f55a',
     segment: '小型SUV/CUV（國產＋進口延伸）',
     models: [
-      { brand:'NISSAN',     name:'Kicks',       color:'#c8f55a', data:{jan:458,feb:180,mar:511,apr:515,may:467,jun:481,jul:478,aug:338} },
-      { brand:'TOYOTA',     name:'Yaris Cross', color:'#f97316', data:{jan:1229,feb:616,mar:1109,apr:1129,may:1090,jun:1555,jul:1787,aug:1039} },
-      { brand:'HONDA',      name:'HR-V',        color:'#fb7185', data:{jan:1112,feb:637,mar:1091,apr:791,may:908,jun:889,jul:1003,aug:728} },
-      { brand:'MITSUBISHI', name:'XFORCE',      color:'#f43f5e', data:{jan:634,feb:395,mar:473,apr:468,may:489,jun:499,jul:535,aug:327} },
-      { brand:'MAZDA',      name:'CX-30',       color:'#34d399', ext:'進口延伸', data:{jan:187,feb:129,mar:474,apr:173,may:339,jun:215,jul:273,aug:266} },
-      { brand:'HYUNDAI',    name:'VENUE',       color:'#a78bfa', data:{jan:310,feb:195,mar:250,apr:267,may:282,jun:207,jul:304,aug:186} },
-      { brand:'MG',         name:'ZS',          color:'#64748b', note:'7月273台為2026年式出清高點；8月推ZS 2027年式（69.9–74.9萬），交接空窗使掛牌落至116台（-57.5%，全戰場最深）。屬年式交替造成的斷檔，非需求崩跌，與CX-5 576→61同類。⚠9/30 TNCAP 2026Q3公布ZS總評0星（國產第五順位受測、第二版新制）：安全輔助0星、成人保護2星，側撞與側柱撞時側氣簾未正常作動；台灣MG同步宣布主動召回2025/3–2026/9生產車輛免費檢修。對照KIA Sportage二星案例（6–7月負面聲量爆發當月反為全年銷售高點、8月才回落），ZS衝擊預期落在10–11月，且因8月已處年式交接低基期，判讀時須與交接效應分離', data:{jan:175,feb:122,mar:140,apr:169,may:142,jun:167,jul:273,aug:116} },
-      { brand:'MAZDA',      name:'CX-3',        color:'#6ee7b7', ext:'進口延伸', data:{jan:6,feb:21,mar:63,apr:30,may:38,jun:38,jul:52,aug:32} },
+      { brand:'NISSAN',     name:'Kicks',       color:'#c8f55a', data:{jan:458,feb:180,mar:511,apr:515,may:467,jun:481,jul:478,aug:338,sep:434} },
+      { brand:'TOYOTA',     name:'Yaris Cross', color:'#f97316', data:{jan:1229,feb:616,mar:1109,apr:1129,may:1090,jun:1555,jul:1787,aug:1039,sep:1365} },
+      { brand:'HONDA',      name:'HR-V',        color:'#fb7185', data:{jan:1112,feb:637,mar:1091,apr:791,may:908,jun:889,jul:1003,aug:728,sep:752} },
+      { brand:'MITSUBISHI', name:'XFORCE',      color:'#f43f5e', data:{jan:634,feb:395,mar:473,apr:468,may:489,jun:499,jul:535,aug:327,sep:388} },
+      { brand:'MAZDA',      name:'CX-30',       color:'#34d399', ext:'進口延伸', data:{jan:187,feb:129,mar:474,apr:173,may:339,jun:215,jul:273,aug:266,sep:34} },
+      { brand:'HYUNDAI',    name:'VENUE',       color:'#a78bfa', data:{jan:310,feb:195,mar:250,apr:267,may:282,jun:207,jul:304,aug:186,sep:240} },
+      { brand:'MG',         name:'ZS',          color:'#64748b', note:'7月273台為2026年式出清高點；8月推ZS 2027年式（69.9–74.9萬），交接空窗使掛牌落至116台（-57.5%，全戰場最深）。屬年式交替造成的斷檔，非需求崩跌，與CX-5 576→61同類。⚠9/30 TNCAP 2026Q3公布ZS總評0星（國產第五順位受測、第二版新制）：安全輔助0星、成人保護2星，側撞與側柱撞時側氣簾未正常作動；台灣MG同步宣布主動召回2025/3–2026/9生產車輛免費檢修。對照KIA Sportage二星案例（6–7月負面聲量爆發當月反為全年銷售高點、8月才回落），ZS衝擊預期落在10–11月，且因8月已處年式交接低基期，判讀時須與交接效應分離', data:{jan:175,feb:122,mar:140,apr:169,may:142,jun:167,jul:273,aug:116,sep:111} },
+      { brand:'MAZDA',      name:'CX-3',        color:'#6ee7b7', ext:'進口延伸', data:{jan:6,feb:21,mar:63,apr:30,may:38,jun:38,jul:52,aug:32,sep:11} },
     ]
   },
   sentra: {
@@ -29,11 +29,11 @@ const COMP_DATA = {
     color: '#c8f55a',
     segment: '中型房車 SEDAN（含掀背／進口延伸參考）',
     models: [
-      { brand:'NISSAN', name:'Sentra',        color:'#c8f55a', data:{jan:294,feb:170,mar:299,apr:227,may:286,jun:304,jul:265,aug:191} },
-      { brand:'TOYOTA', name:'Corolla Altis', color:'#f97316', data:{jan:852,feb:411,mar:625,apr:641,may:646,jun:704,jul:772,aug:491} },
-      { brand:'HONDA',  name:'Fit e:HEV',     color:'#fb7185', ext:'掀背延伸', data:{jan:520,feb:238,mar:405,apr:199,may:217,jun:246,jul:286,aug:221} },
-      { brand:'MAZDA',  name:'MAZDA3',        color:'#34d399', ext:'進口延伸', note:'8月335台為2026年單月最高，於民俗月逆勢成長，與大盤走勢相反，原因待確認', data:{jan:140,feb:58,mar:297,apr:257,may:134,jun:284,jul:132,aug:335} },
-      { brand:'FORD',   name:'FOCUS',         color:'#60a5fa', note:'已近停產尾量', data:{jan:1,feb:106,mar:65,apr:3,may:0,jun:0,jul:0,aug:0} },
+      { brand:'NISSAN', name:'Sentra',        color:'#c8f55a', data:{jan:294,feb:170,mar:299,apr:227,may:286,jun:304,jul:265,aug:191,sep:207} },
+      { brand:'TOYOTA', name:'Corolla Altis', color:'#f97316', data:{jan:852,feb:411,mar:625,apr:641,may:646,jun:704,jul:772,aug:491,sep:612} },
+      { brand:'HONDA',  name:'Fit e:HEV',     color:'#fb7185', ext:'掀背延伸', data:{jan:520,feb:238,mar:405,apr:199,may:217,jun:246,jul:286,aug:221,sep:268} },
+      { brand:'MAZDA',  name:'MAZDA3',        color:'#34d399', ext:'進口延伸', note:'8月335台為2026年單月最高，於民俗月逆勢成長，與大盤走勢相反，原因待確認', data:{jan:140,feb:58,mar:297,apr:257,may:134,jun:284,jul:132,aug:335,sep:49} },
+      { brand:'FORD',   name:'FOCUS',         color:'#60a5fa', note:'已近停產尾量', data:{jan:1,feb:106,mar:65,apr:3,may:0,jun:0,jul:0,aug:0,sep:0} },
     ]
   },
   xtrail: {
@@ -42,13 +42,13 @@ const COMP_DATA = {
     color: '#c8f55a',
     segment: '國產中大型SUV',
     models: [
-      { brand:'NISSAN', name:'X-Trail 汽油版', color:'#c8f55a', data:{jan:248,feb:123,mar:163,apr:227,may:192,jun:260,jul:305,aug:222} },
-      { brand:'TOYOTA', name:'Corolla Cross',  color:'#f97316', data:{jan:4604,feb:2441,mar:3565,apr:3573,may:3917,jun:4551,jul:4710,aug:2823} },
-      { brand:'FORD',   name:'Territory',      color:'#60a5fa', data:{jan:1333,feb:838,mar:1257,apr:1294,may:857,jun:1276,jul:963,aug:785} },
-      { brand:'HONDA',  name:'CR-V',           color:'#fb7185', note:'4月0台／5月57台為大改款交替期，6月起回升', data:{jan:840,feb:589,mar:1114,apr:0,may:57,jun:1089,jul:894,aug:493} },
-      { brand:'HYUNDAI',name:'Tucson L',       color:'#a78bfa', data:{jan:222,feb:124,mar:235,apr:215,may:151,jun:218,jul:221,aug:225} },
-      { brand:'HYUNDAI',name:'MUFASA',         color:'#c084fc', data:{jan:235,feb:134,mar:190,apr:173,may:169,jun:138,jul:121,aug:95} },
-      { brand:'FORD',   name:'KUGA',           color:'#93c5fd', note:'5月起近0，全面停產', data:{jan:132,feb:59,mar:161,apr:99,may:0,jun:7,jul:0,aug:0} },
+      { brand:'NISSAN', name:'X-Trail 汽油版', color:'#c8f55a', data:{jan:248,feb:123,mar:163,apr:227,may:192,jun:260,jul:305,aug:222,sep:199} },
+      { brand:'TOYOTA', name:'Corolla Cross',  color:'#f97316', data:{jan:4604,feb:2441,mar:3565,apr:3573,may:3917,jun:4551,jul:4710,aug:2823,sep:3615} },
+      { brand:'FORD',   name:'Territory',      color:'#60a5fa', data:{jan:1333,feb:838,mar:1257,apr:1294,may:857,jun:1276,jul:963,aug:785,sep:879} },
+      { brand:'HONDA',  name:'CR-V',           color:'#fb7185', note:'4月0台／5月57台為大改款交替期，6月起回升', data:{jan:840,feb:589,mar:1114,apr:0,may:57,jun:1089,jul:894,aug:493,sep:594} },
+      { brand:'HYUNDAI',name:'Tucson L',       color:'#a78bfa', data:{jan:222,feb:124,mar:235,apr:215,may:151,jun:218,jul:221,aug:225,sep:182} },
+      { brand:'HYUNDAI',name:'MUFASA',         color:'#c084fc', data:{jan:235,feb:134,mar:190,apr:173,may:169,jun:138,jul:121,aug:95,sep:142} },
+      { brand:'FORD',   name:'KUGA',           color:'#93c5fd', note:'5月起近0，全面停產', data:{jan:132,feb:59,mar:161,apr:99,may:0,jun:7,jul:0,aug:0,sep:0} },
     ]
   },
   xtraile: {
@@ -57,12 +57,12 @@ const COMP_DATA = {
     color: '#c8f55a',
     segment: '進口中大型SUV',
     models: [
-      { brand:'NISSAN', name:'X-Trail e-POWER', color:'#c8f55a', data:{jan:129,feb:57,mar:58,apr:76,may:70,jun:93,jul:72,aug:56} },
-      { brand:'TOYOTA', name:'RAV4',            color:'#f97316', data:{jan:1822,feb:1796,mar:2063,apr:2028,may:1830,jun:2943,jul:2683,aug:1732} },
-      { brand:'MAZDA',  name:'CX-5',            color:'#34d399', note:'8月61台為世代交替谷底：二代出清完畢、第三代8/18發表但9/1起才陸續交車，非需求消失', data:{jan:281,feb:358,mar:753,apr:320,may:773,jun:808,jul:576,aug:61} },
-      { brand:'KIA',    name:'Sportage',        color:'#94a3b8', note:'6月952台暴增：電池八年延保＋優惠；7月935台維持高檔——TNCAP二星負面聲量於6–7月爆發，該期間反為全年銷售最高的兩個月，促銷力道短期蓋過負面輿情；8月573台（-39%），惟同期戰場④整體-40.1%，Sportage並未跌得比級距合計深，須排除CX-5世代交替（-89.4%）後的-33.1%比較，才落後約5.6個百分點。TNCAP影響屬減速而非崩盤', data:{jan:208,feb:164,mar:217,apr:158,may:338,jun:952,jul:935,aug:573} },
-      { brand:'VW',     name:'Tiguan',          color:'#7dd3fc', data:{jan:123,feb:99,mar:116,apr:137,may:165,jun:126,jul:148,aug:127} },
-      { brand:'MAZDA',  name:'CX-60',           color:'#6ee7b7', data:{jan:131,feb:64,mar:80,apr:227,may:107,jun:110,jul:175,aug:198} },
+      { brand:'NISSAN', name:'X-Trail e-POWER', color:'#c8f55a', data:{jan:129,feb:57,mar:58,apr:76,may:70,jun:93,jul:72,aug:56,sep:169} },
+      { brand:'TOYOTA', name:'RAV4',            color:'#f97316', data:{jan:1822,feb:1796,mar:2063,apr:2028,may:1830,jun:2943,jul:2683,aug:1732,sep:2108} },
+      { brand:'MAZDA',  name:'CX-5',            color:'#34d399', note:'8月61台為世代交替谷底：二代出清完畢、第三代8/18發表但9/1起才陸續交車，非需求消失', data:{jan:281,feb:358,mar:753,apr:320,may:773,jun:808,jul:576,aug:61,sep:508} },
+      { brand:'KIA',    name:'Sportage',        color:'#94a3b8', note:'6月952台暴增：電池八年延保＋優惠；7月935台維持高檔——TNCAP二星負面聲量於6–7月爆發，該期間反為全年銷售最高的兩個月，促銷力道短期蓋過負面輿情；8月573台（-39%），惟同期戰場④整體-40.1%，Sportage並未跌得比級距合計深，須排除CX-5世代交替（-89.4%）後的-33.1%比較，才落後約5.6個百分點。TNCAP影響屬減速而非崩盤', data:{jan:208,feb:164,mar:217,apr:158,may:338,jun:952,jul:935,aug:573,sep:530} },
+      { brand:'VW',     name:'Tiguan',          color:'#7dd3fc', data:{jan:123,feb:99,mar:116,apr:137,may:165,jun:126,jul:148,aug:127,sep:86} },
+      { brand:'MAZDA',  name:'CX-60',           color:'#6ee7b7', data:{jan:131,feb:64,mar:80,apr:227,may:107,jun:110,jul:175,aug:198,sep:186} },
     ]
   }
 };
