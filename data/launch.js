@@ -201,6 +201,14 @@ const LAUNCH_2026 = [
      ]},
   ]},
   {ym:'2026-10', label:'10月', items:[
+    {brand:'NISSAN', title:'Nissan MOMIJI 全車系特仕車上市發表會（10/13）', type:'特仕',
+     points:[
+       '裕隆日產 10 月 13 日舉辦上市發表會，為全車系特仕企劃；各車款配備與定價待公布',
+       '以「紅葉」為名，延續 3 月 SAKURA 櫻花特仕的日系節氣命名手法',
+       '涵蓋範圍大於 3 月 SAKURA（當時僅 Kicks、Sentra 兩款），本次納入 X-Trail 與 e-POWER 車系',
+       '戰術意義：X-Trail 汽油版自召回輿情後連兩月下跌（222→199），為首次全車系層級的反攻檔期',
+       '前例參考：3 月 SAKURA 期間 Kicks 衝上 511 台、Sentra 299 台，為上半年單月高點',
+     ]},
     {brand:'HYUNDAI', title:'KONA Hybrid 正式發表', type:'新車',
      points:[
        '接續 9/19 起的預接單，10 月正式發表；正式售價待原廠公布',
