@@ -201,11 +201,11 @@ const LAUNCH_2026 = [
      ]},
   ]},
   {ym:'2026-10', label:'10月', items:[
-    {brand:'NISSAN', title:'「Nissan MOMIJI」上市發表會（10/13）', type:'預告',
+    {brand:'NISSAN', title:'Nissan MOMIJI 特仕車上市發表會（10/13）', type:'特仕',
      points:[
-       '裕隆日產預告 10 月 13 日舉辦上市發表會，車款與內容尚未正式公布',
+       '裕隆日產 10 月 13 日舉辦上市發表會，確認為特仕車企劃；適用車款與定價待公布',
        '以「紅葉」為名，延續 3 月 Kicks / Sentra SAKURA 櫻花特仕的日系節氣命名手法',
-       '媒體推測為 Sentra 與 Kicks 新年式／特仕，尚待官方證實',
+       '媒體推測適用 Sentra 與 Kicks，尚待官方證實',
        '前例參考：3 月 SAKURA 特仕期間 Kicks 衝上 511 台、Sentra 299 台，為上半年單月高點',
      ]},
     {brand:'HYUNDAI', title:'KONA Hybrid 正式發表', type:'新車',
