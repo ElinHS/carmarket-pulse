@@ -35,5 +35,6 @@ const RAW=[
   {yr:2026,mo:7,kicks:478,kickse:0,sentra:265,xtrail:305,xtraile:72,ariya:0,note:'X-Trail 粋．月國產小改款上市'},
   {yr:2026,mo:8,kicks:338,kickse:0,sentra:191,xtrail:222,xtraile:56,ariya:0,note:'民俗月；X-Trail 擴大召回輿情'},
   {yr:2026,mo:9,kicks:434,kickse:0,sentra:207,xtrail:199,xtraile:169,ariya:0,note:'X-Trail e-POWER 小改款上市，進口版 56→169 台；汽油版續跌至 199 台'},
+  {yr:2026,mo:10,kicks:521,kickse:0,sentra:269,xtrail:174,xtraile:86,ariya:0,note:'MOMIJI 特仕車 10/13 上市：Kicks 521 台創 2026 單月最高（超越 3 月 SAKURA 的 511），Sentra 269 台（+30%）但未達 SAKURA 的 299；未納入特仕的 X-Trail 汽油版連二月下跌至 174 台，為 2026 年除春節外最低；e-POWER 自 9 月小改款高點 169 回落至 86 台（-49%）'},
 ];
 
