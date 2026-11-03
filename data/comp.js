@@ -47,7 +47,7 @@ const COMP_DATA = {
       { brand:'TOYOTA', name:'Corolla Cross',  color:'#f97316', data:{jan:4604,feb:2441,mar:3565,apr:3573,may:3917,jun:4551,jul:4710,aug:2823,sep:3615,oct:3333} },
       { brand:'FORD',   name:'Territory',      color:'#60a5fa', data:{jan:1333,feb:838,mar:1257,apr:1294,may:857,jun:1276,jul:963,aug:785,sep:879,oct:779} },
       { brand:'HONDA',  name:'CR-V',           color:'#fb7185', note:'4月0台／5月57台為大改款交替期，6月起回升', data:{jan:840,feb:589,mar:1114,apr:0,may:57,jun:1089,jul:894,aug:493,sep:594,oct:782} },
-      { brand:'HYUNDAI',name:'Tucson L',       color:'#a78bfa', note:'⚠ 來源檔「2026掛牌數_每月更新.xlsx」10月欄位空白，故本月未填；表格顯示「—」且不計入YTD與月均。待補值後戰場③的10月級距合計與MoM需重算（目前合計少約200台）', data:{jan:222,feb:124,mar:235,apr:215,may:151,jun:218,jul:221,aug:225,sep:182} },
+      { brand:'HYUNDAI',name:'Tucson L',       color:'#a78bfa', note:'10月182台與9月完全相同，為來源檔補登值。全年落在121–235台的窄帶內，是戰場③中波動最小的車款', data:{jan:222,feb:124,mar:235,apr:215,may:151,jun:218,jul:221,aug:225,sep:182,oct:182} },
       { brand:'HYUNDAI',name:'MUFASA',         color:'#c084fc', data:{jan:235,feb:134,mar:190,apr:173,may:169,jun:138,jul:121,aug:95,sep:142,oct:114} },
       { brand:'FORD',   name:'KUGA',           color:'#93c5fd', note:'5月起近0，全面停產', data:{jan:132,feb:59,mar:161,apr:99,may:0,jun:7,jul:0,aug:0,sep:0,oct:0} },
     ]
@@ -62,7 +62,7 @@ const COMP_DATA = {
       { brand:'TOYOTA', name:'RAV4',            color:'#f97316', data:{jan:1822,feb:1796,mar:2063,apr:2028,may:1830,jun:2943,jul:2683,aug:1732,sep:2108,oct:2013} },
       { brand:'MAZDA',  name:'CX-5',            color:'#34d399', note:'8月61台為世代交替谷底：二代出清完畢、第三代8/18發表但9/1起才陸續交車，非需求消失', data:{jan:281,feb:358,mar:753,apr:320,may:773,jun:808,jul:576,aug:61,sep:508,oct:412} },
       { brand:'KIA',    name:'Sportage',        color:'#94a3b8', note:'6月952台暴增：電池八年延保＋優惠；7月935台維持高檔——TNCAP二星負面聲量於6–7月爆發，該期間反為全年銷售最高的兩個月，促銷力道短期蓋過負面輿情；8月573台（-39%），惟同期戰場④整體-40.1%，Sportage並未跌得比級距合計深，須排除CX-5世代交替（-89.4%）後的-33.1%比較，才落後約5.6個百分點。TNCAP影響屬減速而非崩盤', data:{jan:208,feb:164,mar:217,apr:158,may:338,jun:952,jul:935,aug:573,sep:530,oct:332} },
-      { brand:'VW',     name:'Tiguan',          color:'#7dd3fc', note:'⚠ 來源檔「2026掛牌數_每月更新.xlsx」10月欄位空白，故本月未填；表格顯示「—」且不計入YTD與月均。待補值後戰場④的10月級距合計與MoM需重算（目前合計少約100台）', data:{jan:123,feb:99,mar:116,apr:137,may:165,jun:126,jul:148,aug:127,sep:86} },
+      { brand:'VW',     name:'Tiguan',          color:'#7dd3fc', data:{jan:123,feb:99,mar:116,apr:137,may:165,jun:126,jul:148,aug:127,sep:86,oct:124} },
       { brand:'MAZDA',  name:'CX-60',           color:'#6ee7b7', note:'10月41台（-78.0%）為2026年單月最低。10月促銷明載「2027年式預接單於11月底前入主」，屬買氣遞延至新年式的世代交接空窗，非需求消失', data:{jan:131,feb:64,mar:80,apr:227,may:107,jun:110,jul:175,aug:198,sep:186,oct:41} },
     ]
   }
