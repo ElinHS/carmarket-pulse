@@ -194,18 +194,8 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
       <span style="background:rgba(251,146,60,.1);border:1px solid rgba(251,146,60,.3);color:var(--accent3);font-family:'DM Mono',monospace;font-size:10px;padding:3px 10px;border-radius:3px;letter-spacing:.08em">競車促銷方案</span>
     </div>
     <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-      <div class="tab-group" id="promoMonthGroup">
-        <button class="tab-btn active" onclick="setPromoMonth('jan',event)">1月</button>
-        <button class="tab-btn" onclick="setPromoMonth('feb',event)">2月</button>
-        <button class="tab-btn" onclick="setPromoMonth('mar',event)">3月</button>
-        <button class="tab-btn" onclick="setPromoMonth('apr',event)">4月</button>
-        <button class="tab-btn" onclick="setPromoMonth('may',event)">5月</button>
-        <button class="tab-btn" onclick="setPromoMonth('jun',event)">6月</button>
-        <button class="tab-btn" onclick="setPromoMonth('jul',event)">7月</button>
-        <button class="tab-btn" onclick="setPromoMonth('aug',event)">8月</button>
-        <button class="tab-btn" onclick="setPromoMonth('sep',event)">9月</button>
-        <button class="tab-btn" onclick="setPromoMonth('oct',event)">10月</button>
-      </div>
+      <!-- 月份頁籤由 MONTHS_AVAIL 動態產生（見 index.html 中 ALL_MONTHS 的說明） -->
+      <div class="tab-group" id="promoMonthGroup"></div>
       <div class="tab-group">
         <button class="tab-btn active" onclick="setPromoBrand('ALL',event)">全品牌</button>
         <button class="tab-btn" onclick="setPromoBrand('NISSAN',event)">NISSAN</button>
@@ -240,17 +230,8 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
       <span style="background:rgba(200,245,90,.1);border:1px solid rgba(200,245,90,.3);color:var(--accent);font-family:'DM Mono',monospace;font-size:10px;padding:3px 10px;border-radius:3px;letter-spacing:.08em">Nielsen AdIntel</span>
       <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--text3)" id="nielsenPeriodLabel">2026/01 ｜ 六品牌數位廣告監測</span>
     </div>
-    <div class="tab-group" id="nielsenPeriodGroup">
-      <button class="tab-btn active" onclick="setNielsenPeriod('jan',event)">1月</button>
-      <button class="tab-btn" onclick="setNielsenPeriod('feb',event)">2月</button>
-      <button class="tab-btn" onclick="setNielsenPeriod('mar',event)">3月</button>
-      <button class="tab-btn" onclick="setNielsenPeriod('apr',event)">4月</button>
-      <button class="tab-btn" onclick="setNielsenPeriod('may',event)">5月</button>
-      <button class="tab-btn" onclick="setNielsenPeriod('jun',event)">6月</button>
-      <button class="tab-btn" onclick="setNielsenPeriod('jul',event)">7月</button>
-      <button class="tab-btn" onclick="setNielsenPeriod('aug',event)">8月</button>
-      <button class="tab-btn" onclick="setNielsenPeriod('sep',event)">9月</button>
-    </div>
+    <!-- 月份頁籤由 NIELSEN_MONTHLY 動態產生（見 index.html 中 ALL_MONTHS 的說明） -->
+    <div class="tab-group" id="nielsenPeriodGroup"></div>
   </div>
   <div id="nielsenKpiRow" style="display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:16px"></div>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
@@ -417,19 +398,19 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
 <!-- ⚠ 資料檔後面的 ?v=YYYYMMDD 是快取破除用的版本戳。GitHub Pages 會讓瀏覽器
      快取這些 .js，不加版本戳的話更新完資料要等快取過期才看得到新內容。
      每次更新 data/ 底下任何檔案後，請把所有 ?v= 一起改成當天日期。 -->
-<script src="data/creatives.js?v=20261103b"></script>
-<script src="data/registrations.js?v=20261103b"></script>
-<script src="data/intel.js?v=20261103b"></script>
-<script src="data/promos.js?v=20261103b"></script>
-<script src="data/nielsen.js?v=20261103b"></script>
-<script src="data/strategy.js?v=20261103b"></script>
-<script src="data/q1_report.js?v=20261103b"></script>
-<script src="data/comp.js?v=20261103b"></script>
-<script src="data/kol.js?v=20261103b"></script>
-<script src="data/opview.js?v=20261103b"></script>
-<script src="data/launch.js?v=20261103b"></script>
-<script src="data/actions.js?v=20261103b"></script>
-<script src="data/models.js?v=20261103b"></script>
+<script src="data/creatives.js?v=20261103c"></script>
+<script src="data/registrations.js?v=20261103c"></script>
+<script src="data/intel.js?v=20261103c"></script>
+<script src="data/promos.js?v=20261103c"></script>
+<script src="data/nielsen.js?v=20261103c"></script>
+<script src="data/strategy.js?v=20261103c"></script>
+<script src="data/q1_report.js?v=20261103c"></script>
+<script src="data/comp.js?v=20261103c"></script>
+<script src="data/kol.js?v=20261103c"></script>
+<script src="data/opview.js?v=20261103c"></script>
+<script src="data/launch.js?v=20261103c"></script>
+<script src="data/actions.js?v=20261103c"></script>
+<script src="data/models.js?v=20261103c"></script>
 <script>
 
 // 📦 資料已抽離 → data/creatives.js（素材 base64 圖庫（window._cac 預載 / Q1_CREATIVE_IMGS））
@@ -676,8 +657,16 @@ function updateAll(){buildKPI();buildTrendChart();buildModelChart();buildStacked
 // ── PROMO DATA ──
 const BRAND_COLORS={NISSAN:'var(--accent)',HONDA:'#fb7185',FORD:'#60a5fa',HYUNDAI:'#a78bfa',MAZDA:'#34d399',TOYOTA:'#f97316'};
 const BRAND_BG={NISSAN:'rgba(200,245,90,.07)',HONDA:'rgba(251,113,133,.07)',FORD:'rgba(96,165,250,.07)',HYUNDAI:'rgba(167,139,250,.07)',MAZDA:'rgba(52,211,153,.07)',TOYOTA:'rgba(249,115,22,.07)'};
-const MONTHS_AVAIL=['jan','feb','mar','apr','may','jun','jul','aug','sep','oct'];
+// ── 月份清單一律由資料推導，不寫死 ──
+// 新增月份時只需修改 data/*.js，index.html 完全不必動。
+// 這很重要：index.html 是唯一無法帶快取版本戳（?v=）的檔案，一旦把月份寫死在這裡，
+// 每月更新都得改它，而使用者的瀏覽器可能仍快取著舊版 index.html，
+// 導致「資料檔已更新、畫面卻看不到新月份」。
+const ALL_MONTHS=['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'];
 const MONTH_LABELS={jan:'1月',feb:'2月',mar:'3月',apr:'4月',may:'5月',jun:'6月',jul:'7月',aug:'8月',sep:'9月',oct:'10月',nov:'11月',dec:'12月'};
+const MONTH_NUM=mo=>String(ALL_MONTHS.indexOf(mo)+1).padStart(2,'0');
+// 促銷：PROMO 任一列有該月欄位即視為已收錄（'—' 代表當月無方案，仍算已收錄）
+const MONTHS_AVAIL=ALL_MONTHS.filter(mo=>PROMO.some(r=>r[mo]!=null));
 let promoMonth='jan', promoBrand='ALL';
 
 // 📦 資料已抽離 → data/promos.js（競品促銷方案 PROMO）
@@ -831,8 +820,8 @@ function setNielsenPeriod(p, e){
   nielsenPeriod = p;
   document.querySelectorAll('#nielsenPeriodGroup .tab-btn').forEach(b=>b.classList.remove('active'));
   if(e) e.target.classList.add('active');
-  const labels={jan:'2026/01 ｜ 六品牌數位廣告監測',feb:'2026/02 ｜ 六品牌數位廣告監測',mar:'2026/03 ｜ 六品牌數位廣告監測',apr:'2026/04 ｜ 六品牌數位廣告監測',may:'2026/05 ｜ 六品牌數位廣告監測',jun:'2026/06 ｜ 六品牌數位廣告監測'};
-  document.getElementById('nielsenPeriodLabel').textContent=labels[p]||'';
+  // 標題由月份代碼推導（原本寫死 jan–jun，7 月起標題會是空白）
+  document.getElementById('nielsenPeriodLabel').textContent=`2026/${MONTH_NUM(p)} ｜ 六品牌數位廣告監測`;
   buildNielsenCharts();
 }
 
@@ -1736,8 +1725,9 @@ document.addEventListener('keydown',e=>{
 // 資料結構：每個車款的競品清單，每個品牌每月掛牌數
 // 📦 資料已抽離 → data/comp.js（競品掛牌比對 COMP_DATA）
 
-const COMP_MONTHS = ['jan','feb','mar','apr','may','jun','jul','aug','sep','oct'];
-const COMP_MONTH_LABELS = {jan:'1月',feb:'2月',mar:'3月',apr:'4月',may:'5月',jun:'6月',jul:'7月',aug:'8月',sep:'9月',oct:'10月'};
+// 競品月份同樣由 comp.js 推導：任一戰場、任一車款有該月數值即納入（見上方 ALL_MONTHS 說明）
+const COMP_MONTHS = ALL_MONTHS.filter(mo=>Object.values(COMP_DATA).some(d=>(d.models||[]).some(m=>m.data[mo]!=null)));
+const COMP_MONTH_LABELS = MONTH_LABELS;
 const COMP_KEYS = ['kicks','sentra','xtrail','xtraile']; // 戰場①→④ 順序
 let compModel = 'kicks';
 let compCharts = {};
@@ -3533,6 +3523,21 @@ function exportActionsCSV(){
   }
   window.addEventListener('hashchange',applyHash);
   if(location.hash.length>1) applyHash();
+})();
+
+// ── 月份頁籤產生器 ──
+// 促銷與 Nielsen 的月份頁籤改由資料推導後動態產生，新增月份不必再改 index.html。
+// 必須在還原 hash 的 IIFE 之前執行，否則那段 clickBtn() 會找不到按鈕。
+(function buildMonthTabs(){
+  const mk=(groupId,months,fnName,current)=>{
+    const g=document.getElementById(groupId);
+    if(!g) return;
+    g.innerHTML=months.map(mo=>
+      `<button class="tab-btn${mo===current?' active':''}" onclick="${fnName}('${mo}',event)">${MONTH_LABELS[mo]||mo}</button>`
+    ).join('');
+  };
+  mk('promoMonthGroup',   MONTHS_AVAIL,                   'setPromoMonth',    promoMonth);
+  mk('nielsenPeriodGroup',Object.keys(NIELSEN_MONTHLY),   'setNielsenPeriod', nielsenPeriod);
 })();
 
 // ── 固定匯出按鈕（右下角）：依當前頁面匯出對應 CSV，無可匯出資料的頁面自動隱藏 ──
