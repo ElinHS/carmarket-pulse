@@ -47,7 +47,20 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
 .intel-nav-item.active{background:rgba(200,245,90,.08);border-left:2px solid var(--accent)}
 .intel-mo-tag{font-family:'DM Mono',monospace;font-size:10px;color:var(--accent);margin-bottom:2px}
 .intel-mo-label{font-size:11px;color:var(--text2)}
-.intel-content{padding:20px;overflow-y:auto;max-height:70vh}
+.intel-content{padding:20px 24px;overflow-y:auto;max-height:70vh}
+/* 以下 7 條原本完全沒有樣式，條目之間沒有間距也沒有項目符號，長條目折行後會與下一條黏成一片 */
+.intel-header{margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+.intel-title{font-size:17px;font-weight:700;color:#fff;margin-bottom:6px;line-height:1.4}
+.intel-meta{font-size:12px;color:var(--text2);line-height:1.7}
+.intel-section{margin-bottom:24px}
+.intel-section-title{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);letter-spacing:.08em;margin-bottom:14px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.intel-section-nissan .intel-section-title{color:var(--accent);border-bottom-color:rgba(200,245,90,.25)}
+.intel-group{margin-bottom:18px}
+.intel-group:last-child{margin-bottom:0}
+.intel-sub-title{font-size:13px;font-weight:600;color:#fff;margin-bottom:8px;line-height:1.5}
+.intel-item{position:relative;padding-left:16px;margin-bottom:8px;font-size:12.5px;line-height:1.8;color:var(--text2)}
+.intel-item::before{content:'';position:absolute;left:3px;top:.72em;width:4px;height:4px;border-radius:50%;background:var(--text3)}
+.intel-section-nissan .intel-item::before{background:var(--accent);opacity:.6}
 @media(max-width:1100px){.kpi-row{grid-template-columns:repeat(3,1fr)}.intel-grid{grid-template-columns:1fr}}
 </style>
 <style>
