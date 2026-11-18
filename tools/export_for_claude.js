@@ -21,6 +21,7 @@ const clean = s => String(s == null ? '' : s)
   .replace(/<strong>/g, '**').replace(/<\/strong>/g, '**')
   .replace(/<[^>]+>/g, '').replace(/\n/g, '；');
 const n = v => (v == null ? '—' : Number(v).toLocaleString());
+const r1 = v => Math.round(v * 10) / 10;   // 千元→萬元換算後保留一位小數
 
 fs.mkdirSync(OUT, { recursive: true });
 const write = (file, body) => {
@@ -134,12 +135,12 @@ const nieMonths = Object.keys(NIE);
     const brands = Object.keys(d).filter(k => d[k] && typeof d[k] === 'object' && 'totalSp' in d[k]);
     const tot = brands.reduce((a, b) => a + (d[b].totalSp || 0), 0);
     md += `## ${d.label || mo}${d.period ? `（${d.period}）` : ''}\n\n`;
-    md += `六品牌合計 ${n(Math.round(tot))} 萬元\n\n`;
+    md += `六品牌合計 ${n(Math.round(tot / 10))} 萬元（原始 ${n(r1(tot))} 千元）\n\n`;
     md += `| 品牌 | 投放（萬元） | SOV | CPM | 主力車款 |\n|---|---|---|---|---|\n`;
     brands.sort((a, b) => (d[b].totalSp || 0) - (d[a].totalSp || 0)).forEach(b => {
       const x = d[b];
-      const top = (x.vehicles || []).slice(0, 2).map(v => `${v.name} ${n(Math.round(v.sp))}萬`).join('、') || '—';
-      md += `| ${b.toUpperCase()} | ${n(Math.round(x.totalSp))} | ${tot ? (x.totalSp / tot * 100).toFixed(1) : '0.0'}% | ${x.cpm ?? '—'} | ${top} |\n`;
+      const top = (x.vehicles || []).slice(0, 2).map(v => `${v.name} ${n(r1(v.sp / 10))}萬`).join('、') || '—';
+      md += `| ${b.toUpperCase()} | ${n(r1(x.totalSp / 10))} | ${tot ? (x.totalSp / tot * 100).toFixed(1) : '0.0'}% | ${x.cpm ?? '—'} | ${top} |\n`;
     });
     md += `\n`;
     brands.forEach(b => {
