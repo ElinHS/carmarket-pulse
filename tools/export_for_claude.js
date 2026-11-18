@@ -128,7 +128,7 @@ const nieMonths = Object.keys(NIE);
 // ── 04 Nielsen 數位投放 ──────────────────────────────────────
 {
   let md = head('數位廣告投放監測（Nielsen AdIntel）',
-    '金額單位為萬元。跨月一律以份額（SOV%）比較，不比絕對金額。已知問題：1–6 月各品牌 channels[].sp 與 totalSp 存在約 100 倍的尺度不一致，圖表讀的是 pct 故無視覺影響，但引用 channels 的絕對金額前須先回查原始匯出檔。');
+    '金額單位為萬元（原始資料為千元，即 Nielsen 匯出的 Spend(000)）。2026/11 已完成全面正規化：1–5 月的 channels 原為 1/100 尺度、6 月的 totalSp 與 vehicles 原為 100 倍膨脹，均已校正，十個月的 totalSp／channels／vehicles 三欄現已一致，跨月可直接比較絕對金額。');
   nieMonths.forEach(mo => {
     const d = NIE[mo];
     const brands = Object.keys(d).filter(k => d[k] && typeof d[k] === 'object' && 'totalSp' in d[k]);
@@ -308,8 +308,10 @@ ${Object.values(COMP).map(b => `| ${b.label} | ${(b.models || []).filter(m => m.
 4. **年式交替與世代交替會造成斷檔。** 掛牌暴跌不等於需求消失。
    comp.js 的 note 欄已逐款標註，引用前務必一起讀。
 
-5. **Nielsen 跨月只比 SOV，不比絕對金額。** 各月的監測範圍與單位基準不保證一致。
-   另：1–6 月的 channels 明細金額與月總額有約 100 倍的尺度不一致，尚未回查原始檔。
+5. **Nielsen 金額單位已全面正規化（2026/11）。** 原始單位為千元（Spend(000)），
+   頁面顯示為萬元。1–5 月的 channels 原為 1/100 尺度、6 月的 totalSp 與 vehicles
+   原為 100 倍膨脹，均已校正，十個月現已一致，跨月可直接比較絕對金額。
+   仍須注意監測範圍只涵蓋六品牌，且為 Nielsen 估算值，不等於品牌實際媒體總投資。
 
 6. **未列入追蹤的車款。** HYUNDAI IONIQ 6、TOYOTA Camry 不在促銷追蹤內；
    Nielsen 僅涵蓋六品牌（NISSAN／TOYOTA／HONDA／FORD／HYUNDAI／MAZDA），

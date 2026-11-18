@@ -1,7 +1,7 @@
 # 數位廣告投放監測（Nielsen AdIntel）
 
 > 來源：carmarket-pulse 儀表板，匯出日 2026-11-18
-> 金額單位為萬元。跨月一律以份額（SOV%）比較，不比絕對金額。已知問題：1–6 月各品牌 channels[].sp 與 totalSp 存在約 100 倍的尺度不一致，圖表讀的是 pct 故無視覺影響，但引用 channels 的絕對金額前須先回查原始匯出檔。
+> 金額單位為萬元（原始資料為千元，即 Nielsen 匯出的 Spend(000)）。2026/11 已完成全面正規化：1–5 月的 channels 原為 1/100 尺度、6 月的 totalSp 與 vehicles 原為 100 倍膨脹，均已校正，十個月的 totalSp／channels／vehicles 三欄現已一致，跨月可直接比較絕對金額。
 
 ## 2026年 1月（2026/01/01–01/31）
 
@@ -36,12 +36,12 @@
 | FORD | 166 | 0.1% | 88 | 福特 Territory 71萬、福特休旅車 55萬 |
 | MAZDA | 29 | 0.0% | 155 | CX-60 13萬、CX-5 6萬 |
 
-- **TOYOTA**：TOYOTA+LEXUS 合計 2,081.7萬。主力：LEXUS RX 1,207萬 + LEXUS IS 721萬，純TOYOTA車款佔比不到2%
-- **NISSAN**：春節月份花費縮減至71萬，X-Trail汽油版獨佔97%預算，Yahoo+UDN大版位為主力
-- **HYUNDAI**：春節大縮量1.2萬，VENUE主力40%，自由時報+ETtoday全線92%，Mobile01完全缺席，版位轉向新聞媒體
-- **HONDA**：2月縮量4.63萬，UDN 96%（1905x400超大版位）；純Display，CR-V改款前的靜默期，以UDN首頁大圖維持品牌曝光
-- **FORD**：春節縮量僅1.66萬，Territory+休旅車小量維持，UDN+自由時報為主要版位，Focus改用Instagram影音
-- **MAZDA**：春節縮量0.29萬，CX-60+CX-5+CX-90多車款並行，集中愛料理+汽車日報小版位，純Display，Instagram全車系維持存在感
+- **TOYOTA**：TOYOTA+LEXUS 合計 2億817萬。主力：LEXUS RX 1億207萬 + LEXUS IS 7,210萬，純TOYOTA車款佔比不到2%
+- **NISSAN**：春節月份花費縮減至713萬，X-Trail汽油版獨佔97%預算，Yahoo+UDN大版位為主力
+- **HYUNDAI**：春節大縮量126萬，VENUE主力40%，自由時報+ETtoday全線92%，Mobile01完全缺席，版位轉向新聞媒體
+- **HONDA**：2月縮量46.3萬，UDN 96%（1905x400超大版位）；純Display，CR-V改款前的靜默期，以UDN首頁大圖維持品牌曝光
+- **FORD**：春節縮量僅16.6萬，Territory+休旅車小量維持，UDN+自由時報為主要版位，Focus改用Instagram影音
+- **MAZDA**：春節縮量2.9萬，CX-60+CX-5+CX-90多車款並行，集中愛料理+汽車日報小版位，純Display，Instagram全車系維持存在感
 
 ## 2026年 3月（2026/03/01–03/31）
 
@@ -56,12 +56,12 @@
 | MAZDA | 488 | 0.2% | 150 | Mazda3/CX-30 470萬、CX-5 14萬 |
 | HONDA | 108 | 0.0% | 135 | 全車系 108萬 |
 
-- **TOYOTA**：TOYOTA+LEXUS 合計 2,099.8萬。LEXUS整合投放1,479萬獨大（Mobile01+Yahoo），TOYOTA休旅車609萬
-- **FORD**：⚡ 3月爆量！Territory 全力押注 Mobile01，302萬集中單一版位（300x250 Mobile01首頁單行215萬），CPM 151元偏高但曝光量達2億次，占全月掛牌亞軍關鍵功臣
+- **TOYOTA**：TOYOTA+LEXUS 合計 2億998萬。LEXUS整合投放1億4,790萬獨大（Mobile01+Yahoo），TOYOTA休旅車6,090萬
+- **FORD**：⚡ 3月爆量！Territory 全力押注 Mobile01，3,023萬集中單一版位（300x250 Mobile01首頁單行2,150萬），CPM 151元偏高但曝光量達2億次，占全月掛牌亞軍關鍵功臣
 - **HYUNDAI**：VENUE大改款上市爆量，93%預算集中單一車款，Yahoo奇摩83%佔比，Video突破45%（VENUE影音48%），CPM 72元全季最低
 - **NISSAN**：3月轉向Kicks Sakura，影音占比升至6%，搭配59.9萬定價掛牌暴增183.9%
-- **MAZDA**：3月爆量4.88萬，Mazda3/CX-30 HOMURA新款上市，集中癮科技+關鍵評論網版位，Instagram影音17%，搭配上市話題月增267%
-- **HONDA**：3月縮至1.08萬，持續靜默等待CR-V e:HEV改款上市；UDN 68%+自由時報 23%，規模創Q1最低，品牌廣告刻意減量以清出空間給新車上市
+- **MAZDA**：3月爆量48.8萬，Mazda3/CX-30 HOMURA新款上市，集中癮科技+關鍵評論網版位，Instagram影音17%，搭配上市話題月增267%
+- **HONDA**：3月縮至10.8萬，持續靜默等待CR-V e:HEV改款上市；UDN 68%+自由時報 23%，規模創Q1最低，品牌廣告刻意減量以清出空間給新車上市
 
 ## 2026年 4月（2026/04/01–04/30）
 
@@ -76,12 +76,12 @@
 | NISSAN | 225 | 0.1% | 52 | X-Trail 汽油版 130萬、Sentra 55萬 |
 | FORD | 150 | 0.0% | 59 | 福特 Territory 103萬、福特全車系 46萬 |
 
-- **TOYOTA**：TOYOTA+LEXUS 4月合計 2,972.8萬，較3月增加42%。LEXUS NX 1,117萬回歸主力，TOYOTA汽車+休旅車各約800萬，CC Hybrid 70萬含51%影音
-- **HYUNDAI**：4月縮量2萬，TUCSON L接棒主力57%，自由時報68%回歸主導，VENUE次之25%，Video僅3%
-- **HONDA**：4月 CR-V 掛牌歸零（油電改款空窗），UDN 94%大版位維持品牌存在感，花費3.4萬
+- **TOYOTA**：TOYOTA+LEXUS 4月合計 2億9,728萬，較3月增加42%。LEXUS NX 1億1,170萬回歸主力，TOYOTA汽車+休旅車各約8,000萬，CC Hybrid 700萬含51%影音
+- **HYUNDAI**：4月縮量205萬，TUCSON L接棒主力57%，自由時報68%回歸主導，VENUE次之25%，Video僅3%
+- **HONDA**：4月 CR-V 掛牌歸零（油電改款空窗），UDN 94%大版位維持品牌存在感，花費34.1萬
 - **MAZDA**：4月轉向CX-60，Video高達85%，Facebook大圖影片為主力，精品定位溝通，CPM 198元偏高但受眾精準
-- **NISSAN**：4月規模大幅縮減僅2.2萬，CPM 52元全月最低，競品TOYOTA同月投入2,972萬
-- **FORD**：4月縮量1.5萬，改用YouTube版位（Territory+全車系），從Mobile01移到影音平台，CPM 59元，策略轉向精準低量
+- **NISSAN**：4月規模大幅縮減僅22.5萬，CPM 52元全月最低，競品TOYOTA同月投入2億9,728萬
+- **FORD**：4月縮量15萬，改用YouTube版位（Territory+全車系），從Mobile01移到影音平台，CPM 59元，策略轉向精準低量
 
 ## 2026年 5月（2026/05/01–05/31）
 
@@ -96,30 +96,30 @@
 | NISSAN | 365 | 0.2% | 50 | — |
 | MAZDA | 39 | 0.0% | 109 | — |
 
-- **TOYOTA**：5月維持天量1,755萬，Mobile01霸主地位穩固，Yaris Cross+RAV4+Corolla多線並進
-- **FORD**：5月爆量369萬，Territory+Kuga Mobile01大版位重押，媒體規模較4月大增246倍
-- **HONDA**：5月暴增38.88萬，CR-V e:HEV上市備戰，Yahoo奇摩主力+YouTube影音20%，上市前造勢
-- **HYUNDAI**：5月縮量33萬，自由時報主力50%+Yahoo奇摩，TUCSON L+INSTER雙線並行
-- **NISSAN**：5月大幅縮量3.65萬，YouTube首次成為主力版位，CPM 50元創新低，品牌廣告降至最低維持存在
-- **MAZDA**：5月規模最小0.39萬，愛料理54%+Meta影音，Video占23.5%，分眾精品路線
+- **TOYOTA**：5月維持天量1億7,550萬，Mobile01霸主地位穩固，Yaris Cross+RAV4+Corolla多線並進
+- **FORD**：5月爆量3,694萬，Territory+Kuga Mobile01大版位重押，媒體規模較4月大增246倍
+- **HONDA**：5月暴增388.8萬，CR-V e:HEV上市備戰，Yahoo奇摩主力+YouTube影音20%，上市前造勢
+- **HYUNDAI**：5月縮量331萬，自由時報主力50%+Yahoo奇摩，TUCSON L+INSTER雙線並行
+- **NISSAN**：5月大幅縮量36.5萬，YouTube首次成為主力版位，CPM 50元創新低，品牌廣告降至最低維持存在
+- **MAZDA**：5月規模最小3.9萬，愛料理54%+Meta影音，Video占23.5%，分眾精品路線
 
 ## 2026年 6月（2026/06/01–06/30）
 
-六品牌合計 33,760,770 萬元
+六品牌合計 337,608 萬元
 
 | 品牌 | 投放（萬元） | SOV | CPM | 主力車款 |
 |---|---|---|---|---|
-| TOYOTA | 27,654,910 | 81.9% | 108 | LEXUS NX 16,476,091萬、RAV4 5,616,707萬 |
-| HONDA | 5,523,950 | 16.4% | 105 | CR-V 5,365,088萬、全車系 149,767萬 |
-| MAZDA | 379,340 | 1.1% | 57 | CX-5 367,208萬、Mazda 2 10,579萬 |
-| HYUNDAI | 109,780 | 0.3% | 98 | TUCSON L Turbo Hybrid 43,729萬、現代汽車（全車系） 42,568萬 |
-| NISSAN | 50,800 | 0.2% | 91 | 全車系 37,343萬、INFINITI QX60 11,422萬 |
-| FORD | 41,990 | 0.1% | 214 | Territory 41,604萬、全車系 381萬 |
+| TOYOTA | 276,549 | 81.9% | 108 | LEXUS NX 164,761萬、RAV4 56,167萬 |
+| HONDA | 55,240 | 16.4% | 105 | CR-V 53,651萬、全車系 1,498萬 |
+| MAZDA | 3,793 | 1.1% | 57 | CX-5 3,672萬、Mazda 2 106萬 |
+| HYUNDAI | 1,098 | 0.3% | 98 | TUCSON L Turbo Hybrid 437萬、現代汽車（全車系） 426萬 |
+| NISSAN | 508 | 0.2% | 91 | 全車系 373萬、INFINITI QX60 114萬 |
+| FORD | 420 | 0.1% | 214 | Territory 416萬、全車系 4萬 |
 
 - **TOYOTA**：本月 LEXUS NX 獨佔59%（Mobile01霸版），RAV4 20%，和泰汽車 19%；Mobile01佔76%，Yahoo奇摩11%。規模遠超其他品牌
 - **HONDA**：CR-V 全力爆量（佔97%），Mobile01 54%＋Yahoo奇摩 23%；Video佔23%（YouTube廣泛鋪量），PRELUDE 少量測試影音。本月為Honda六月份最大數位投放
 - **MAZDA**：CX-5 霸佔96.8%花費，Yahoo奇摩運動版位 86%；Mazda 2 入門車款補投，整體CPM僅57元（Yahoo 聯播網量採效益）
-- **HYUNDAI**：TUCSON L Turbo Hybrid 新上市主打自由時報62%，YouTube 影音21%（TUCSON L 原廠影片100%影音）；全品牌規模縮減至1.1萬曝光，低調月份
+- **HYUNDAI**：TUCSON L Turbo Hybrid 新上市主打自由時報62%，YouTube 影音21%（TUCSON L 原廠影片100%影音）；全品牌花費規模110萬，低調月份
 - **NISSAN**：全車系廣告主力（佔73%），INFINITI QX60 FB 精準投放22%；中時電子報57%、Facebook 28%、YouTube 15%。本月 Kicks 影音佔比100%（小量測試）
 - **FORD**：Territory 單車型獨佔99%；GQ 媒體版位合作48%、Instagram 影音51%，媒體策略高度集中精品化版位，CPM偏高214元
 
