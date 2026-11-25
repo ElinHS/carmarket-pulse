@@ -57,7 +57,9 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
 .intel-section-nissan .intel-section-title{color:var(--accent);border-bottom-color:rgba(200,245,90,.25)}
 /* ── 月報 KPI 列（數值全部由 registrations.js / nielsen.js 推導，不寫死）── */
 .intel-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:9px;margin-bottom:16px}
-.intel-kc{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 13px}
+.intel-kc{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 13px;transition:.1s}
+.intel-kc.click{cursor:pointer}
+.intel-kc.click:hover{border-color:rgba(200,245,90,.45);background:rgba(200,245,90,.05)}
 .intel-kl{font-family:'DM Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:.06em;margin-bottom:4px;white-space:nowrap}
 .intel-kv{font-size:20px;font-weight:700;line-height:1.1;color:#fff}
 .intel-kv span{font-size:11px;color:var(--text3);margin-left:2px;font-weight:400}
