@@ -57,6 +57,27 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
 .intel-section{margin-bottom:24px}
 .intel-section-title{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);letter-spacing:.08em;margin-bottom:14px;padding-bottom:6px;border-bottom:1px solid var(--border)}
 .intel-section-nissan .intel-section-title{color:var(--accent);border-bottom-color:rgba(200,245,90,.25)}
+/* ── 月報 KPI 列（數值全部由 registrations.js / nielsen.js 推導，不寫死）── */
+.intel-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:9px;margin-bottom:16px}
+.intel-kc{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 13px}
+.intel-kl{font-family:'DM Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:.06em;margin-bottom:4px;white-space:nowrap}
+.intel-kv{font-size:20px;font-weight:700;line-height:1.1;color:#fff}
+.intel-kv span{font-size:11px;color:var(--text3);margin-left:2px;font-weight:400}
+.intel-ks{font-size:10px;margin-top:3px}
+/* ── 段落頁籤 ── */
+.intel-tabs{display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin-bottom:15px;border-bottom:1px solid var(--border);padding-bottom:11px}
+.intel-tdiv{width:1px;height:17px;background:var(--border);margin:0 3px}
+.intel-tb{background:var(--surface2);border:1px solid var(--border);color:var(--text2);font-size:11.5px;padding:6px 11px;border-radius:6px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px;transition:.1s}
+.intel-tb span{font-family:'DM Mono',monospace;font-size:9px;color:var(--text3);background:var(--bg);padding:1px 5px;border-radius:7px}
+.intel-tb:hover{border-color:var(--text3)}
+.intel-tb.nis{color:var(--accent);border-color:rgba(200,245,90,.22)}
+.intel-tb.all{color:var(--text3)}
+.intel-tb.on{background:rgba(200,245,90,.1);border-color:rgba(200,245,90,.45);color:var(--accent)}
+.intel-tb.on span{color:var(--accent)}
+.intel-pane{display:none}
+.intel-pane.on{display:block}
+.intel-lede{font-size:13px;color:#fff;font-weight:600;margin-bottom:11px;padding-left:9px;border-left:2px solid var(--accent)}
+.intel-item{max-width:80ch}
 .intel-group{margin-bottom:18px}
 .intel-group:last-child{margin-bottom:0}
 .intel-sub-title{font-size:13px;font-weight:600;color:#fff;margin-bottom:8px;line-height:1.5}
@@ -411,19 +432,19 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
 <!-- ⚠ 資料檔後面的 ?v=YYYYMMDD 是快取破除用的版本戳。GitHub Pages 會讓瀏覽器
      快取這些 .js，不加版本戳的話更新完資料要等快取過期才看得到新內容。
      每次更新 data/ 底下任何檔案後，請把所有 ?v= 一起改成當天日期。 -->
-<script src="data/creatives.js?v=20261118b"></script>
-<script src="data/registrations.js?v=20261118b"></script>
-<script src="data/intel.js?v=20261118b"></script>
-<script src="data/promos.js?v=20261118b"></script>
-<script src="data/nielsen.js?v=20261118b"></script>
-<script src="data/strategy.js?v=20261118b"></script>
-<script src="data/q1_report.js?v=20261118b"></script>
-<script src="data/comp.js?v=20261118b"></script>
-<script src="data/kol.js?v=20261118b"></script>
-<script src="data/opview.js?v=20261118b"></script>
-<script src="data/launch.js?v=20261118b"></script>
-<script src="data/actions.js?v=20261118b"></script>
-<script src="data/models.js?v=20261118b"></script>
+<script src="data/creatives.js?v=20261125"></script>
+<script src="data/registrations.js?v=20261125"></script>
+<script src="data/intel.js?v=20261125"></script>
+<script src="data/promos.js?v=20261125"></script>
+<script src="data/nielsen.js?v=20261125"></script>
+<script src="data/strategy.js?v=20261125"></script>
+<script src="data/q1_report.js?v=20261125"></script>
+<script src="data/comp.js?v=20261125"></script>
+<script src="data/kol.js?v=20261125"></script>
+<script src="data/opview.js?v=20261125"></script>
+<script src="data/launch.js?v=20261125"></script>
+<script src="data/actions.js?v=20261125"></script>
+<script src="data/models.js?v=20261125"></script>
 <script>
 
 // 📦 資料已抽離 → data/creatives.js（素材 base64 圖庫（window._cac 預載 / Q1_CREATIVE_IMGS））
@@ -648,21 +669,96 @@ function buildIntelNav(){
 }
 function showIntel(idx,el){
   document.querySelectorAll('.intel-nav-item').forEach(e=>e.classList.remove('active'));
-  el.classList.add('active');
+  if(el) el.classList.add('active');
   const d=INTEL[idx];
-  let html=`<div class="intel-header"><div class="intel-title">${d.title}</div><div class="intel-meta">${d.sub}</div></div>`;
-  if(d.mkt&&d.mkt.length){
-    html+=`<div class="intel-section"><div class="intel-section-title">&#9679; 市場整體觀察</div>`;
-    d.mkt.forEach(s=>{html+=`<div class="intel-group"><div class="intel-sub-title">${s.t}</div>`;s.i.forEach(it=>{html+=`<div class="intel-item">${it}</div>`});html+=`</div>`});
-    html+=`</div>`;
+
+  // ── KPI 列：全部由 registrations.js / nielsen.js 推導，不在 intel.js 另存一份 ──
+  // id 形如 '26.10' → 2026 年 10 月；label 含「全年」者改走年度口徑。
+  const yr=2000+parseInt(d.id.slice(0,2),10), mo=parseInt(d.id.slice(3),10);
+  const isYear=/全年/.test(d.label);
+  const sum=r=>r?r.kicks+r.kickse+r.sentra+r.xtrail+r.xtraile+r.ariya:null;
+  const row=(y,m)=>RAW.find(r=>r.yr===y&&r.mo===m)||null;
+  const yrSum=y=>{const rs=RAW.filter(r=>r.yr===y);return rs.length?rs.reduce((a,r)=>a+sum(r),0):null};
+  const ytd=(y,m)=>{const rs=RAW.filter(r=>r.yr===y&&r.mo<=m);return rs.length?rs.reduce((a,r)=>a+sum(r),0):null};
+  const pc=(a,b)=>(a==null||b==null||!b)?null:(a/b-1)*100;
+  const sg=v=>v==null?'—':(v>=0?'+':'−')+Math.abs(v).toFixed(1)+'%';
+  const cl=v=>v==null?'var(--text3)':v>=0?'var(--green)':'var(--red)';
+  const card=(l,v,u,s,c)=>v==null?'':`<div class="intel-kc"><div class="intel-kl">${l}</div>
+    <div class="intel-kv">${typeof v==='number'?v.toLocaleString():v}<span>${u}</span></div>
+    <div class="intel-ks" style="color:${c||'var(--text3)'}">${s}</div></div>`;
+
+  let kpis='';
+  if(isYear){
+    const t=yrSum(yr), p=yrSum(yr-1), yy=pc(t,p);
+    kpis=card('NISSAN 全年',t,'台',`YoY ${sg(yy)}`,cl(yy))
+        +card('Kicks 車系',RAW.filter(r=>r.yr===yr).reduce((a,r)=>a+r.kicks+r.kickse,0),'台','全年合計')
+        +card('X-Trail 車系',RAW.filter(r=>r.yr===yr).reduce((a,r)=>a+r.xtrail+r.xtraile,0),'台','全年合計')
+        +card('Sentra',RAW.filter(r=>r.yr===yr).reduce((a,r)=>a+r.sentra,0),'台','全年合計');
+  }else{
+    const c=row(yr,mo), pv=row(yr,mo===1?12:mo-1)||row(yr-1,12);
+    const t=sum(c), tm=pc(t,sum(pv));
+    const y1=ytd(yr,mo), y0=ytd(yr-1,mo), yy=pc(y1,y0);
+    const nieKey=['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'][mo-1];
+    const nd=(yr===2026&&typeof NIELSEN_MONTHLY!=='undefined')?NIELSEN_MONTHLY[nieKey]:null;
+    const nis=nd&&nd.nissan;
+    const nieTot=nd?['nissan','toyota','honda','ford','hyundai','mazda']
+      .reduce((a,k)=>a+((nd[k]&&nd[k].totalSp)||0),0):0;
+    kpis=card('NISSAN 合計',t,'台',`MoM ${sg(tm)}`,cl(tm))
+        +card('YTD 累計',y1,'台',`YoY ${sg(yy)}`,cl(yy))
+        +card('Kicks',c&&c.kicks,'台',`MoM ${sg(pc(c&&c.kicks,pv&&pv.kicks))}`,cl(pc(c&&c.kicks,pv&&pv.kicks)))
+        +card('X-Trail 汽油',c&&c.xtrail,'台',`MoM ${sg(pc(c&&c.xtrail,pv&&pv.xtrail))}`,cl(pc(c&&c.xtrail,pv&&pv.xtrail)))
+        +(nis?card('數位投放',(nis.totalSp/10).toFixed(0),'萬',
+            `SOV ${nieTot?(nis.totalSp/nieTot*100).toFixed(1):'—'}%`,'var(--text3)'):'');
   }
-  if(d.nis&&d.nis.length){
-    html+=`<div class="intel-section intel-section-nissan"><div class="intel-section-title">&#9650; NISSAN 專項觀察</div>`;
-    d.nis.forEach(s=>{html+=`<div class="intel-group"><div class="intel-sub-title" style="color:var(--accent)">${s.t}</div>`;s.i.forEach(it=>{html+=`<div class="intel-item">${it}</div>`});html+=`</div>`});
-    html+=`</div>`;
-  }
-  document.getElementById('intelContent').innerHTML=html;
+
+  // ── 段落頁籤：市場段 → 分隔線 → NISSAN 段 → 分隔線 → 全部 ──
+  const secs=[...(d.mkt||[]).map(s=>({s,nis:false})),...(d.nis||[]).map(s=>({s,nis:true}))];
+  const total=secs.reduce((a,x)=>a+x.s.i.length,0);
+  // 切換月份時盡量停在同一個段落，讓跨月對照不必重新找。
+  // NISSAN 段的標題帶月份（NISSAN 10月觀察），比對前先正規化成同一個鍵。
+  let pick=secs.findIndex(x=>intelTabKey(x.s.t)===_intelTab);
+  if(pick<0) pick=_intelTab==='__all'?-1:0;
+
+  const tabs=secs.map((x,i)=>
+    `${i===(d.mkt||[]).length?'<span class="intel-tdiv"></span>':''}`+
+    `<button class="intel-tb${x.nis?' nis':''}${i===pick?' on':''}" onclick="setIntelTab(${i})">`+
+    `${x.s.t.split('：')[0]}<span>${x.s.i.length}</span></button>`).join('')
+    +`<span class="intel-tdiv"></span><button class="intel-tb all${pick<0?' on':''}" onclick="setIntelTab(-1)">全部<span>${total}</span></button>`;
+
+  const panes=secs.map((x,i)=>`<div class="intel-pane${i===pick?' on':''}" id="intelPane${i}">
+    ${x.s.t.includes('：')?`<div class="intel-lede">${x.s.t.split('：').slice(1).join('：')}</div>`:''}
+    <div class="${x.nis?'intel-section-nissan':''}">${x.s.i.map(t=>`<div class="intel-item">${t}</div>`).join('')}</div>
+  </div>`).join('')
+  +`<div class="intel-pane${pick<0?' on':''}" id="intelPaneAll">${secs.map(x=>
+    `<div class="intel-group ${x.nis?'intel-section-nissan':''}">
+      <div class="intel-sub-title"${x.nis?' style="color:var(--accent)"':''}>${x.s.t}</div>
+      ${x.s.i.map(t=>`<div class="intel-item">${t}</div>`).join('')}</div>`).join('')}</div>`;
+
+  document.getElementById('intelContent').innerHTML=
+    `<div class="intel-header"><div class="intel-title">${d.title}</div><div class="intel-meta">${d.sub}</div></div>`
+    +(kpis?`<div class="intel-kpis">${kpis}</div>`:'')
+    +`<div class="intel-tabs">${tabs}</div>${panes}`;
   document.getElementById('intelContent').scrollTop=0;
+}
+
+// 記住目前看的段落（以標題前綴為鍵），切換月份時沿用
+const intelTabKey=t=>t.split('：')[0].trim()
+  .replace(/^NISSAN\s*(\d+月|全年)觀察$/,'NISSAN 觀察');
+let _intelTab=null;
+function setIntelTab(i){
+  const btns=[...document.querySelectorAll('.intel-tb')];
+  const panes=[...document.querySelectorAll('.intel-pane')];
+  btns.forEach(b=>b.classList.remove('on'));
+  panes.forEach(p=>p.classList.remove('on'));
+  if(i<0){
+    btns[btns.length-1].classList.add('on');
+    document.getElementById('intelPaneAll').classList.add('on');
+    _intelTab='__all';
+  }else{
+    btns[i].classList.add('on');
+    document.getElementById('intelPane'+i).classList.add('on');
+    _intelTab=intelTabKey(btns[i].childNodes[0].textContent.trim());
+  }
 }
 
 function updateAll(){buildKPI();buildTrendChart();buildModelChart();buildStackedChart();buildYoyGrid();buildModelTable();}

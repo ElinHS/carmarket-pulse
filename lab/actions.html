@@ -55,6 +55,27 @@ body{background:var(--bg);color:var(--text);font-family:'Noto Sans TC',sans-seri
 .intel-section{margin-bottom:24px}
 .intel-section-title{font-family:'DM Mono',monospace;font-size:11px;color:var(--text3);letter-spacing:.08em;margin-bottom:14px;padding-bottom:6px;border-bottom:1px solid var(--border)}
 .intel-section-nissan .intel-section-title{color:var(--accent);border-bottom-color:rgba(200,245,90,.25)}
+/* ── 月報 KPI 列（數值全部由 registrations.js / nielsen.js 推導，不寫死）── */
+.intel-kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:9px;margin-bottom:16px}
+.intel-kc{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:9px 13px}
+.intel-kl{font-family:'DM Mono',monospace;font-size:9px;color:var(--text3);letter-spacing:.06em;margin-bottom:4px;white-space:nowrap}
+.intel-kv{font-size:20px;font-weight:700;line-height:1.1;color:#fff}
+.intel-kv span{font-size:11px;color:var(--text3);margin-left:2px;font-weight:400}
+.intel-ks{font-size:10px;margin-top:3px}
+/* ── 段落頁籤 ── */
+.intel-tabs{display:flex;gap:5px;flex-wrap:wrap;align-items:center;margin-bottom:15px;border-bottom:1px solid var(--border);padding-bottom:11px}
+.intel-tdiv{width:1px;height:17px;background:var(--border);margin:0 3px}
+.intel-tb{background:var(--surface2);border:1px solid var(--border);color:var(--text2);font-size:11.5px;padding:6px 11px;border-radius:6px;cursor:pointer;font-family:inherit;display:flex;align-items:center;gap:6px;transition:.1s}
+.intel-tb span{font-family:'DM Mono',monospace;font-size:9px;color:var(--text3);background:var(--bg);padding:1px 5px;border-radius:7px}
+.intel-tb:hover{border-color:var(--text3)}
+.intel-tb.nis{color:var(--accent);border-color:rgba(200,245,90,.22)}
+.intel-tb.all{color:var(--text3)}
+.intel-tb.on{background:rgba(200,245,90,.1);border-color:rgba(200,245,90,.45);color:var(--accent)}
+.intel-tb.on span{color:var(--accent)}
+.intel-pane{display:none}
+.intel-pane.on{display:block}
+.intel-lede{font-size:13px;color:#fff;font-weight:600;margin-bottom:11px;padding-left:9px;border-left:2px solid var(--accent)}
+.intel-item{max-width:80ch}
 .intel-group{margin-bottom:18px}
 .intel-group:last-child{margin-bottom:0}
 .intel-sub-title{font-size:13px;font-weight:600;color:#fff;margin-bottom:8px;line-height:1.5}
